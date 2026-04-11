@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QuickReserve</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- NAVBAR -->
+<header class="navbar">
+  <div class="logo">Quick<span>Reserve</span></div>
+
+  <nav>
+    <a href="#">Home</a>
+    <a href="#">About</a>
+    <a href="#">Services</a>
+    <a href="#">Plan Your Trip</a>
+    <a href="#">Stations & Stops</a>
+    <a href="#">News</a>
+  </nav>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="overlay"></div>
+
+  <div class="hero-content">
+    <h1>Your Journey of Exploration Begins Here!</h1>
+    <p>
+      Experience the allure of California's diverse landscapes and vibrant cities
+      as you embark on your next adventure.
+    </p>
+  </div>
+
+  <!-- BOOKING BOX -->
+  <div class="booking-box">
+    <div class="tabs">
+      <button class="active">One Way</button>
+      <button>Round Trip</button>
+    </div>
+
+    <div class="form">
+      <div class="field">
+        <label>From</label>
+        <input type="text" id="from" value="Los Angeles">
+      </div>
+
+      <div class="field">
+        <label>To</label>
+        <input type="text" id="to" value="San Diego">
+      </div>
+
+      <div class="field">
+        <label>Departing</label>
+        <input type="date" id="date">
+      </div>
+
+      <div class="field">
+        <label>Passengers</label>
+        <input type="number" value="1">
+      </div>
+
+      <button class="search-btn" onclick="searchTrips()">Search</button>
+    </div>
+  </div>
+</section>
+
+<!-- MAIN SYSTEM -->
+<main class="container">
+
+  <!-- AVAILABLE TRIPS -->
+  <section class="mt-5">
+    <h2>Available Trips</h2>
+    <div id="tripResults"></div>
+  </section>
+
+  <!-- BOOKING SUMMARY -->
+  <section id="bookingSummary" class="d-none">
+    <h3>Booking Summary</h3>
+    <p>From: <span id="sumFrom"></span></p>
+    <p>To: <span id="sumTo"></span></p>
+    <p>Date: <span id="sumDate"></span></p>
+    <p>Seat: <span id="sumSeat"></span></p>
+    <button onclick="confirmBooking()">Confirm Booking</button>
+  </section>
+
+  <!-- SEAT SELECTION -->
+  <section class="mt-5">
+    <h2>Select Seat</h2>
+    <div id="seats" class="seat-container">
+      <button class="seat">1</button>
+      <button class="seat">2</button>
+      <button class="seat">3</button>
+      <button class="seat">4</button>
+    </div>
+  </section>
+
+  <!-- MY BOOKINGS -->
+  <section class="mt-5">
+    <h2>My Bookings</h2>
+    <table border="1">
+      <thead>
+        <tr>
+          <th>Route</th>
+          <th>Date</th>
+          <th>Seat</th>
+        </tr>
+      </thead>
+      <tbody id="myBookings"></tbody>
+    </table>
+  </section>
+
+</main>
+
+<script src="script.js"></script>
+</body>
+</html>

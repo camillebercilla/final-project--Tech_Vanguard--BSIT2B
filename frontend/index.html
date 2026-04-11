@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>QuickReserve</title>
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+
+<body class="bg-light">
+
+<!-- NAVBAR -->
+<nav class="navbar navbar-dark bg-success">
+  <div class="container">
+    <span class="navbar-brand">QuickReserve</span>
+  </div>
+</nav>
+
+<div class="container mt-4">
+
+  <!-- REGISTER -->
+  <div class="card p-3 mb-3">
+    <h4>Register</h4>
+    <input id="regName" class="form-control mb-2" placeholder="Name">
+    <input id="regEmail" class="form-control mb-2" placeholder="Email">
+    <input id="regPassword" type="password" class="form-control mb-2" placeholder="Password">
+    <button class="btn btn-primary" onclick="register()">Register</button>
+  </div>
+
+  <!-- LOGIN -->
+  <div class="card p-3 mb-3">
+    <h4>Login</h4>
+    <input id="loginEmail" class="form-control mb-2" placeholder="Email">
+    <input id="loginPassword" type="password" class="form-control mb-2" placeholder="Password">
+    <button class="btn btn-success" onclick="login()">Login</button>
+  </div>
+
+  <!-- SEARCH -->
+  <input id="search" class="form-control mb-3" placeholder="Search destination..." onkeyup="filterTrips()">
+
+  <!-- TRIPS -->
+  <h4>Trips</h4>
+  <button class="btn btn-secondary mb-3" onclick="loadTrips()">Load Trips</button>
+
+  <div class="row" id="trips"></div>
+
+</div>
+
+<script>
+let allTrips = [];
+
+/* REGISTER */
+async function register() {
+  const name = document.getElementById("regName").value;
+  const email = document.getElementById("regEmail").value;
+  const password = document.getElementById("regPassword").value;
+
+  const res = await fetch("http://localhost:5000/api/auth/register", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({ name, email, password })
+  });
+
+  const data = await res.json();
+  alert(data.message || "Registered!");
+}
+
+/* LOGIN */
+async function login() {
+  const email = document.getElementById("loginEmail").value;
+  const password = document.getElementById("loginPassword").value;
+
+  const res = await fetch("http://localhost:5000/api/auth/login", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({ email, password })
+  });
+
+  const data = await res.json();
+
+  if (data.token) {
+    localStorage.setItem("token", data.token);
+    alert("Login successful!");
+  } else {
+    alert(data.message || "Login failed");
+  }
+}
+
+/* LOAD TRIPS */
+async function loadTrips() {
+  const res = await fetch("http://localhost:5000/api/trips");
+  allTrips = await res.json();
+  displayTrips(allTrips);
+}
+
+/* DISPLAY TRIPS */
+function displayTrips(trips) {
+  const container = document.getElementById("trips");
+  container.innerHTML = "";
+
+  trips.forEach(t => {
+    container.innerHTML += `
+      <div class="col-md-4">
+        <div class="card shadow mb-3">
+          <div class="card-body">
+            <h5>${t.origin} → ${t.destination}</h5>
+            <p>Price: ₱${t.price}</p>
+            <p>Seats: ${t.availableSeats}</p>
+            <button class="btn btn-success w-100" onclick="book('${t._id}')">
+              Book Now
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+  });
+}
+
+/* SEARCH FILTER */
+function filterTrips() {
+  const search = document.getElementById("search").value.toLowerCase();
+
+  const filtered = allTrips.filter(t =>
+    t.destination.toLowerCase().includes(search) ||
+    t.origin.toLowerCase().includes(search)
+  );
+
+  displayTrips(filtered);
+}
+
+/* BOOK */
+async function book(id) {
+  await fetch("http://localhost:5000/api/bookings", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": localStorage.getItem("token")
+    },
+    body: JSON.stringify({
+      tripId: id,
+      seatNumber: Math.floor(Math.random() * 40) + 1
+    })
+  });
+
+  alert("Booked!");
+}
+</script>
+
+</body>
+</html>
