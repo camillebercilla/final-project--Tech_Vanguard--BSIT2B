@@ -1,7 +1,15 @@
-const router = require("express").Router();
-const { getTrips, addTrip } = require("../controllers/tripController");
+const express = require("express");
+const router = express.Router();
 
+const { getTrips, addTrip, searchTrips } = require("../controllers/tripController");
+
+// Get all trips
 router.get("/", getTrips);
+
+// Search trips
+router.get("/search", searchTrips);
+
+// Add trip
 router.post("/", addTrip);
 
 module.exports = router;

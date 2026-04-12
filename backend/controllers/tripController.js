@@ -1,11 +1,15 @@
-const Trip = require("../models/Trip");
+const Trip = require("../../models/Trip");
 
-exports.getTrips = async (req, res) => {
-  const trips = await Trip.find();
+// Search Trips
+exports.searchTrips = async (req, res) => {
+  const { origin, destination } = req.query;
+
+  const trips = await Trip.find({ origin, destination });
   res.json(trips);
 };
 
-exports.addTrip = async (req, res) => {
-  const trip = await Trip.create(req.body);
-  res.json(trip);
+// Get all trips
+exports.getTrips = async (req, res) => {
+  const trips = await Trip.find();
+  res.json(trips);
 };
