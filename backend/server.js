@@ -1,6 +1,17 @@
-require("dotenv").config();
+require("dns").setServers(["8.8.8.8", "8.8.4.4"]);
+
 const express = require("express");
+const mongoose = require("mongoose");
 const cors = require("cors");
+const path = require("path");
+require("dotenv").config();
+
+// Routes
+const userRoutes = require("./routes/users");
+const tripRoutes = require("./routes/tripRoutes");
+const bookingRoutes = require("./routes/bookingRoutes");
+
+// DB connection (MAKE SURE YOU HAVE THIS FILE)
 const connectDB = require("./config/db");
 
 const app = express();
@@ -13,9 +24,9 @@ app.use(cors());
 app.use(express.json());
 
 // Routes
-app.use("/api/trips", require("./routes/tripRoutes"));
-app.use("/api/users", require("./routes/userRoutes"));
-app.use("/api/bookings", require("./routes/bookingRoutes"));
+app.use("/api/users", userRoutes);
+app.use("/api/trips", tripRoutes);
+app.use("/api/bookings", bookingRoutes);
 
 const PORT = process.env.PORT || 5000;
 

@@ -1,15 +1,49 @@
-const Trip = require("../../models/Trip");
+const Trip = require('../models/Trip');
 
-// Search Trips
+// SEARCH TRIPS
 exports.searchTrips = async (req, res) => {
-  const { origin, destination } = req.query;
+  try {
+    const { origin, destination } = req.query;
 
-  const trips = await Trip.find({ origin, destination });
-  res.json(trips);
+    const filter = {};
+
+    if (origin) filter.origin = origin;
+    if (destination) filter.destination = destination;
+
+    const trips = await Trip.find(filter);
+
+    res.json(trips);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 };
 
-// Get all trips
+// GET ALL TRIPS
 exports.getTrips = async (req, res) => {
-  const trips = await Trip.find();
-  res.json(trips);
+  try {
+    const trips = await Trip.find();
+    res.json(trips);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+// ADD TRIP
+exports.addTrip = async (req, res) => {
+  try {
+    const { title, origin, destination, price } = req.body;
+
+    const trip = new Trip({
+      title,
+      origin,
+      destination,
+      price
+    });
+
+    await trip.save();
+
+    res.status(201).json(trip);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 };

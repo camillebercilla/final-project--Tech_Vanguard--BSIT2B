@@ -9,7 +9,7 @@ router.get("/", getTrips);
 // Search trips
 router.get("/search", searchTrips);
 
-// Add trip
+// Add tripa
 router.post("/", addTrip);
 
 module.exports = router;
