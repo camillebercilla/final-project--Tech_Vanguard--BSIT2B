@@ -1,12 +1,22 @@
 const router = require("express").Router();
+
 const {
   createBooking,
   getBookings,
-  cancelBooking
+  cancelBooking,
+  getUserBookings   // 👈 ADD THIS
 } = require("../controllers/bookingController");
 
+// Create booking
 router.post("/", createBooking);
+
+// Get all bookings
 router.get("/", getBookings);
-router.put("/:id", cancelBooking);
+
+// Get bookings of a specific user 👇 ADD THIS
+router.get("/user/:id", getUserBookings);
+
+// Cancel booking
+router.delete("/:id", cancelBooking);
 
 module.exports = router;
