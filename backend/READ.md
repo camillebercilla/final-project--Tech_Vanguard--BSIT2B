@@ -202,11 +202,11 @@ Client → Route → Controller → Model → Database → Response
 
 ## 📌 Best Practices Implemented
 
-* 🔐 Secure authentication with JWT
-* 🧱 Clean MVC architecture
+* 🔐 JWT-based authentication
+* 🧱 MVC architecture
 * 🔄 Separation of concerns
-* 🔍 Input validation (recommended)
-* 🔑 Role-based access control
+* 🔍 Basic input validation
+* 🔑 Role-based access control (Admin & User)
 
 ---
 
