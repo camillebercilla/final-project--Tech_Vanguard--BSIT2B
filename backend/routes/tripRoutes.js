@@ -1,7 +1,12 @@
 const express = require("express");
 const router = express.Router();
 
-const { getTrips, addTrip, searchTrips } = require("../controllers/tripController");
+const {
+  getTrips,
+  addTrip,
+  searchTrips,
+  updateTrip
+} = require("../controllers/tripController");
 
 // Get all trips
 router.get("/", getTrips);
@@ -9,7 +14,10 @@ router.get("/", getTrips);
 // Search trips
 router.get("/search", searchTrips);
 
-// Add tripa
+// Add trip
 router.post("/", addTrip);
+
+// Update trip
+router.put("/:id", updateTrip);
 
 module.exports = router;

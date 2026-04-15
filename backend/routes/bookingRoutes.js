@@ -4,7 +4,8 @@ const {
   createBooking,
   getBookings,
   cancelBooking,
-  getUserBookings   // 👈 ADD THIS
+  getUserBookings,
+  rescheduleBooking   
 } = require("../controllers/bookingController");
 
 // Create booking
@@ -18,5 +19,7 @@ router.get("/user/:id", getUserBookings);
 
 // Cancel booking
 router.delete("/:id", cancelBooking);
+
+router.put("/:id", rescheduleBooking);
 
 module.exports = router;
