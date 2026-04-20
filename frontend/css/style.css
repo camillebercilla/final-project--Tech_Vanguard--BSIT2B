@@ -1,86 +1,903 @@
 body {
   background-color: #f1f3f6;
+
+  --hero-height: 600px;
+  --route-img-height: 180px;
+}
+
+/* NAV */
+.logo-icon {
+  width: 24px;
+  height: 25px;
+  margin-right: 4px;
+  vertical-align: middle;
+}
+
+.navbar-brand .quick {
+  color: #16c4a1;
+}
+.navbar-brand .reserve {
+  color: #ffffff;
+}
+
+.btn-register {
+  background-color: #4ba486;
+  color: white;
+  border: none;
+  font-weight: 600;
+}
+
+.btn-register:hover {
+  background-color: #285A48;
+  color: white;
+}
+
+.btn-start {
+  background-color: #408A71;
+  color: white;
+  font-weight: 600;
+
+  height: 40px;
+  width: 20%;
+
+  border: none;
+  border-radius: 8px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  text-decoration: none; /* IMPORTANT for <a> */
+
+  transition: all 0.6s ease;
+
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+/* visible state */
+.btn-start.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* hover */
+.btn-start:hover {
+  background-color: #285A48;
+  color: white;
+  transform: translateY(-2px);
+}
+
+.btn-go {
+  background-color: #408A71;
+  color: white;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.btn-go:hover {
+  background-color: #4ba084;
+  transform: translateY(-2px);
+}
+
+/* ================= LIVE BAR ================= */
+.live-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  background: #16c4a1;
+  border-radius: 50%;
+  margin-right: 6px;
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.3; }
 }
 
 /* HERO */
 .hero {
+  height: var(--hero-height);
+  background: url(../img/bus1.jpg) center/cover no-repeat;
   position: relative;
-  height: 450px;
-  background: url(../img/bus1.png) center/cover no-repeat;
+  color: white;
+
+  display: flex;
+  align-items: center;      /* vertical center */
+  justify-content: flex-start; /* move LEFT */
+  padding-left: 140px;
 }
 
-.hero-overlay {
+.hero::after {
+  content: "";
   position: absolute;
-  width: 100%;
-  height: 100%;
-  background: rgba(0,0,0,0.5);
+  inset: 0;
+  background: rgba(0,0,0,0.25);
 }
 
 .hero-content {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  text-align: center;
-  color: white;
-  width: 90%;
-}
-
-.search-box {
-  background: white;
-  padding: 15px;
-  border-radius: 10px;
-  margin-top: 20px;
-}
-
-/* ROUTES */
-.route-card {
   position: relative;
-  border-radius: 10px;
-  overflow: hidden;
+  z-index: 2;
+  text-align: left;
+  max-width: 600px;
+  
 }
 
-.route-card img {
-  width: 100%;
-  height: 180px;
-  object-fit: cover;
-}
+.step-box {
+  background-color: #408A71;
+  color: #212529;
 
-.route-text {
-  position: absolute;
-  bottom: 10px;
-  left: 15px;
-  color: white;
-  font-weight: bold;
-  font-size: 18px;
-}
+  padding: 12px 15px;   /* smaller padding */
+  border-radius: 12px;
 
-/* ICONS */
-.icon-circle {
-  width: 70px;
-  height: 70px;
-  background: #0d6efd;
-  border-radius: 50%;
+  font-weight: 600;
+
+  min-height: 50px;     /* controlled small height */
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: auto;
-  color: white;
-  font-size: 30px;
+  text-align: center;
+
+  box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+
+  cursor: pointer;
+
+  transition: all 0.4s ease;
+
+  opacity: 0;
+  transform: translateY(30px);
 }
 
-/* GALLERY */
-.gallery img {
-  height: 180px;
+/* hover effect */
+.step-box:hover {
+  background-color: #4ea789;
+  color: white;
+  transform: translateY(-6px);
+  box-shadow: 0 12px 25px rgba(0,0,0,0.15);
+}
+
+/* visible state (for fade-in JS) */
+.step-box.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* CARDS */
+.trip-card {
+  border-radius: 12px;
+  overflow: hidden;
+  transition: 0.2s;
+}
+
+.trip-card:hover {
+  transform: scale(1.02);
+}
+
+/* SEAT GRID */
+.seat-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  max-width: 300px;
+}
+
+.seat {
+  padding: 10px;
+  background: #ddd;
+  border-radius: 6px;
+  text-align: center;
+  cursor: pointer;
+}
+
+.seat.selected {
+  background: #16c4a1;
+  color: white;
+}
+
+.seat.booked {
+  background: #dc3545;
+  color: white;
+  cursor: not-allowed;
+}
+
+/* DASHBOARD */
+.sidebar {
+  height: 100vh;
+  background: #212529;
+  color: white;
+  padding: 20px;
+}
+
+.sidebar a {
+  color: white;
+  display: block;
+  margin: 10px 0;
+  text-decoration: none;
+}
+
+.sidebar a:hover {
+  color: #16c4a1;
+}
+
+/* FORCE ALL ROUTE CARDS TO BE SAME SIZE */
+.card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+
+  /* added animation */
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  overflow: hidden;
+}
+
+/* hover zoom effect */
+.card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+}
+
+/* USE YOUR VARIABLE FOR IMAGE SIZE */
+.card-img-top {
+  height: var(--route-img-height);
   object-fit: cover;
-  border-radius: 10px;
+  background-color: #b71a1a;
+
+  /* optional smoother image zoom */
+  transition: transform 0.4s ease;
 }
 
-/* BUTTON */
-.btn-main {
-  background: #0d6efd;
-  color: white;
-  padding: 10px 30px;
+/* image zoom when card is hovered */
+.card:hover .card-img-top {
+  transform: scale(1.08);
+}
+
+/* ALIGN CONTENT INSIDE CARD */
+.card-body {
+  color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(140deg, #091413, #285A48, #408A71);
+  font-weight: 600;
+}
+
+.why-btn {
+  background-color: #4ea789;
+  color: #212529; /* better contrast than white */
+
+  font-weight: 600;
+  padding: 12px 18px;
   border-radius: 8px;
   border: none;
+  width: 100%;
+
+  /* fade animation */
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 0.7s ease;
+}
+
+/* fade in */
+.why-btn {
+  background-color: #4ea789;
+  color: #212529;
+
+  font-weight: 600;
+  padding: 12px 18px;
+  border-radius: 8px;
+  border: none;
+  width: 100%;
+
+  /* fade animation */
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.8s ease, transform 0.8s ease, box-shadow 0.3s ease;
+}
+
+/* visible */
+.why-btn.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* hover */
+.why-btn:hover {
+  background-color: #285A48;
+  color: white;
+  transform: translateY(-3px);
+  box-shadow: 0 8px 18px rgba(0,0,0,0.15);
+}
+
+/* PUSH BUTTON TO BOTTOM */
+.card-body .btn {
+  margin-top: auto;
+}
+
+.card-body .btn-primary {
+  color: black;
+  background-color: #B0E4CC;
+  border: none;
+  font-weight: bold;
+}
+
+.card-body .btn-primary:hover {
+  background-color: #408A71;
+  color: white;
+}
+
+.card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  overflow: hidden;
+}
+
+
+/* when visible */
+.card.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* HERO FIX */
+.hero {
+  position: relative;
+}
+
+/* SEARCH FLOATING AT BOTTOM */
+.hero-search {
+  position: absolute;
+  bottom: -40px;
+
+  left: 20%;
+  transform: translateX(-50%);
+
+  width: 90%;
+  max-width: 1000px;
+
+  display: flex;
+  justify-content: center;
+
+  z-index: 3;
+}
+/* THIS IS THE IMPORTANT PART */
+.hero-search .card {
+  width: 90%;
+  max-width: 900px;
+
+  margin: 0 auto;
+  border-radius: 12px;
+}
+
+/* MAKE SURE TEXT STAYS ABOVE OVERLAY */
+.hero-content {
+  z-index: 2;
+}
+
+/* ADD SPACE BELOW HERO */
+.hero {
+  margin-bottom: 80px;
+}
+
+.form-control {
+  border-radius: 8px;
+}
+
+.hero-search .card {
+  box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+/* ===== FADE BASE CLASS ===== */
+.fade {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.8s ease;
+}
+
+/* ===== WHEN ELEMENT IS VISIBLE ===== */
+.fade.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ===== OPTIONAL FADE OUT ===== */
+.fade.hide {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.6s ease;
+}
+
+/* ===== FADE ANIMATION ===== */
+.fade {
+  opacity: 0;
+  transform: translateY(25px);
+  transition: all 0.8s ease;
+}
+
+.fade.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+
+/* ================= ROOT ================= */
+:root {
+  --green1: #20b2a6;
+  --green2: #167c70;
+  --light: #e9f2f1;
+}
+
+/* ================= BASE ================= */
+body.register-page {
+  margin: 0;
+  min-height: 100vh;
+  font-family: 'Segoe UI', sans-serif;
+  background: var(--light);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  overflow-x: hidden;
+  overflow-y: auto;   /* IMPORTANT FIX */
+  position: relative;
+}
+
+/* ================= WAVE BACKGROUND ================= */
+body.register-page::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 900' preserveAspectRatio='none'%3E%3C!-- TOP LEFT burst --%3E%3Cpath d='M 0 0 L 350 0 A 350 350 0 0 0 0 350 Z' fill='%2320b2a6' opacity='0.9'/%3E%3Cpath d='M 0 0 L 240 0 A 240 240 0 0 0 0 240 Z' fill='%2320b2a6' opacity='0.6'/%3E%3Cpath d='M 0 0 L 130 0 A 130 130 0 0 0 0 130 Z' fill='%2320b2a6' opacity='0.35'/%3E%3C!-- BOTTOM RIGHT burst --%3E%3Cpath d='M 800 900 L 450 900 A 350 350 0 0 0 800 550 Z' fill='%2320b2a6' opacity='0.9'/%3E%3Cpath d='M 800 900 L 560 900 A 240 240 0 0 0 800 660 Z' fill='%2320b2a6' opacity='0.6'/%3E%3Cpath d='M 800 900 L 670 900 A 130 130 0 0 0 800 770 Z' fill='%2320b2a6' opacity='0.35'/%3E%3C/svg%3E");
+  background-size: cover;
+  background-position: center;
+}
+
+body.register-page .card {
+  position: relative;
+  z-index: 10;
+}
+
+/* ================= REGISTER PAGE FIX ================= */
+body.register-page .card {
+  opacity: 0;
+  transform: translateY(30px);
+  animation: floatUp 0.6s ease forwards;
+}
+
+/* ================= CARD ================= */
+.card {
+  width: 350px;
+  z-index: 2;
+  position: relative;
+
+  border-radius: 25px;
+  border: none;
+
+  background: rgba(255,255,255,0.95);
+  backdrop-filter: blur(10px);
+
+  box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+
+  animation: floatUp 0.6s ease;
+}
+
+@keyframes floatUp {
+  from {
+    transform: translateY(30px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* ================= FORM ================= */
+.form-control {
+  border-radius: 10px;
+  border: none;
+  border-bottom: 2px solid #ddd;
+}
+
+.form-control:focus {
+  border-color: var(--green1);
+  box-shadow: none;
+}
+
+/* ================= BUTTON ================= */
+.btn-success {
+  border-radius: 20px;
+  background: linear-gradient(135deg, var(--green1), var(--green2));
+  border: none;
+  transition: 0.3s;
+}
+
+.btn-success:hover {
+  transform: scale(1.03);
+}
+
+/* ================= TEXT ================= */
+.toggle-password {
+  cursor: pointer;
+  font-size: 13px;
+  color: #777;
+}
+
+/* Prevent hero search card from inheriting the dark card-body gradient */
+.hero-search .card-body,
+.hero-search .card {
+  background: #ffffff !important;
+  color: #212529 !important;
+}
+
+/* Also prevent cards inside hero-search from animating weirdly */
+.hero-search .card {
+  opacity: 1 !important;
+  transform: none !important;
+  animation: none !important;
+}
+
+/* ================================================
+   LOGIN PAGE
+   ================================================ */
+body.login-page {
+  margin: 0;
+  min-height: 100vh;
+  background: #e2f0ee;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: 'Poppins', sans-serif;
+  position: relative;
+  overflow: hidden;
+}
+
+body.login-page::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 680 500' preserveAspectRatio='none'%3E%3Cpath d='M 0 0 L 260 0 A 260 260 0 0 0 0 260 Z' fill='%2320b2a6' opacity='0.9'/%3E%3Cpath d='M 0 0 L 175 0 A 175 175 0 0 0 0 175 Z' fill='%2320b2a6' opacity='0.6'/%3E%3Cpath d='M 0 0 L 95 0 A 95 95 0 0 0 0 95 Z' fill='%2320b2a6' opacity='0.35'/%3E%3Cpath d='M 680 500 L 420 500 A 260 260 0 0 0 680 240 Z' fill='%2320b2a6' opacity='0.9'/%3E%3Cpath d='M 680 500 L 505 500 A 175 175 0 0 0 680 325 Z' fill='%2320b2a6' opacity='0.6'/%3E%3Cpath d='M 680 500 L 585 500 A 95 95 0 0 0 680 405 Z' fill='%2320b2a6' opacity='0.35'/%3E%3C/svg%3E");
+  background-size: cover;
+  background-position: center;
+}
+
+.login-card {
+  position: relative;
+  z-index: 10;
+  background: #fff;
+  border-radius: 20px;
+  padding: 36px 32px;
+  width: 340px;
+  box-shadow: 0 8px 32px rgba(32,178,166,0.12);
+  border: 0.5px solid rgba(32,178,166,0.15);
+  animation: floatUp 0.5s ease forwards;
+}
+
+.login-logo {
+  width: 48px;
+  height: 48px;
+  background: #20b2a6;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 14px;
+}
+
+.login-logo img {
+  width: 26px;
+  height: 26px;
+  filter: brightness(10);
+}
+
+.login-title {
+  text-align: center;
+  font-size: 20px;
+  font-weight: 700;
+  color: #167c70;
+  margin-bottom: 4px;
+}
+
+.login-sub {
+  text-align: center;
+  font-size: 13px;
+  color: #999;
+  margin-bottom: 24px;
+}
+
+.login-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #167c70;
+  margin-bottom: 4px;
+  display: block;
+  letter-spacing: 0.4px;
+}
+
+.login-input {
+  width: 100%;
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1.5px solid #c8e8e4;
+  font-size: 14px;
+  color: #222;
+  background: #f6fffe;
+  margin-bottom: 14px;
+  box-sizing: border-box;
+  outline: none;
+  font-family: 'Poppins', sans-serif;
+  transition: border 0.2s;
+}
+
+.login-input:focus {
+  border-color: #20b2a6;
+  background: #fff;
+}
+
+.pw-wrap {
+  position: relative;
+  margin-bottom: 8px;
+}
+
+.pw-wrap .login-input {
+  margin-bottom: 0;
+  padding-right: 52px;
+}
+
+.pw-toggle {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: #20b2a6;
+  font-size: 12px;
+  font-weight: 600;
+  user-select: none;
+}
+
+.forgot {
+  text-align: right;
+  font-size: 12px;
+  color: #20b2a6;
+  margin-bottom: 20px;
+  cursor: pointer;
+}
+
+.login-btn {
+  width: 100%;
+  padding: 12px;
+  background: #20b2a6;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: 'Poppins', sans-serif;
+  transition: background 0.2s, transform 0.15s;
+}
+
+.login-btn:hover {
+  background: #167c70;
+  transform: translateY(-1px);
+}
+
+.login-btn:active {
+  transform: scale(0.98);
+}
+
+.login-divider {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 18px 0;
+}
+
+.login-divider span {
+  font-size: 12px;
+  color: #aaa;
+}
+
+.login-divider hr {
+  flex: 1;
+  border: none;
+  border-top: 1px solid #e0e0e0;
+  margin: 0;
+}
+
+.login-register {
+  text-align: center;
+  font-size: 13px;
+  color: #888;
+}
+
+.login-register a {
+  color: #20b2a6;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.login-register a:hover {
+  color: #167c70;
+}
+
+
+/* ================================================
+   REGISTER PAGE
+   ================================================ */
+body.register-page {
+  margin: 0;
+  min-height: 100vh;
+  background: #e2f0ee;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: 'Poppins', sans-serif;
+  position: relative;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+body.register-page::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 680 520' preserveAspectRatio='none'%3E%3Cpath d='M 0 0 L 260 0 A 260 260 0 0 0 0 260 Z' fill='%2320b2a6' opacity='0.9'/%3E%3Cpath d='M 0 0 L 175 0 A 175 175 0 0 0 0 175 Z' fill='%2320b2a6' opacity='0.6'/%3E%3Cpath d='M 0 0 L 95 0 A 95 95 0 0 0 0 95 Z' fill='%2320b2a6' opacity='0.35'/%3E%3Cpath d='M 680 520 L 420 520 A 260 260 0 0 0 680 260 Z' fill='%2320b2a6' opacity='0.9'/%3E%3Cpath d='M 680 520 L 505 520 A 175 175 0 0 0 680 345 Z' fill='%2320b2a6' opacity='0.6'/%3E%3Cpath d='M 680 520 L 585 520 A 95 95 0 0 0 680 425 Z' fill='%2320b2a6' opacity='0.35'/%3E%3C/svg%3E");
+  background-size: cover;
+  background-position: center;
+}
+
+.register-card {
+  position: relative;
+  z-index: 10;
+  background: #fff;
+  border-radius: 20px;
+  padding: 36px 32px 28px;
+  width: 360px;
+  box-shadow: 0 4px 32px rgba(0,0,0,0.10);
+  animation: floatUp 0.5s ease forwards;
+}
+
+.register-card h2 {
+  text-align: center;
+  font-size: 22px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-bottom: 22px;
+}
+
+.register-card input[type="text"],
+.register-card input[type="email"],
+.register-card input[type="password"] {
+  width: 100%;
+  padding: 10px 2px;
+  border: none;
+  border-bottom: 1.5px solid #ccc;
+  background: transparent;
+  font-size: 14px;
+  color: #333;
+  margin-bottom: 16px;
+  outline: none;
+  font-family: 'Poppins', sans-serif;
+  transition: border-color 0.2s;
+  box-sizing: border-box;
+}
+
+.register-card input:focus {
+  border-bottom-color: #20b2a6;
+}
+
+.register-card input::placeholder {
+  color: #aaa;
+  font-size: 14px;
+}
+
+.show-password {
+  text-align: right;
+  font-size: 12px;
+  color: #888;
+  margin-bottom: 14px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.register-card select {
+  width: 100%;
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1.5px solid #ddd;
+  font-size: 14px;
+  color: #333;
+  background: #fff;
+  margin-bottom: 20px;
+  font-family: 'Poppins', sans-serif;
+  outline: none;
+  cursor: pointer;
+  appearance: auto;
+  box-sizing: border-box;
+}
+
+.btn-register-submit {
+  width: 100%;
+  padding: 13px;
+  background: #20b2a6;
+  color: #fff;
+  border: none;
+  border-radius: 30px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: 'Poppins', sans-serif;
+  transition: background 0.2s, transform 0.15s;
+  margin-bottom: 16px;
+}
+
+.btn-register-submit:hover {
+  background: #167c70;
+  transform: translateY(-1px);
+}
+
+.btn-register-submit:active {
+  transform: scale(0.98);
+}
+
+.login-link {
+  text-align: center;
+  font-size: 13px;
+  color: #666;
+}
+
+.login-link a {
+  color: #20b2a6;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.login-link a:hover {
+  color: #167c70;
+}
+
+.login-logo {
+  width: 64px;
+  height: 64px;
+  background: #20b2a6;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 14px;
+}
+
+.login-logo img {
+  width: 38px;
+  height: 38px;
+  object-fit: contain;
+  filter: brightness(0) invert(1);
+}
+
+.login-title {
+  text-align: center;
+  font-size: 22px;
+  font-weight: 700;
+  color: #167c70;
+  margin-bottom: 4px;
+}
+
+.login-sub {
+  text-align: center;
+  font-size: 13px;
+  color: #999;
+  margin-bottom: 28px;
 }

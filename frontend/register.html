@@ -1,6 +1,118 @@
-<nav>
-  <a href="index.html">Home</a>
-  <a href="login.html">Login</a>
-  <a href="register.html">Register</a>
-  <a href="dashboard.html">Dashboard</a>
-</nav>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Register - QuickReserve</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+
+</head>
+
+  <body class="register-page">
+
+<div class="card p-4" style="width: 350px;">
+  
+  <h4 class="text-center mb-3">Create Account</h4>
+
+  <div id="alertBox"></div>
+
+  <form id="registerForm">
+    
+    <input id="name" class="form-control mb-3" placeholder="Full Name" required>
+
+    <input id="email" type="email" class="form-control mb-3" placeholder="Email" required>
+
+    <input id="password" type="password" class="form-control mb-2" placeholder="Password (min 6 chars)" required>
+
+    <input id="confirmPassword" type="password" class="form-control mb-2" placeholder="Confirm Password" required>
+
+    <div class="text-end mb-3">
+      <span class="toggle-password" onclick="togglePassword()">Show Password</span>
+    </div>
+
+    <select id="role" class="form-select mb-3">
+      <option value="passenger">Passenger</option>
+      <option value="admin">Admin</option>
+    </select>
+
+    <button type="submit" class="btn btn-success w-100">Register</button>
+
+  </form>
+
+  <p class="text-center mt-3 mb-0">
+    Already have an account? <a href="login.html">Login</a>
+  </p>
+
+</div>
+
+<script>
+const API_URL = "http://localhost:5000/api";
+
+function showAlert(message, type = "danger") {
+  document.getElementById("alertBox").innerHTML =
+    `<div class="alert alert-${type} py-2">${message}</div>`;
+}
+
+function togglePassword() {
+  const pass = document.getElementById("password");
+  const confirm = document.getElementById("confirmPassword");
+
+  if (!pass || !confirm) return;
+
+  const isHidden = pass.type === "password";
+
+  pass.type = isHidden ? "text" : "password";
+  confirm.type = isHidden ? "text" : "password";
+}
+
+document.getElementById("registerForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const name = document.getElementById("name").value.trim();
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value;
+  const confirmPassword = document.getElementById("confirmPassword").value;
+  const role = document.getElementById("role").value;
+
+  if (!name || !email || !password) {
+    return showAlert("All fields are required");
+  }
+
+  if (password.length < 6) {
+    return showAlert("Password must be at least 6 characters");
+  }
+
+  if (password !== confirmPassword) {
+    return showAlert("Passwords do not match");
+  }
+
+  try {
+    const res = await fetch(`${API_URL}/auth/register`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ name, email, password, role })
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      return showAlert(data.message || "Registration failed");
+    }
+
+    showAlert("Account created successfully!", "success");
+
+    setTimeout(() => {
+      window.location.href = "login.html";
+    }, 1500);
+
+  } catch (err) {
+    showAlert("Server error. Try again.");
+  }
+});
+</script>
+
+</body>
+</html>
