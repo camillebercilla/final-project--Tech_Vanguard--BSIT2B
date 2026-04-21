@@ -1,6 +1,211 @@
-<nav>
-  <a href="index.html">Home</a>
-  <a href="login.html">Login</a>
-  <a href="register.html">Register</a>
-  <a href="dashboard.html">Dashboard</a>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>My Profile — QuickReserve</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+
+<body>
+
+<!-- ================= NAV ================= -->
+<nav class="main-nav">
+  <a href="index.html" class="nav-logo">
+    <img src="img/rabbit.png" class="logo-icon" alt="Logo">
+    <span class="navbar-brand">
+      <span class="quick">Quick</span><span class="reserve">Reserve</span>
+    </span>
+  </a>
+
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="my-bookings.html">My Bookings</a>
+    <a href="dashboard.html">Dashboard</a>
+    <a href="profile.html" class="active">Profile</a>
+  </div>
+
+  <div class="nav-right">
+    <div class="nav-avatar" id="navAvatar">👤</div>
+  </div>
 </nav>
+
+<!-- ================= PAGE WRAPPER ================= -->
+<div class="page">
+
+  <!-- ================= HERO ================= -->
+  <div class="card hero-card">
+    <div class="avatar-wrap">
+      <div id="mainAvatar">👤</div>
+      <button class="avatar-edit-btn" onclick="togglePicker()" title="Change avatar">✎</button>
+    </div>
+
+    <div class="hero-info">
+      <div class="hero-name">
+        <span id="headerName">Juan dela Cruz</span>
+        <span class="badge badge-verified">✓ Verified</span>
+      </div>
+      <div class="hero-email" id="headerEmail">juan.delacruz@email.com</div>
+      <div class="hero-since">Member since April 2026</div>
+    </div>
+
+    <div class="hero-actions">
+      <button class="btn-ghost" id="cancelBtn" style="display:none" onclick="cancelEdit()">Cancel</button>
+      <button class="btn-primary" id="editBtn" onclick="toggleEdit()">Edit profile</button>
+    </div>
+  </div>
+
+  <!-- ================= AVATAR PICKER ================= -->
+  <div class="card" id="avatarPicker" style="display:none">
+    <div class="section-label">Choose your avatar</div>
+    <div class="avatar-grid">
+      <div class="avatar-opt picked"  onclick="pickAvatar(this,'👤')" style="background:#E1F5EE">👤</div>
+      <div class="avatar-opt"         onclick="pickAvatar(this,'🧑')" style="background:#FFF3E0">🧑</div>
+      <div class="avatar-opt"         onclick="pickAvatar(this,'👩')" style="background:#FCE4EC">👩</div>
+      <div class="avatar-opt"         onclick="pickAvatar(this,'🧔')" style="background:#E8EAF6">🧔</div>
+      <div class="avatar-opt"         onclick="pickAvatar(this,'👴')" style="background:#E0F7FA">👴</div>
+      <div class="avatar-opt"         onclick="pickAvatar(this,'👵')" style="background:#F3E5F5">👵</div>
+      <div class="avatar-opt"         onclick="pickAvatar(this,'🧒')" style="background:#E8F5E9">🧒</div>
+      <div class="avatar-opt"         onclick="pickAvatar(this,'👦')" style="background:#FFFDE7">👦</div>
+    </div>
+    <p class="picker-hint">To use real images, replace emojis with <code>&lt;img&gt;</code> tags.</p>
+  </div>
+
+  <!-- ================= STATS ================= -->
+  <div class="stats-grid">
+    <div class="stat">
+      <div class="stat-num">8</div>
+      <div class="stat-lbl">Total trips</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">₱3,200</div>
+      <div class="stat-lbl">Total spent</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">2</div>
+      <div class="stat-lbl">Upcoming</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num green">Active</div>
+      <div class="stat-lbl">Account status</div>
+    </div>
+  </div>
+
+  <!-- ================= PERSONAL INFO ================= -->
+  <div class="card">
+    <div class="section-label">Personal details</div>
+    <div class="field-grid">
+
+      <div class="field">
+        <label>First name</label>
+        <input id="firstName" type="text" value="Juan" disabled>
+      </div>
+
+      <div class="field">
+        <label>Last name</label>
+        <input id="lastName" type="text" value="dela Cruz" disabled>
+      </div>
+
+      <div class="field">
+        <label>Email</label>
+        <input id="email" type="email" value="juan.delacruz@email.com" disabled>
+      </div>
+
+      <div class="field">
+        <label>Phone</label>
+        <input id="phone" type="tel" value="09171234567" disabled>
+      </div>
+
+      <div class="field">
+        <label>Date of birth</label>
+        <input id="dob" type="date" value="1995-06-15" disabled>
+      </div>
+
+      <div class="field">
+        <label>Gender</label>
+        <select id="gender" disabled>
+          <option>Male</option>
+          <option>Female</option>
+          <option>Prefer not to say</option>
+        </select>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ================= ADDRESS ================= -->
+  <div class="card">
+    <div class="section-label">Address</div>
+    <div class="field-grid">
+
+      <div class="field full">
+        <label>Street address</label>
+        <input id="street" type="text" value="123 Peñaranda St." disabled>
+      </div>
+
+      <div class="field">
+        <label>City</label>
+        <input id="city" type="text" value="Legazpi City" disabled>
+      </div>
+
+      <div class="field">
+        <label>Province</label>
+        <input id="province" type="text" value="Albay" disabled>
+      </div>
+
+      <div class="field">
+        <label>Region</label>
+        <input id="region" type="text" value="Bicol Region" disabled>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ================= PASSWORD ================= -->
+  <div class="card">
+    <div class="section-label">Change password</div>
+    <div class="field-grid">
+
+      <div class="field">
+        <label>Current password</label>
+        <input id="curPass" type="password" placeholder="••••••••" disabled>
+      </div>
+
+      <div class="field">
+        <label>New password</label>
+        <input id="newPass" type="password" placeholder="••••••••" disabled>
+      </div>
+
+      <div class="field">
+        <label>Confirm password</label>
+        <input id="conPass" type="password" placeholder="••••••••" disabled>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ================= SAVE BUTTONS ================= -->
+  <div id="saveRow" style="display:none">
+    <button class="btn-ghost" onclick="cancelEdit()">Cancel</button>
+    <button class="btn-primary" onclick="saveProfile()">Save changes</button>
+  </div>
+
+  <!-- ================= DANGER ================= -->
+  <div class="card">
+    <div class="section-label">Danger zone</div>
+    <p style="color:#6b7280; font-size:13px; margin-bottom:12px;">
+      Deleting your account is permanent and cannot be undone.
+    </p>
+    <button class="btn-danger" onclick="confirmDelete()">Delete my account</button>
+  </div>
+
+</div>
+
+<!-- ================= TOAST ================= -->
+<div id="toast" style="position:fixed;bottom:24px;right:24px;background:#0F6E56;color:#fff;padding:11px 20px;border-radius:8px;opacity:0;transition:opacity 0.4s;z-index:9999;pointer-events:none;"></div>
+
+<!-- SCRIPTS -->
+<script src="js/script.js"></script>
+
+</body>
+</html>

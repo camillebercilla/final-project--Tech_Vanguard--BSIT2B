@@ -48,7 +48,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   });
 
-  // ================= FORM VALIDATION =================
+  // ================= FORM VALIDATION (Register) =================
   const form = document.getElementById("registerForm");
 
   if (form) {
@@ -98,8 +98,10 @@ document.addEventListener("DOMContentLoaded", function () {
           users:    ["Manage Users",    "View and manage registered users"],
           reports:  ["Reports",         "View system reports and analytics"],
         };
-        document.getElementById("pageTitle").textContent    = labels[section][0];
-        document.getElementById("pageSubtitle").textContent = labels[section][1];
+        const titleEl    = document.getElementById("pageTitle");
+        const subtitleEl = document.getElementById("pageSubtitle");
+        if (titleEl)    titleEl.textContent    = labels[section][0];
+        if (subtitleEl) subtitleEl.textContent = labels[section][1];
       });
     });
 
@@ -116,7 +118,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const msg       = document.getElementById("message");
 
         if (!route || !price) {
-          showMessage(msg, "Please fill in Route and Price.", "danger");
+          showAdminMessage(msg, "Please fill in Route and Price.", "danger");
           return;
         }
 
@@ -133,14 +135,15 @@ document.addEventListener("DOMContentLoaded", function () {
         renderTable();
         updateStats();
         this.reset();
-        showMessage(msg, `✅ Trip "${route}" added successfully!`, "success");
+        showAdminMessage(msg, `✅ Trip "${route}" added successfully!`, "success");
       });
     }
 
     // ---- RENDER TABLE ----
     function renderTable(filter = "") {
-      const tbody    = document.getElementById("tripTable");
+      const tbody = document.getElementById("tripTable");
       if (!tbody) return;
+
       const filtered = trips.filter(t =>
         t.route.toLowerCase().includes(filter.toLowerCase())
       );
@@ -185,9 +188,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // ---- STATS ----
     function updateStats() {
-      const statTotal = document.getElementById("statTotalTrips");
+      const statTotal  = document.getElementById("statTotalTrips");
       const statRoutes = document.getElementById("statRoutes");
-      const statAvg = document.getElementById("statAvgPrice");
+      const statAvg    = document.getElementById("statAvgPrice");
       if (statTotal)  statTotal.textContent  = trips.length;
       if (statRoutes) statRoutes.textContent = new Set(trips.map(t => t.route)).size;
       const avg = trips.length
@@ -201,9 +204,10 @@ document.addEventListener("DOMContentLoaded", function () {
       localStorage.setItem("trips", JSON.stringify(trips));
     }
 
-    function showMessage(el, text, type) {
+    function showAdminMessage(el, text, type) {
+      if (!el) return;
       el.innerHTML = `<div class="alert-${type}">${text}</div>`;
-      setTimeout(() => el.innerHTML = "", 3000);
+      setTimeout(() => { el.innerHTML = ""; }, 3000);
     }
 
     function formatTime(t) {
@@ -226,8 +230,8 @@ document.addEventListener("DOMContentLoaded", function () {
   // =============================================
   if (document.querySelector(".booking-container")) {
 
-    const BOOKING_FEE    = 25;
-    let selectedPayment  = "Cash";
+    const BOOKING_FEE   = 25;
+    let selectedPayment = "Cash";
 
     function loadBookingData() {
       const seat      = localStorage.getItem("selectedSeat");
@@ -253,8 +257,8 @@ document.addEventListener("DOMContentLoaded", function () {
     };
 
     function showBookingMessage(el, text, type) {
-      el.textContent  = text;
-      el.className    = `b-message ${type}`;
+      el.textContent   = text;
+      el.className     = `b-message ${type}`;
       el.style.display = "block";
     }
 
@@ -325,15 +329,142 @@ document.addEventListener("DOMContentLoaded", function () {
 
 }); // end DOMContentLoaded
 
-// ================= PASSWORD TOGGLE =================
-// Must stay outside DOMContentLoaded — called via HTML onclick=""
+
+// =========================================
+// PASSWORD TOGGLE (called via HTML onclick)
+// =========================================
 function togglePassword() {
   const pass    = document.getElementById("password");
   const confirm = document.getElementById("confirmPassword");
-
   if (!pass || !confirm) return;
-
   const isHidden = pass.type === "password";
-  pass.type      = isHidden ? "text" : "password";
-  confirm.type   = isHidden ? "text" : "password";
+  pass.type    = isHidden ? "text" : "password";
+  confirm.type = isHidden ? "text" : "password";
+}
+
+
+// =========================================
+// PROFILE — EDIT / CANCEL / SAVE
+// =========================================
+const EDITABLE = [
+  'firstName', 'lastName', 'email', 'phone',
+  'dob', 'gender', 'street', 'city', 'province', 'region',
+  'curPass', 'newPass', 'conPass'
+];
+
+function setEditMode(mode) {
+  // mode: 'edit' = fields enabled | 'view' = fields disabled
+  const isEdit = (mode === 'edit');
+  EDITABLE.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.disabled = !isEdit;
+  });
+
+  const editBtn   = document.getElementById('editBtn');
+  const cancelBtn = document.getElementById('cancelBtn');
+  const saveRow   = document.getElementById('saveRow');
+
+  if (editBtn)   editBtn.style.display   = isEdit ? 'none'         : 'inline-block';
+  if (cancelBtn) cancelBtn.style.display = isEdit ? 'inline-block' : 'none';
+  if (saveRow)   saveRow.style.display   = isEdit ? 'flex'         : 'none';
+}
+
+function toggleEdit() {
+  setEditMode('edit');
+}
+
+function cancelEdit() {
+  setEditMode('view');
+  // Hide avatar picker if open
+  const picker = document.getElementById('avatarPicker');
+  if (picker) picker.style.display = 'none';
+}
+
+function saveProfile() {
+  const first = document.getElementById('firstName')?.value.trim();
+  const last  = document.getElementById('lastName')?.value.trim();
+  const email = document.getElementById('email')?.value.trim();
+  const np    = document.getElementById('newPass')?.value;
+  const cp    = document.getElementById('conPass')?.value;
+
+  if (!first || !last || !email) {
+    alert("Please fill in required fields.");
+    return;
+  }
+  if (np && np.length < 6) {
+    alert("New password must be at least 6 characters.");
+    return;
+  }
+  if (np && np !== cp) {
+    alert("Passwords do not match.");
+    return;
+  }
+
+  // Update header display
+  const nameEl = document.getElementById('headerName');
+  const mailEl = document.getElementById('headerEmail');
+  if (nameEl) nameEl.textContent = `${first} ${last}`;
+  if (mailEl) mailEl.textContent = email;
+
+  // Clear password fields
+  ['curPass', 'newPass', 'conPass'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+
+  setEditMode('view');
+  showToast("Changes saved!");
+}
+
+
+// =========================================
+// AVATAR PICKER
+// =========================================
+function togglePicker() {
+  const p = document.getElementById('avatarPicker');
+  if (!p) return;
+  p.style.display = (p.style.display === 'block') ? 'none' : 'block';
+}
+
+function pickAvatar(el, emoji) {
+  document.querySelectorAll('.avatar-opt').forEach(o => o.classList.remove('picked'));
+  el.classList.add('picked');
+
+  const main = document.getElementById('mainAvatar');
+  const nav  = document.getElementById('navAvatar');
+
+  if (main) {
+    main.textContent       = emoji;
+    main.style.background  = el.style.background;
+  }
+  if (nav) nav.textContent = emoji;
+
+  setTimeout(() => {
+    const p = document.getElementById('avatarPicker');
+    if (p) p.style.display = 'none';
+  }, 250);
+
+  showToast("Avatar updated!");
+}
+
+
+// =========================================
+// TOAST
+// =========================================
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  if (!t) return;
+  t.textContent  = msg;
+  t.style.opacity = '1';
+  setTimeout(() => { t.style.opacity = '0'; }, 2000);
+}
+
+
+// =========================================
+// DELETE ACCOUNT
+// =========================================
+function confirmDelete() {
+  if (confirm("Are you sure? This cannot be undone.")) {
+    window.location.href = "index.html";
+  }
 }
