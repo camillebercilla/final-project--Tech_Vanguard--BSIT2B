@@ -1,16 +1,151 @@
-<link rel="stylesheet" href="css/style.css">
-<script src="js/script.js"defer></script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Confirm Booking</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="js/script.js"></script>
+</head>
 
-<nav>
-  <a href="index.html">Home</a>
-  <a href="login.html">Login</a>
-  <a href="register.html">Register</a>
-  <a href="dashboard.html">Dashboard</a>
-</nav>
+<body class="booking-page">
+<div class="booking-container">
 
-<section id="bookingSummary">
-...
-</section>
+  <!-- TOP NAV -->
+  <div class="booking-topnav">
+    <button class="back-btn" onclick="history.back()">← Back</button>
+    <div>
+      <h2 class="booking-title">Confirm Your Booking</h2>
+      <p class="booking-sub">Review your trip details before confirming</p>
+    </div>
+  </div>
 
-<section class="mt-5">
-  <h2>Select Seat</h2>
+  <!-- STEPS -->
+  <div class="booking-steps">
+    <div class="bstep done"><div class="bstep-num">✓</div><span>Select Trip</span></div>
+    <div class="bstep-line"></div>
+    <div class="bstep done"><div class="bstep-num">✓</div><span>Choose Seat</span></div>
+    <div class="bstep-line"></div>
+    <div class="bstep active"><div class="bstep-num">3</div><span>Confirm</span></div>
+    <div class="bstep-line"></div>
+    <div class="bstep"><div class="bstep-num">4</div><span>Done</span></div>
+  </div>
+
+  <!-- MAIN GRID -->
+  <div class="booking-grid">
+
+    <!-- LEFT COLUMN -->
+    <div class="booking-left">
+
+      <!-- TRIP INFO -->
+      <div class="b-panel">
+        <div class="b-panel-title">
+          <div class="b-panel-icon">🚌</div> Trip Information
+        </div>
+
+        <div class="b-info-row">
+          <div class="b-info-label">Route</div>
+          <div class="b-info-value" id="displayRoute">—</div>
+        </div>
+
+        <div class="b-info-grid">
+          <div class="b-info-row">
+            <div class="b-info-label">Departure</div>
+            <div class="b-info-value" id="displayDeparture">—</div>
+          </div>
+          <div class="b-info-row">
+            <div class="b-info-label">Bus Type</div>
+            <div class="b-info-value" id="displayBusType">—</div>
+          </div>
+        </div>
+
+        <div class="b-info-row">
+          <div class="b-info-label">Selected Seat</div>
+          <div class="b-info-value">
+            <span class="seat-badge" id="displaySeat">—</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- PASSENGER DETAILS -->
+      <div class="b-panel">
+        <div class="b-panel-title">
+          <div class="b-panel-icon">👤</div> Passenger Details
+        </div>
+
+        <div class="b-form-row">
+          <div class="b-form-group">
+            <label for="firstName">First Name</label>
+            <input id="firstName" type="text" class="b-input" placeholder="Juan" required>
+          </div>
+          <div class="b-form-group">
+            <label for="lastName">Last Name</label>
+            <input id="lastName" type="text" class="b-input" placeholder="dela Cruz" required>
+          </div>
+        </div>
+
+        <div class="b-form-group mb-3">
+          <label for="email">Email Address</label>
+          <input id="email" type="email" class="b-input" placeholder="juan@email.com" required>
+        </div>
+
+        <div class="b-form-group">
+          <label for="phone">Phone Number</label>
+          <input id="phone" type="tel" class="b-input" placeholder="09XX XXX XXXX" required>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT COLUMN: PAYMENT -->
+    <div class="b-panel b-panel-right">
+      <div class="b-panel-title">
+        <div class="b-panel-icon">💳</div> Payment Summary
+      </div>
+
+      <div class="price-row">
+        <span>Ticket Price</span>
+        <span id="displayPrice">₱0.00</span>
+      </div>
+      <div class="price-row">
+        <span>Booking Fee <span class="fee-badge">service</span></span>
+        <span>₱25.00</span>
+      </div>
+      <div class="price-row">
+        <span>Discount</span>
+        <span class="discount-val">— ₱0.00</span>
+      </div>
+
+      <div class="b-divider"></div>
+
+      <div class="price-row total-row">
+        <span>Total</span>
+        <span id="displayTotal">₱0.00</span>
+      </div>
+
+      <div class="b-divider"></div>
+
+      <!-- PAYMENT METHOD -->
+      <div class="pay-method-label">Payment Method</div>
+      <div class="pay-method-grid">
+        <div class="pay-option active" data-method="Cash" onclick="selectPayment(this)">Cash</div>
+        <div class="pay-option" data-method="GCash" onclick="selectPayment(this)">GCash</div>
+        <div class="pay-option" data-method="Card" onclick="selectPayment(this)">Card</div>
+        <div class="pay-option" data-method="Maya" onclick="selectPayment(this)">Maya</div>
+      </div>
+
+      <button id="confirmBtn" class="b-confirm-btn">
+        Confirm Booking
+      </button>
+
+      <div class="secure-note">🔒 Your booking is secured</div>
+
+      <div id="message" class="b-message mt-3"></div>
+    </div>
+
+  </div>
+</div>
+
+<script src="js/booking.js"></script>
+</body>
+</html>
