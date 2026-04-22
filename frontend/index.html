@@ -27,21 +27,19 @@
 
     <ul class="navbar-nav ms-auto">
       <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
-      <li class="nav-item"><a class="nav-link" href="#routes">Trips</a></li>
-      <li class="nav-item"><a class="nav-link" href="booking.html">Booking</a></li>
-      <li class="nav-item"><a class="nav-link" href="profile.html">Profile</a></li>
+      <li class="nav-item"><a class="nav-link" href="index.html#routes">Trips</a></li>
+      <li class="nav-item"><a class="nav-link" href="pages/user/booking.html">Booking</a></li>
+      <li class="nav-item"><a class="nav-link" href="pages/user/profile.html">Profile</a></li>
     </ul>
 
-    <div class="ms-lg-3 mt-2 mt-lg-0">
-      <a href="login.html" class="btn btn-outline-light btn-sm me-2">Login</a>
-      <a href="register.html" class="btn btn-register btn-sm">Register</a>
-    </div>
-
+  <div class="ms-lg-3 mt-2 mt-lg-0 d-flex align-items-center gap-2">
+    <a href="pages/auth/login.html" class="nav-login">Login</a>
+    <a href="pages/auth/register.html" class="btn-register">Register</a>
   </div>
 </nav>
 
 <!-- LIVE AVAILABILITY -->
-<div class="live-bar-wrap text-center py-2 bg-dark text-white" style="margin-top:56px;">
+<div class="live-bar-wrap text-center py-2 bg-dark text-white" style="margin-top:58px;">
   <span class="live-dot"></span>
   <strong>Live</strong> — Albay → Manila tonight &nbsp;|&nbsp;
   <span style="color:#16c4a1; font-weight:700;">14 seats left</span>
@@ -118,7 +116,7 @@
         <h5 class="fw-bold mb-1">Summer Sale — Up to 20% off!</h5>
         <p class="mb-0 small" style="opacity:0.85;">Book any route before June 30 and get a discount on your fare.</p>
       </div>
-      <a href="booking.html" class="btn fw-bold px-4 py-2 rounded-pill"
+      <a href="pages/booking.html" class="btn fw-bold px-4 py-2 rounded-pill"
          style="background:#fff; color:#167c70;">Grab the deal</a>
     </div>
   </div>
@@ -139,7 +137,7 @@
           <div class="card-body">
             <h5 class="card-title">Albay → Baguio</h5>
             <p class="card-text">₱900–1,500 <br> 12–15 hrs</p>
-            <a href="booking.html?route=albay-baguio" class="btn btn-primary">Book Now</a>
+            <a href="user/booking.html?route=albay-baguio" class="btn btn-primary">Book Now</a>
           </div>
         </div>
       </div>
@@ -151,7 +149,7 @@
           <div class="card-body">
             <h5 class="card-title">Albay → Batangas</h5>
             <p class="card-text">₱600–900 <br> 8–10 hrs</p>
-            <a href="booking.html?route=albay-batangas" class="btn btn-primary">Book Now</a>
+            <a href="user/booking.html?route=albay-batangas" class="btn btn-primary">Book Now</a>
           </div>
         </div>
       </div>
@@ -163,7 +161,7 @@
           <div class="card-body">
             <h5 class="card-title">Albay → Laguna</h5>
             <p class="card-text">₱500–800 <br> 7–9 hrs</p>
-            <a href="booking.html?route=albay-laguna" class="btn btn-primary">Book Now</a>
+            <a href="user/booking.html?route=albay-laguna" class="btn btn-primary">Book Now</a>
           </div>
         </div>
       </div>
@@ -175,7 +173,7 @@
           <div class="card-body">
             <h5 class="card-title">Albay → Manila</h5>
             <p class="card-text">₱1,100–1,500 <br> 7–9 hrs</p>
-            <a href="booking.html?route=albay-manila" class="btn btn-primary">Book Now</a>
+            <a href="user/booking.html?route=albay-manila" class="btn btn-primary">Book Now</a>
           </div>
         </div>
       </div>
@@ -187,7 +185,7 @@
           <div class="card-body">
             <h5 class="card-title">Albay → Tabaco City</h5>
             <p class="card-text">₱80–150 <br> 7–9 hrs</p>
-            <a href="booking.html?route=albay-tabaco" class="btn btn-primary">Book Now</a>
+            <a href="user/booking.html?route=albay-tabaco" class="btn btn-primary">Book Now</a>
           </div>
         </div>
       </div>
@@ -199,7 +197,7 @@
           <div class="card-body">
             <h5 class="card-title">Albay → Quezon City</h5>
             <p class="card-text">₱1,200–1,800 <br> 7–9 hrs</p>
-            <a href="booking.html?route=albay-quezon-city" class="btn btn-primary">Book Now</a>
+            <a href="user/booking.html?route=albay-quezon-city" class="btn btn-primary">Book Now</a>
           </div>
         </div>
       </div>
@@ -243,7 +241,7 @@
   <h3 class="fw-bold">Ready to travel?</h3>
   <p>Book Your Seat Today.</p>
 
-  <a href="register.html" class="btn-start">
+  <a href="pages/auth/register.html" class="btn-start">
     Start Booking
   </a>
 </section>

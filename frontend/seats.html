@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Choose Your Seat</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="../css/style.css">
+  <style>
+    /* ── Page base ── */
+    body { background: #f4f6f9; font-family: 'Segoe UI', sans-serif; }
+    .seats-wrapper { max-width: 680px; margin: 0 auto; padding: 32px 16px 60px; }
+
+    /* ── Back link ── */
+    .back-link { color: #0f6e56; font-weight: 600; text-decoration: none; font-size: .9rem; display:inline-block; margin-bottom:18px; }
+    .back-link:hover { text-decoration: underline; }
+
+    /* ── Page title ── */
+    .page-title { font-size: 1.55rem; font-weight: 700; margin-bottom: 4px; }
+    .page-sub   { color: #666; font-size: .9rem; margin-bottom: 24px; }
+
+    /* ── Trip summary card ── */
+    .trip-summary {
+      background: #0f6e56; color: #fff; border-radius: 14px;
+      padding: 18px 22px; margin-bottom: 24px;
+      display: flex; flex-wrap: wrap; gap: 12px 28px;
+    }
+    .trip-summary .ts-item { display: flex; flex-direction: column; gap: 2px; }
+    .trip-summary .ts-label { font-size: .75rem; opacity: .75; text-transform: uppercase; letter-spacing: .5px; }
+    .trip-summary .ts-value { font-size: .95rem; font-weight: 600; }
+
+    /* ── Options panel ── */
+    .options-panel {
+      background: #fff; border-radius: 14px; padding: 20px 22px;
+      box-shadow: 0 2px 12px rgba(0,0,0,.07); margin-bottom: 22px;
+    }
+    .options-title { font-weight: 700; font-size: 1rem; margin-bottom: 14px; color: #1a1a1a; }
+
+    /* departure grid */
+    .dep-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 10px; margin-bottom: 18px; }
+    .dep-opt {
+      border: 1.5px solid #d1d5db; border-radius: 10px; padding: 10px 8px;
+      text-align: center; cursor: pointer; transition: all .15s; background: #fff;
+    }
+    .dep-opt .dep-time  { font-weight: 700; font-size: .95rem; color: #1a1a1a; }
+    .dep-opt .dep-avail { font-size: .72rem; color: #6b7280; margin-top: 2px; }
+    .dep-opt:hover       { border-color: #0f6e56; background: #f0fdf8; }
+    .dep-opt.selected    { border-color: #0f6e56; background: #0f6e56; color: #fff; }
+    .dep-opt.selected .dep-time  { color: #fff; }
+    .dep-opt.selected .dep-avail { color: rgba(255,255,255,.75); }
+
+    /* bus type toggle */
+    .bus-toggle { display: flex; gap: 10px; }
+    .bus-opt {
+      flex: 1; border: 1.5px solid #d1d5db; border-radius: 10px; padding: 12px;
+      cursor: pointer; transition: all .15s; background: #fff; text-align: center;
+    }
+    .bus-opt .bus-icon  { font-size: 1.4rem; margin-bottom: 4px; }
+    .bus-opt .bus-name  { font-weight: 700; font-size: .9rem; color: #1a1a1a; }
+    .bus-opt .bus-price { font-size: .8rem; color: #0f6e56; font-weight: 600; margin-top: 2px; }
+    .bus-opt .bus-desc  { font-size: .72rem; color: #6b7280; margin-top: 3px; }
+    .bus-opt:hover      { border-color: #0f6e56; background: #f0fdf8; }
+    .bus-opt.selected   { border-color: #0f6e56; background: #f0fdf8; }
+    .bus-opt.selected .bus-name { color: #0f6e56; }
+
+    /* ── Seat map panel ── */
+    .seat-panel {
+      background: #fff; border-radius: 14px; padding: 22px;
+      box-shadow: 0 2px 12px rgba(0,0,0,.07); margin-bottom: 22px;
+    }
+    .seat-panel-title { font-weight: 700; font-size: 1rem; margin-bottom: 14px; color: #1a1a1a; }
+
+    .legend { display: flex; gap: 18px; margin-bottom: 16px; flex-wrap: wrap; }
+    .legend-item { display: flex; align-items: center; gap: 6px; font-size: .8rem; color: #555; }
+    .leg-dot { width: 16px; height: 16px; border-radius: 4px; }
+    .leg-dot.avail    { background: #e2f5ef; border: 1.5px solid #0f6e56; }
+    .leg-dot.sel      { background: #0f6e56; }
+    .leg-dot.bk       { background: #d1d5db; }
+
+    .bus-front-label {
+      text-align: center; font-size: .75rem; text-transform: uppercase;
+      letter-spacing: 1px; color: #9ca3af; padding-bottom: 12px;
+      border-bottom: 2px dashed #e5e7eb; margin-bottom: 16px;
+    }
+
+    /* 5-col grid: A B [aisle gap] C D */
+    .seat-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 28px 1fr 1fr;
+      gap: 8px;
+      max-width: 300px;
+      margin: 0 auto 16px;
+    }
+    .seat {
+      aspect-ratio: 1; background: #e2f5ef; border: 1.5px solid #0f6e56;
+      border-radius: 7px; display: flex; align-items: center; justify-content: center;
+      font-size: .72rem; font-weight: 600; color: #0f6e56;
+      cursor: pointer; transition: all .13s; user-select: none;
+    }
+    .seat:hover:not(.booked) { background: #b7e4d4; }
+    .seat.selected { background: #0f6e56; color: #fff; border-color: #0a4f3c; transform: scale(1.07); }
+    .seat.booked   { background: #d1d5db; border-color: #9ca3af; color: #9ca3af; cursor: not-allowed; }
+
+    /* aisle spacer — invisible, just holds the column gap */
+    .seat-aisle { display: block; width: 100%; }
+
+    #selectedSeatDisplay {
+      text-align: center; font-size: .9rem; font-weight: 600;
+      color: #0f6e56; min-height: 20px;
+    }
+
+    /* ── Proceed button ── */
+    .btn-proceed {
+      width: 100%; padding: 15px; background: #0f6e56; color: #fff;
+      border: none; border-radius: 12px; font-size: 1rem; font-weight: 700;
+      cursor: pointer; transition: background .2s;
+    }
+    .btn-proceed:hover { background: #0a4f3c; }
+    .btn-proceed:disabled { background: #9ca3af; cursor: not-allowed; }
+
+    .proceed-note { text-align: center; color: #9ca3af; font-size: .8rem; margin-top: 8px; }
+
+    /* section label */
+    .section-label {
+      font-size: .78rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: .6px; color: #6b7280; margin-bottom: 10px;
+    }
+    .divider { border: none; border-top: 1px solid #e5e7eb; margin: 16px 0; }
+  </style>
+</head>
+<body>
+
+<div class="seats-wrapper">
+  <a class="back-link" href="javascript:history.back()">← Back</a>
+  <h1 class="page-title">Choose Your Seat</h1>
+  <p class="page-sub">Pick a departure time, bus type, and your preferred seat.</p>
+
+  <!-- Trip summary strip (populated by JS) -->
+  <div class="trip-summary">
+    <div class="ts-item"><span class="ts-label">Route</span>    <span class="ts-value" id="sumRoute">—</span></div>
+    <div class="ts-item"><span class="ts-label">Duration</span> <span class="ts-value" id="sumDuration">—</span></div>
+    <div class="ts-item"><span class="ts-label">Fare from</span><span class="ts-value" id="sumPrice">—</span></div>
+  </div>
+
+  <!-- ── Step 1: Departure time ── -->
+  <div class="options-panel">
+    <p class="section-label">Step 1 — Departure Time</p>
+    <div class="dep-grid" id="depGrid">
+      <!-- injected by JS -->
+    </div>
+
+    <hr class="divider">
+
+    <!-- ── Step 2: Bus type ── -->
+    <p class="section-label">Step 2 — Bus Type</p>
+    <div class="bus-toggle" id="busToggle">
+      <div class="bus-opt selected" data-type="Regular" data-multiplier="1">
+        <div class="bus-icon">🚌</div>
+        <div class="bus-name">Regular</div>
+        <div class="bus-price" id="busRegularPrice">—</div>
+        <div class="bus-desc">Standard seating, no A/C</div>
+      </div>
+      <div class="bus-opt" data-type="Airconditioned" data-multiplier="1.35">
+        <div class="bus-icon">❄️</div>
+        <div class="bus-name">Airconditioned</div>
+        <div class="bus-price" id="busAcPrice">—</div>
+        <div class="bus-desc">A/C, reclining seats</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Step 3: Seat map ── -->
+  <div class="seat-panel">
+    <p class="seat-panel-title">Step 3 — Pick Your Seat</p>
+
+    <div class="legend">
+      <div class="legend-item"><div class="leg-dot avail"></div> Available</div>
+      <div class="legend-item"><div class="leg-dot sel"></div>   Selected</div>
+      <div class="legend-item"><div class="leg-dot bk"></div>    Booked</div>
+    </div>
+
+    <div class="bus-front-label">🚌 Front — Driver</div>
+
+    <div class="seat-grid" id="seatGrid"></div>
+    <div id="selectedSeatDisplay">No seat selected</div>
+  </div>
+
+  <button class="btn-proceed" id="proceedBtn" onclick="proceedToBooking()" disabled>
+    Proceed to Booking →
+  </button>
+  <p class="proceed-note">Select a departure time, bus type, and seat to continue.</p>
+</div>
+
+<!-- ✅ FIXED: seats.html is in /pages/ so path is ../js/main.js -->
+<script src="../js/main.js"></script>
+<script>
+(function () {
+
+  // ── Read route data from localStorage (set by storeRoute() on index page) ──
+  const route    = localStorage.getItem("selectedRoute")    || "—";
+  const priceMin = parseFloat(localStorage.getItem("selectedPriceMin")) || 0;
+  const priceMax = parseFloat(localStorage.getItem("selectedPriceMax")) || priceMin;
+  const duration = localStorage.getItem("selectedDuration") || "—";
+
+  // Populate summary strip
+  document.getElementById("sumRoute").textContent    = route;
+  document.getElementById("sumDuration").textContent = duration;
+  document.getElementById("sumPrice").textContent    = `₱${priceMin.toLocaleString()}`;
+
+  // ── Bus type price labels ──
+  document.getElementById("busRegularPrice").textContent = `₱${priceMin.toLocaleString()}`;
+  document.getElementById("busAcPrice").textContent      = `₱${Math.round(priceMin * 1.35).toLocaleString()}`;
+
+  let selectedBusType    = "Regular";
+  let selectedMultiplier = 1;
+  let selectedDeparture  = null;
+
+  // ── Departure slots ──
+  const departures = [
+    { time: "06:00", label: "6:00 AM",  avail: 12 },
+    { time: "08:30", label: "8:30 AM",  avail: 8  },
+    { time: "10:00", label: "10:00 AM", avail: 15 },
+    { time: "13:00", label: "1:00 PM",  avail: 20 },
+    { time: "16:00", label: "4:00 PM",  avail: 5  },
+    { time: "21:00", label: "9:00 PM",  avail: 18 },
+    { time: "22:30", label: "10:30 PM", avail: 22 },
+    { time: "23:59", label: "11:59 PM", avail: 10 },
+  ];
+
+  const depGrid = document.getElementById("depGrid");
+  departures.forEach(d => {
+    const el = document.createElement("div");
+    el.className = "dep-opt";
+    el.dataset.time = d.time;
+    el.innerHTML = `
+      <div class="dep-time">${d.label}</div>
+      <div class="dep-avail">${d.avail} seats left</div>`;
+    el.addEventListener("click", () => {
+      document.querySelectorAll(".dep-opt").forEach(o => o.classList.remove("selected"));
+      el.classList.add("selected");
+      selectedDeparture = d.time;
+      localStorage.setItem("selectedDeparture", d.time);
+      checkProceed();
+    });
+    depGrid.appendChild(el);
+  });
+
+  // ── Bus type toggle ──
+  document.querySelectorAll(".bus-opt").forEach(opt => {
+    opt.addEventListener("click", () => {
+      document.querySelectorAll(".bus-opt").forEach(o => o.classList.remove("selected"));
+      opt.classList.add("selected");
+      selectedBusType    = opt.dataset.type;
+      selectedMultiplier = parseFloat(opt.dataset.multiplier);
+      const finalPrice   = Math.round(priceMin * selectedMultiplier);
+      localStorage.setItem("selectedBusType", selectedBusType);
+      localStorage.setItem("selectedPrice",   finalPrice);
+      checkProceed();
+    });
+  });
+
+  // Set defaults in localStorage
+  localStorage.setItem("selectedBusType", "Regular");
+  localStorage.setItem("selectedPrice",   priceMin);
+
+  // ── Seat map ──
+  const bookedSeats = new Set([3, 7, 12, 15, 21, 28, 33, 36, 40]);
+  const grid = document.getElementById("seatGrid");
+
+  for (let row = 1; row <= 10; row++) {
+    ["A", "B", "AISLE", "C", "D"].forEach(col => {
+      if (col === "AISLE") {
+        // Invisible spacer div that holds the aisle column
+        const sp = document.createElement("div");
+        sp.className = "seat-aisle";
+        grid.appendChild(sp);
+        return;
+      }
+      const seatNum = (row - 1) * 4 + ["A", "B", "C", "D"].indexOf(col) + 1;
+      const el = document.createElement("div");
+      el.className    = "seat" + (bookedSeats.has(seatNum) ? " booked" : "");
+      el.dataset.seat = seatNum;
+      el.textContent  = seatNum;
+      grid.appendChild(el);
+    });
+  }
+
+  // ── Proceed button guard ──
+  function checkProceed() {
+    const hasSeat = !!localStorage.getItem("selectedSeat");
+    const hasDep  = !!selectedDeparture;
+    const btn  = document.getElementById("proceedBtn");
+    const note = document.querySelector(".proceed-note");
+
+    btn.disabled = !(hasSeat && hasDep);
+
+    if (hasSeat && hasDep) {
+      note.textContent = "✅ Ready — click to continue.";
+      note.style.color = "#0f6e56";
+    } else {
+      const missing = [];
+      if (!hasDep)  missing.push("a departure time");
+      if (!hasSeat) missing.push("a seat");
+      note.textContent = `Please select ${missing.join(" and ")} to continue.`;
+      note.style.color = "#9ca3af";
+    }
+  }
+
+  // Re-check proceed after seat click (main.js handles the actual selection + localStorage write)
+  document.addEventListener("click", function (e) {
+    if (e.target.classList.contains("seat") && !e.target.classList.contains("booked")) {
+      setTimeout(checkProceed, 50);
+    }
+  });
+
+  checkProceed();
+})();
+</script>
+
+</body>
+</html>
