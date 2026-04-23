@@ -1,6 +1,157 @@
-<nav>
-  <a href="index.html">Home</a>
-  <a href="login.html">Login</a>
-  <a href="register.html">Register</a>
-  <a href="dashboard.html">Dashboard</a>
-</nav>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manage Users — QuickReserve Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+
+<div class="admin-layout">
+  <aside class="sidebar">
+    <div class="sidebar-brand"><span style="color:#16c4a1">Quick</span>Reserve<br><span style="font-size:11px;font-weight:400;opacity:0.5">Admin Panel</span></div>
+    <nav class="sidebar-nav">
+      <a href="admin-dashboard.html"><span class="sidebar-icon">📊</span> Dashboard</a>
+      <a href="manage-bookings.html"><span class="sidebar-icon">🎫</span> Bookings</a>
+      <a href="manage-trips.html"><span class="sidebar-icon">🚌</span> Trips</a>
+      <a href="manage-users.html" class="active"><span class="sidebar-icon">👥</span> Users</a>
+      <a href="../../index.html"><span class="sidebar-icon">🌐</span> View Site</a>
+      <a href="#" onclick="Auth.logout()"><span class="sidebar-icon">🚪</span> Logout</a>
+    </nav>
+  </aside>
+
+  <main class="admin-main">
+    <div class="admin-topbar">
+      <span style="font-weight:700">Manage Users</span>
+      <span id="user-count" style="color:#6b7280;font-size:13px"></span>
+    </div>
+
+    <div class="admin-content">
+      <div style="margin-bottom:16px">
+        <input type="text" id="search-input" placeholder="Search by name, email..." onkeyup="renderTable()"
+          style="border:1.5px solid var(--border);border-radius:10px;padding:8px 14px;font-size:13px;font-family:Poppins,sans-serif;outline:none;width:300px">
+      </div>
+
+      <div class="card-white">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th><th>Name</th><th>Email</th><th>Phone</th><th>Role</th><th>Joined</th><th>Bookings</th><th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="users-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- Edit Modal -->
+<div id="user-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:2000;align-items:center;justify-content:center">
+  <div style="background:#fff;border-radius:16px;padding:28px;width:420px;max-width:90vw">
+    <h5 style="font-weight:700;margin-bottom:20px">Edit User</h5>
+    <input type="hidden" id="modal-uid">
+    <div class="form-group">
+      <label>Full Name</label>
+      <input type="text" id="modal-name">
+    </div>
+    <div class="form-group">
+      <label>Email</label>
+      <input type="email" id="modal-email">
+    </div>
+    <div class="form-group">
+      <label>Phone</label>
+      <input type="tel" id="modal-phone">
+    </div>
+    <div class="form-group">
+      <label>Role</label>
+      <select id="modal-role" style="width:100%;border:1.5px solid var(--border);border-radius:10px;padding:10px 14px;font-size:14px;font-family:Poppins,sans-serif;outline:none">
+        <option value="user">User</option>
+        <option value="admin">Admin</option>
+      </select>
+    </div>
+    <div style="display:flex;gap:10px;margin-top:16px">
+      <button class="btn-primary-full" onclick="saveUser()" style="margin-top:0">Save</button>
+      <button class="btn-sm btn-gray" onclick="closeModal()" style="flex:1;padding:13px">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../../js/script.js"></script>
+<script>
+  // Guard: if not admin, redirect to login cleanly
+  if (!Auth.requireAdmin()) {
+    window.location.replace('../../pages/auth/login.html');
+    throw new Error('Not authorized');
+  }
+
+  function renderTable() {
+    const search = document.getElementById('search-input').value.toLowerCase();
+    let users = Users.all();
+    if (search) users = users.filter(u => u.name.toLowerCase().includes(search) || u.email.toLowerCase().includes(search));
+    document.getElementById('user-count').textContent = users.length + ' users';
+
+    const allBookings = Bookings.all();
+    document.getElementById('users-tbody').innerHTML = users.map(u => {
+      const bCount = allBookings.filter(b => b.userId === u.id).length;
+      return `
+        <tr>
+          <td>${u.id}</td>
+          <td><strong>${u.name}</strong></td>
+          <td style="font-size:12px">${u.email}</td>
+          <td style="font-size:12px">${u.phone || '—'}</td>
+          <td><span class="${u.role === 'admin' ? 'badge-pending' : 'badge-confirmed'}">${u.role}</span></td>
+          <td>${formatDate(u.joined)}</td>
+          <td><a href="manage-bookings.html" style="color:#0f6e56;font-weight:700">${bCount}</a></td>
+          <td style="display:flex;gap:6px">
+            <button class="btn-sm btn-yellow" onclick="openEdit(${u.id})">Edit</button>
+            ${u.role !== 'admin' ? `<button class="btn-sm btn-red" onclick="deleteUser(${u.id})">Delete</button>` : ''}
+          </td>
+        </tr>
+      `;
+    }).join('') || '<tr><td colspan="8" style="text-align:center;color:#9ca3af;padding:40px">No users found</td></tr>';
+  }
+
+  function openEdit(id) {
+    const u = Users.byId(id);
+    document.getElementById('modal-uid').value    = id;
+    document.getElementById('modal-name').value   = u.name;
+    document.getElementById('modal-email').value  = u.email;
+    document.getElementById('modal-phone').value  = u.phone || '';
+    document.getElementById('modal-role').value   = u.role;
+    document.getElementById('user-modal').style.display = 'flex';
+  }
+  function closeModal() { document.getElementById('user-modal').style.display = 'none'; }
+  function saveUser() {
+    const id   = parseInt(document.getElementById('modal-uid').value);
+    const data = {
+      name:  document.getElementById('modal-name').value.trim(),
+      email: document.getElementById('modal-email').value.trim(),
+      phone: document.getElementById('modal-phone').value.trim(),
+      role:  document.getElementById('modal-role').value,
+    };
+    if (!data.name || !data.email) { showToast('Name and email are required.', 'error'); return; }
+    Users.update(id, data);
+    showToast('User updated!');
+    closeModal(); renderTable();
+  }
+  function deleteUser(id) {
+    const currentUser = Auth.currentUser();
+    if (currentUser && currentUser.id === id) { showToast('Cannot delete yourself.', 'error'); return; }
+    confirmAction('Delete this user? This cannot be undone.', () => {
+      Users.delete(id);
+      showToast('User deleted.', 'error');
+      renderTable();
+    });
+  }
+
+  renderTable();
+</script>
+</body>
+</html>

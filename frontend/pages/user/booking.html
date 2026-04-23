@@ -1,151 +1,184 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Confirm Booking</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Complete Booking — QuickReserve</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="../../css/style.css">
-  <script src="js/script.js"></script>
 </head>
+<body>
 
-<body class="booking-page">
-<div class="booking-container">
-
-  <!-- TOP NAV -->
-  <div class="booking-topnav">
-    <a class="btn-back" href="../../index.html">← Back</a>
-    <div>
-      <h2 class="booking-title">Confirm Your Booking</h2>
-      <p class="booking-sub">Review your trip details before confirming</p>
-    </div>
+<nav class="navbar navbar-expand-lg">
+  <div class="container" style="max-width:1200px">
+    <a class="navbar-brand" href="../../index.html"><span><span class="brand-quick">Quick</span>Reserve</span></a>
+    <div class="ms-auto d-flex align-items-center gap-2" id="nav-auth-btns"></div>
   </div>
+</nav>
 
-  <!-- STEPS -->
-  <div class="booking-steps">
-    <div class="bstep done"><div class="bstep-num">✓</div><span>Select Trip</span></div>
-    <div class="bstep-line"></div>
-    <div class="bstep done"><div class="bstep-num">✓</div><span>Choose Seat</span></div>
-    <div class="bstep-line"></div>
-    <div class="bstep active"><div class="bstep-num">3</div><span>Confirm</span></div>
-    <div class="bstep-line"></div>
-    <div class="bstep"><div class="bstep-num">4</div><span>Done</span></div>
+<div class="page-header">
+  <div class="container">
+    <h1>Complete Your Booking</h1>
+    <p>Review your trip details and confirm payment</p>
   </div>
+</div>
 
-  <!-- MAIN GRID -->
-  <div class="booking-grid">
+<div id="page-content" style="display:none;background:#f9fafb;padding:32px 0;min-height:60vh">
+  <div class="container" style="max-width:900px">
 
-    <!-- LEFT COLUMN -->
-    <div class="booking-left">
-
-      <!-- TRIP INFO -->
-      <div class="b-panel">
-        <div class="b-panel-title">
-          <div class="b-panel-icon">🚌</div> Trip Information
-        </div>
-
-        <div class="b-info-row">
-          <div class="b-info-label">Route</div>
-          <div class="b-info-value" id="displayRoute">—</div>
-        </div>
-
-        <div class="b-info-grid">
-          <div class="b-info-row">
-            <div class="b-info-label">Departure</div>
-            <div class="b-info-value" id="displayDeparture">—</div>
-          </div>
-          <div class="b-info-row">
-            <div class="b-info-label">Bus Type</div>
-            <div class="b-info-value" id="displayBusType">—</div>
-          </div>
-        </div>
-
-        <div class="b-info-row">
-          <div class="b-info-label">Selected Seat</div>
-          <div class="b-info-value">
-            <span class="seat-badge" id="displaySeat">—</span>
-          </div>
-        </div>
+    <!-- Success State -->
+    <div id="success-state" style="display:none;text-align:center;padding:60px 20px">
+      <div style="font-size:60px;margin-bottom:16px">✅</div>
+      <h2 style="font-weight:800;color:#0f6e56;margin-bottom:8px">Booking Confirmed!</h2>
+      <p style="color:#6b7280;margin-bottom:8px">Your booking reference is:</p>
+      <div id="booking-ref" style="font-size:2rem;font-weight:800;color:#0f6e56;margin-bottom:24px"></div>
+      <div class="booking-summary" style="max-width:400px;margin:0 auto 24px">
+        <div class="summary-row"><span>Route</span><span id="conf-route">—</span></div>
+        <div class="summary-row"><span>Date</span><span id="conf-date">—</span></div>
+        <div class="summary-row"><span>Departure</span><span id="conf-depart">—</span></div>
+        <div class="summary-row"><span>Seat</span><span id="conf-seat">—</span></div>
+        <div class="summary-row"><span>Total Paid</span><span id="conf-price">—</span></div>
       </div>
-
-      <!-- PASSENGER DETAILS -->
-      <div class="b-panel">
-        <div class="b-panel-title">
-          <div class="b-panel-icon">👤</div> Passenger Details
-        </div>
-
-        <div class="b-form-row">
-          <div class="b-form-group">
-            <label for="firstName">First Name</label>
-            <input id="firstName" type="text" class="b-input" placeholder="Juan" required>
-          </div>
-          <div class="b-form-group">
-            <label for="lastName">Last Name</label>
-            <input id="lastName" type="text" class="b-input" placeholder="dela Cruz" required>
-          </div>
-        </div>
-
-        <div class="b-form-group mb-3">
-          <label for="email">Email Address</label>
-          <input id="email" type="email" class="b-input" placeholder="juan@email.com" required>
-        </div>
-
-        <div class="b-form-group">
-          <label for="phone">Phone Number</label>
-          <input id="phone" type="tel" class="b-input" placeholder="09XX XXX XXXX" required>
-        </div>
+      <p style="font-size:13px;color:#9ca3af;margin-bottom:20px">Show this reference at the terminal. Safe travels! 🚌</p>
+      <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+        <a href="my-bookings.html" class="btn-sm btn-green" style="padding:10px 24px;font-size:14px">View My Bookings</a>
+        <a href="../../index.html" class="btn-sm btn-gray" style="padding:10px 24px;font-size:14px">Back to Home</a>
       </div>
     </div>
 
-    <!-- RIGHT COLUMN: PAYMENT -->
-    <div class="b-panel b-panel-right">
-      <div class="b-panel-title">
-        <div class="b-panel-icon">💳</div> Payment Summary
+    <!-- Booking Form -->
+    <div id="booking-form-state">
+      <div style="display:grid;grid-template-columns:1fr 300px;gap:24px;align-items:start">
+
+        <div>
+          <div class="card-white">
+            <h5 style="font-weight:700;font-size:15px;margin-bottom:20px">👤 Passenger Details</h5>
+            <div class="form-group"><label>Full Name</label><input type="text" id="pax-name" placeholder="As shown on valid ID"></div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+              <div class="form-group"><label>Email</label><input type="email" id="pax-email" placeholder="you@example.com"></div>
+              <div class="form-group"><label>Phone</label><input type="tel" id="pax-phone" placeholder="09XX XXX XXXX"></div>
+            </div>
+          </div>
+
+          <div class="card-white">
+            <h5 style="font-weight:700;font-size:15px;margin-bottom:20px">💳 Payment Method</h5>
+            <div style="display:flex;flex-direction:column;gap:10px">
+              <label class="payment-option"><input type="radio" name="payment" value="Cash" checked style="accent-color:#0f6e56"> <span>💵 Cash (Pay at terminal)</span></label>
+              <label class="payment-option"><input type="radio" name="payment" value="GCash" style="accent-color:#0f6e56"> <span>📱 GCash</span></label>
+              <label class="payment-option"><input type="radio" name="payment" value="Credit Card" style="accent-color:#0f6e56"> <span>💳 Credit / Debit Card</span></label>
+            </div>
+          </div>
+        </div>
+
+        <div style="position:sticky;top:24px">
+          <div class="card-white">
+            <h5 style="font-weight:700;font-size:15px;margin-bottom:16px">🧾 Order Summary</h5>
+            <div class="booking-summary">
+              <div class="summary-row"><span>Route</span><span id="b-route" style="font-weight:600;text-align:right;max-width:160px">—</span></div>
+              <div class="summary-row"><span>Date</span><span id="b-date">—</span></div>
+              <div class="summary-row"><span>Departure</span><span id="b-depart">—</span></div>
+              <div class="summary-row"><span>Seat</span><span id="b-seat">—</span></div>
+              <div class="summary-row"><span>Fare</span><span id="b-price">—</span></div>
+            </div>
+            <button class="btn-primary-full" id="confirm-btn" onclick="confirmBooking()" style="margin-top:12px">Confirm Booking ✓</button>
+            <a href="../../seats.html" style="display:block;text-align:center;font-size:12px;color:#9ca3af;margin-top:10px;text-decoration:none">← Change seat</a>
+          </div>
+        </div>
+
       </div>
-
-      <div class="price-row">
-        <span>Ticket Price</span>
-        <span id="displayPrice">₱0.00</span>
-      </div>
-      <div class="price-row">
-        <span>Booking Fee <span class="fee-badge">service</span></span>
-        <span>₱25.00</span>
-      </div>
-      <div class="price-row">
-        <span>Discount</span>
-        <span class="discount-val">— ₱0.00</span>
-      </div>
-
-      <div class="b-divider"></div>
-
-      <div class="price-row total-row">
-        <span>Total</span>
-        <span id="displayTotal">₱0.00</span>
-      </div>
-
-      <div class="b-divider"></div>
-
-      <!-- PAYMENT METHOD -->
-      <div class="pay-method-label">Payment Method</div>
-      <div class="pay-method-grid">
-        <div class="pay-option active" data-method="Cash" onclick="selectPayment(this)">Cash</div>
-        <div class="pay-option" data-method="GCash" onclick="selectPayment(this)">GCash</div>
-        <div class="pay-option" data-method="Card" onclick="selectPayment(this)">Card</div>
-        <div class="pay-option" data-method="Maya" onclick="selectPayment(this)">Maya</div>
-      </div>
-
-      <button id="confirmBtn" class="b-confirm-btn">
-        Confirm Booking
-      </button>
-
-      <div class="secure-note">🔒 Your booking is secured</div>
-
-      <div id="message" class="b-message mt-3"></div>
     </div>
 
   </div>
 </div>
 
-<script src="js/booking.js"></script>
+<style>
+.payment-option {
+  display:flex;align-items:center;gap:10px;
+  padding:12px 14px;border-radius:10px;border:1.5px solid var(--border);
+  cursor:pointer;font-size:14px;font-weight:500;transition:all 0.15s;
+}
+.payment-option:has(input:checked){border-color:var(--green);background:var(--green-bg);}
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../../js/script.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+
+    // Auth guard
+    if (!Auth.isLoggedIn()) {
+      try { localStorage.setItem('loginRedirect', window.location.href); } catch(e){}
+      window.location.href = '../auth/login.html';
+      return;
+    }
+
+    var user      = Auth.currentUser();
+    var route     = localStorage.getItem('selectedRoute')     || '';
+    var date      = localStorage.getItem('selectedDate')      || '';
+    var seat      = localStorage.getItem('selectedSeat')      || '';
+    var departure = localStorage.getItem('selectedDeparture') || '';
+    var priceMin  = parseInt(localStorage.getItem('selectedPriceMin')) || 0;
+    var priceMax  = parseInt(localStorage.getItem('selectedPriceMax')) || 0;
+    var price     = priceMin > 0 ? priceMin + Math.floor(Math.random() * Math.max(priceMax - priceMin, 1)) : 1100;
+
+    if (!seat || !route) { window.location.href = '../../index.html'; return; }
+
+    document.getElementById('page-content').style.display = 'block';
+
+    // Pre-fill user info
+    document.getElementById('pax-name').value  = user.name  || '';
+    document.getElementById('pax-email').value = user.email || '';
+    document.getElementById('pax-phone').value = user.phone || '';
+
+    // Fill summary
+    document.getElementById('b-route').textContent  = route;
+    document.getElementById('b-date').textContent   = formatDate(date);
+    document.getElementById('b-depart').textContent = departure || '—';
+    document.getElementById('b-seat').textContent   = 'Seat ' + seat;
+    document.getElementById('b-price').textContent  = formatPeso(price);
+
+    window.confirmBooking = function() {
+      var name    = document.getElementById('pax-name').value.trim();
+      var email   = document.getElementById('pax-email').value.trim();
+      var phone   = document.getElementById('pax-phone').value.trim();
+      var payment = document.querySelector('input[name="payment"]:checked');
+      var method  = payment ? payment.value : 'Cash';
+
+      if (!name || !email || !phone) { showToast('Please fill in all passenger details.', 'error'); return; }
+
+      var btn = document.getElementById('confirm-btn');
+      btn.disabled = true;
+      btn.textContent = 'Processing...';
+
+      // Book seat and save
+      Seats.book(route, date, departure, seat);
+
+      var booking = Bookings.add({
+        userId: user.id,
+        userName: user.name,
+        route: route, seat: seat, date: date, departure: departure,
+        price: price, status: 'confirmed',
+        paymentMethod: method,
+        passengerName: name, passengerEmail: email, passengerPhone: phone,
+      });
+
+      // Clear selection
+      localStorage.removeItem('selectedSeat');
+      localStorage.removeItem('selectedDeparture');
+
+      // Show success
+      document.getElementById('booking-form-state').style.display = 'none';
+      document.getElementById('success-state').style.display = 'block';
+      document.getElementById('booking-ref').textContent   = booking.id;
+      document.getElementById('conf-route').textContent    = route;
+      document.getElementById('conf-date').textContent     = formatDate(date);
+      document.getElementById('conf-depart').textContent   = departure || '—';
+      document.getElementById('conf-seat').textContent     = 'Seat ' + seat;
+      document.getElementById('conf-price').textContent    = formatPeso(price);
+    };
+
+  });
+</script>
 </body>
 </html>

@@ -1,14 +1,135 @@
-<link rel="stylesheet" href="../frontend/css/style.css">
-<script src="../frontend/js/script.js"></script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Search Results — QuickReserve</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
 
-<nav>
-  <a href="index.html">Home</a>
-  <a href="login.html">Login</a>
-  <a href="register.html">Register</a>
-  <a href="dashboard.html">Dashboard</a>
-</nav>/a>
+<nav class="navbar navbar-expand-lg">
+  <div class="container" style="max-width:1200px">
+    <a class="navbar-brand" href="../../index.html"><span><span class="brand-quick">Quick</span>Reserve</span></a>
+    <div class="ms-auto d-flex align-items-center gap-2" id="nav-auth-btns"></div>
+  </div>
+</nav>
 
-<section class="mt-5">
-  <h2>Available Trips</h2>
-  <div id="tripResults"></div>
-</section>
+<div class="page-header">
+  <div class="container">
+    <h1>Search Results</h1>
+    <p id="search-summary">Finding available trips...</p>
+  </div>
+</div>
+
+<div style="background:#f9fafb;padding:32px 0;min-height:60vh">
+  <div class="container">
+
+    <!-- Refine search -->
+    <div class="card-white" style="margin-bottom:20px">
+      <h6 style="font-weight:700;margin-bottom:12px">🔍 Refine Search</h6>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:end">
+        <div class="search-field" style="flex:1;min-width:160px">
+          <label>Destination</label>
+          <input id="to" type="text" placeholder="e.g. Manila">
+        </div>
+        <div class="search-field" style="flex:1;min-width:160px">
+          <label>Travel Date</label>
+          <input id="date" type="date">
+        </div>
+        <button class="btn-search" onclick="doSearch()">Search →</button>
+      </div>
+    </div>
+
+    <!-- Results -->
+    <div id="results-container"></div>
+
+  </div>
+</div>
+
+<footer>
+  <div class="container">
+    <div style="text-align:center;color:rgba(255,255,255,0.35);font-size:12px">© 2026 QuickReserve. All rights reserved.</div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../js/script.js"></script>
+<script>
+  // Pre-fill from stored values
+  const storedRoute = QR.get('selectedRoute') || '';
+  const storedDate  = QR.get('selectedDate')  || '';
+
+  if (storedDate)  document.getElementById('date').value = storedDate;
+  if (storedRoute) {
+    const dest = storedRoute.replace('Albay → ', '');
+    document.getElementById('to').value = dest;
+  }
+
+  function doSearch() {
+    const to   = document.getElementById('to').value.trim();
+    const date = document.getElementById('date').value;
+    if (!to) { showToast('Please enter a destination.', 'error'); return; }
+
+    const route = `Albay → ${to}`;
+    document.getElementById('search-summary').textContent = `Showing trips for ${route}${date ? ' on ' + formatDate(date) : ''}`;
+
+    const trips = Trips.all();
+    const matched = trips.filter(t => t.route.toLowerCase().includes(to.toLowerCase()));
+    const container = document.getElementById('results-container');
+
+    if (!matched.length) {
+      container.innerHTML = `
+        <div style="text-align:center;padding:60px 20px">
+          <div style="font-size:60px;margin-bottom:16px">😔</div>
+          <h4 style="font-weight:700;color:#1a1a1a;margin-bottom:8px">No trips found for "${to}"</h4>
+          <p style="color:#9ca3af;margin-bottom:20px">Try a different destination or check back later.</p>
+          <a href="../index.html#routes" class="btn-sm btn-green" style="padding:10px 24px;font-size:14px">Browse All Routes</a>
+        </div>`;
+      return;
+    }
+
+    container.innerHTML = matched.map(t => `
+      <div class="card-white" style="margin-bottom:16px">
+        <div style="display:flex;justify-content:space-between;align-items:start;flex-wrap:wrap;gap:16px">
+          <div>
+            <div style="font-weight:800;font-size:16px;color:#1a1a1a;margin-bottom:8px">${t.route}</div>
+            <div style="display:flex;gap:20px;flex-wrap:wrap">
+              <div style="font-size:13px;color:#6b7280">⏱ <strong style="color:#0f6e56">${t.duration}</strong></div>
+              <div style="font-size:13px;color:#6b7280">💰 <strong style="color:#0f6e56">${formatPeso(t.priceMin)} – ${formatPeso(t.priceMax)}</strong></div>
+              <div style="font-size:13px;color:#6b7280">💺 ${t.totalSeats || 45} seats</div>
+            </div>
+            <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
+              ${(t.departures||[]).map(d => `
+                <button class="btn-sm btn-gray" style="padding:6px 14px"
+                  onclick="bookThis('${t.route}', ${t.priceMin}, ${t.priceMax}, '${t.duration}', '${d}', '${date}')">
+                  🕐 ${d}
+                </button>`).join('')}
+            </div>
+          </div>
+          <button class="btn-book" style="width:160px"
+            onclick="bookThis('${t.route}', ${t.priceMin}, ${t.priceMax}, '${t.duration}', '${(t.departures||['18:00'])[0]}', '${date}')">
+            Select Seat →
+          </button>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function bookThis(route, pmin, pmax, duration, departure, date) {
+    QR.set('selectedRoute', route);
+    QR.set('selectedPriceMin', pmin);
+    QR.set('selectedPriceMax', pmax);
+    QR.set('selectedDuration', duration);
+    QR.set('selectedDate', date || document.getElementById('date').value);
+    QR.set('selectedDeparture', departure);
+    QR.remove('selectedSeat');
+    window.location.href = 'seats.html';
+  }
+
+  doSearch();
+</script>
+</body>
+</html>

@@ -2,117 +2,94 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Register - QuickReserve</title>
-
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register — QuickReserve</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
- <link rel="stylesheet" href="../../css/style.css">
-
+  <link rel="stylesheet" href="../../css/style.css">
 </head>
+<body>
 
-  <body class="register-page">
+<nav class="navbar navbar-expand-lg">
+  <div class="container" style="max-width:1200px">
+    <a class="navbar-brand" href="../../index.html">
+      <span><span class="brand-quick">Quick</span>Reserve</span>
+    </a>
+    <div class="ms-auto d-flex align-items-center gap-2" id="nav-auth-btns"></div>
+  </div>
+</nav>
 
-<div class="card p-4" style="width: 350px;">
-  
-  <h4 class="text-center mb-3">Create Account</h4>
-
-  <div id="alertBox"></div>
-
-  <form id="registerForm">
-    
-    <input id="name" class="form-control mb-3" placeholder="Full Name" required>
-
-    <input id="email" type="email" class="form-control mb-3" placeholder="Email" required>
-
-    <input id="password" type="password" class="form-control mb-2" placeholder="Password (min 6 chars)" required>
-
-    <input id="confirmPassword" type="password" class="form-control mb-2" placeholder="Confirm Password" required>
-
-    <div class="text-end mb-3">
-      <span class="toggle-password" onclick="togglePassword()">Show Password</span>
+<div class="auth-page">
+  <div class="auth-card">
+    <div style="text-align:center;margin-bottom:24px">
+      <div style="font-size:40px;margin-bottom:8px">✨</div>
+      <h2>Create Account</h2>
+      <p class="sub">Join QuickReserve and book smarter</p>
     </div>
 
-    <select id="role" class="form-select mb-3">
-      <option value="passenger">Passenger</option>
-      <option value="admin">Admin</option>
-    </select>
+    <div id="reg-error" style="display:none;background:#fee2e2;color:#991b1b;padding:10px 14px;border-radius:8px;font-size:13px;margin-bottom:16px;font-weight:600"></div>
 
-    <button type="submit" class="btn btn-success w-100">Register</button>
+    <div class="form-group">
+      <label>Full Name</label>
+      <input type="text" id="name" placeholder="Maria Santos">
+    </div>
+    <div class="form-group">
+      <label>Email Address</label>
+      <input type="email" id="email" placeholder="you@example.com">
+    </div>
+    <div class="form-group">
+      <label>Phone Number</label>
+      <input type="tel" id="phone" placeholder="09XX XXX XXXX">
+    </div>
+    <div class="form-group">
+      <label>Password</label>
+      <input type="password" id="password" placeholder="At least 6 characters">
+    </div>
+    <div class="form-group">
+      <label>Confirm Password</label>
+      <input type="password" id="confirm" placeholder="Repeat your password">
+    </div>
 
-  </form>
-
-  <p class="text-center mt-3 mb-0">
-    Already have an account? <a href="login.html">Login</a>
-  </p>
-
+    <button class="btn-primary-full" onclick="doRegister()">Create Account →</button>
+    <p class="auth-link">Already have an account? <a href="login.html">Login here</a></p>
+    <p class="auth-link" style="margin-top:6px"><a href="../../index.html">← Back to Home</a></p>
+  </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../../js/script.js"></script>
 <script>
-const API_URL = "http://localhost:5000/api";
+  if (Auth.isLoggedIn()) window.location.href = '../../index.html';
 
-function showAlert(message, type = "danger") {
-  document.getElementById("alertBox").innerHTML =
-    `<div class="alert alert-${type} py-2">${message}</div>`;
-}
+  function doRegister() {
+    const name     = document.getElementById('name').value.trim();
+    const email    = document.getElementById('email').value.trim();
+    const phone    = document.getElementById('phone').value.trim();
+    const password = document.getElementById('password').value;
+    const confirm  = document.getElementById('confirm').value;
+    const errEl    = document.getElementById('reg-error');
+    errEl.style.display = 'none';
 
-function togglePassword() {
-  const pass = document.getElementById("password");
-  const confirm = document.getElementById("confirmPassword");
-
-  if (!pass || !confirm) return;
-
-  const isHidden = pass.type === "password";
-
-  pass.type = isHidden ? "text" : "password";
-  confirm.type = isHidden ? "text" : "password";
-}
-
-document.getElementById("registerForm").addEventListener("submit", async (e) => {
-  e.preventDefault();
-
-  const name = document.getElementById("name").value.trim();
-  const email = document.getElementById("email").value.trim();
-  const password = document.getElementById("password").value;
-  const confirmPassword = document.getElementById("confirmPassword").value;
-  const role = document.getElementById("role").value;
-
-  if (!name || !email || !password) {
-    return showAlert("All fields are required");
-  }
-
-  if (password.length < 6) {
-    return showAlert("Password must be at least 6 characters");
-  }
-
-  if (password !== confirmPassword) {
-    return showAlert("Passwords do not match");
-  }
-
-  try {
-    const res = await fetch(`${API_URL}/pages/auth/register`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ name, email, password, role })
-    });
-
-    const data = await res.json();
-
-    if (!res.ok) {
-      return showAlert(data.message || "Registration failed");
+    if (!name || !email || !phone || !password || !confirm) {
+      errEl.textContent = 'Please fill in all fields.'; errEl.style.display = 'block'; return;
+    }
+    if (password.length < 6) {
+      errEl.textContent = 'Password must be at least 6 characters.'; errEl.style.display = 'block'; return;
+    }
+    if (password !== confirm) {
+      errEl.textContent = 'Passwords do not match.'; errEl.style.display = 'block'; return;
+    }
+    if (Users.byEmail(email)) {
+      errEl.textContent = 'An account with this email already exists.'; errEl.style.display = 'block'; return;
     }
 
-    showAlert("Account created successfully!", "success");
-
-    setTimeout(() => {
-      window.location.href = "pages/auth/login.html";
-    }, 1500);
-
-  } catch (err) {
-    showAlert("Server error. Try again.");
+    const newUser = Users.add({ name, email, phone, password });
+    Auth.login(newUser);
+    showToast('Account created! Welcome, ' + name.split(' ')[0] + '! 🎉');
+    setTimeout(() => { window.location.href = '../../index.html'; }, 600);
   }
-});
-</script>
 
+  document.addEventListener('keydown', (e) => { if (e.key === 'Enter') doRegister(); });
+</script>
 </body>
 </html>

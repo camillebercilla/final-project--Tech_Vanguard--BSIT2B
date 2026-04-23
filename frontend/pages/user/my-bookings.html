@@ -1,97 +1,192 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>My Bookings</title>
-  <style>
-    /* ── Base ── */
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Segoe UI', sans-serif; background: #f4f6f9; color: #222; min-height: 100vh; }
-
-    .my-bookings-container { max-width: 780px; margin: 0 auto; padding: 32px 16px 60px; }
-
-    h1 { font-size: 1.8rem; font-weight: 700; margin-bottom: 6px; }
-    .page-sub { color: #666; margin-bottom: 28px; font-size: 0.95rem; }
-
-    /* ── Top bar ── */
-    .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px; }
-    .btn-back    { text-decoration: none; color: #0f6e56; font-weight: 600; font-size: 0.9rem; }
-    .btn-back:hover { text-decoration: underline; }
-    .btn-clear   { background: #e53e3e; color: #fff; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-size: 0.85rem; }
-    .btn-clear:hover { background: #c53030; }
-
-    /* ── Empty state ── */
-    #emptyBookings {
-      text-align: center; padding: 60px 20px; color: #888;
-      background: #fff; border-radius: 16px; box-shadow: 0 2px 12px rgba(0,0,0,0.06);
-    }
-    #emptyBookings .empty-icon { font-size: 3rem; margin-bottom: 12px; }
-    #emptyBookings p { font-size: 1rem; }
-    #emptyBookings a { display: inline-block; margin-top: 16px; padding: 10px 24px;
-      background: #0f6e56; color: #fff; border-radius: 10px; text-decoration: none; font-weight: 600; }
-
-    /* ── Booking cards ── */
-    #bookingsList { display: flex; flex-direction: column; gap: 20px; }
-
-    .booking-card {
-      background: #fff; border-radius: 16px;
-      box-shadow: 0 2px 12px rgba(0,0,0,0.07);
-      overflow: hidden; border: 1px solid #e8ecf0;
-    }
-
-    .booking-card-header {
-      display: flex; justify-content: space-between; align-items: center;
-      padding: 14px 20px; background: #0f6e56; color: #fff;
-    }
-    .booking-ref   { font-weight: 700; font-size: 0.95rem; letter-spacing: 0.5px; }
-    .booking-status {
-      font-size: 0.78rem; font-weight: 700; padding: 3px 12px;
-      border-radius: 20px; text-transform: uppercase; letter-spacing: 0.5px;
-    }
-    .status-confirmed  { background: #d1fae5; color: #065f46; }
-    .status-cancelled  { background: #fee2e2; color: #991b1b; }
-    .status-pending    { background: #fef3c7; color: #92400e; }
-
-    .booking-card-body { padding: 16px 20px; display: flex; flex-direction: column; gap: 10px; }
-
-    .booking-row { display: flex; justify-content: space-between; align-items: center; font-size: 0.9rem; }
-    .booking-label { color: #666; min-width: 120px; }
-    .booking-value { font-weight: 500; text-align: right; }
-    .booking-row-total { margin-top: 6px; padding-top: 10px; border-top: 1px dashed #e0e4e8; }
-    .booking-total { font-size: 1.05rem; font-weight: 700; color: #0f6e56; }
-
-    .booking-card-footer { padding: 12px 20px; background: #f9fafb; border-top: 1px solid #eee; display: flex; justify-content: flex-end; }
-    .btn-cancel-booking {
-      background: transparent; color: #e53e3e; border: 1.5px solid #e53e3e;
-      padding: 7px 18px; border-radius: 8px; cursor: pointer; font-size: 0.85rem; font-weight: 600;
-      transition: background 0.2s;
-    }
-    .btn-cancel-booking:hover { background: #fee2e2; }
-  </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Bookings — QuickReserve</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="../../css/style.css">
 </head>
 <body>
 
-<div class="my-bookings-container">
-  <div class="top-bar">
-    <a class="btn-back" href="../../index.html">← Back to Home</a>
-    <button class="btn-clear" onclick="clearAllBookings()">Clear All Bookings</button>
+<nav class="navbar navbar-expand-lg">
+  <div class="container" style="max-width:1200px">
+    <a class="navbar-brand" href="../../index.html"><span><span class="brand-quick">Quick</span>Reserve</span></a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="nav">
+      <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-1">
+        <li class="nav-item"><a class="nav-link" href="../../index.html">Home</a></li>
+        <li class="nav-item"><a class="nav-link active" href="my-bookings.html">My Bookings</a></li>
+        <li class="nav-item"><a class="nav-link" href="profile.html">Profile</a></li>
+      </ul>
+      <div class="ms-lg-3 mt-2 mt-lg-0 d-flex align-items-center gap-2" id="nav-auth-btns"></div>
+    </div>
   </div>
+</nav>
 
-  <h1>My Bookings</h1>
-  <p class="page-sub">Here are all your confirmed and past reservations.</p>
-
-  <!-- Empty state (shown when no bookings exist) -->
-  <div id="emptyBookings" style="display:none;">
-    <div class="empty-icon">🎫</div>
-    <p>You have no bookings yet.</p>
-    <a href="../../index.html">Book a Trip Now</a>
+<div class="page-header">
+  <div class="container">
+    <h1>My Bookings</h1>
+    <p id="greeting">Manage and track all your trips</p>
   </div>
-
-  <!-- Booking cards rendered here by JS -->
-  <div id="bookingsList"></div>
 </div>
 
-<script src="main.js"></script>
+<div style="background:#f9fafb;padding:32px 0;min-height:60vh">
+  <div class="container">
+
+    <!-- Stats -->
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px">
+      <div class="stat-card"><div class="stat-card-icon">🎟️</div><div><h4 id="total-count">0</h4><p>Total Bookings</p></div></div>
+      <div class="stat-card"><div class="stat-card-icon">✅</div><div><h4 id="confirmed-count">0</h4><p>Confirmed</p></div></div>
+      <div class="stat-card"><div class="stat-card-icon">❌</div><div><h4 id="cancelled-count">0</h4><p>Cancelled</p></div></div>
+    </div>
+
+    <!-- Filter tabs -->
+    <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap">
+      <button class="btn-sm btn-green filter-tab" onclick="filterBookings('all',this)">All</button>
+      <button class="btn-sm btn-gray filter-tab" onclick="filterBookings('confirmed',this)">Confirmed</button>
+      <button class="btn-sm btn-gray filter-tab" onclick="filterBookings('pending',this)">Pending</button>
+      <button class="btn-sm btn-gray filter-tab" onclick="filterBookings('cancelled',this)">Cancelled</button>
+    </div>
+
+    <!-- Table -->
+    <div class="card-white" id="table-card">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Booking ID</th><th>Route</th><th>Date</th><th>Departure</th>
+              <th>Seat</th><th>Fare</th><th>Payment</th><th>Status</th><th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="bookings-tbody">
+            <tr><td colspan="9" style="text-align:center;color:#9ca3af;padding:40px">Loading...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Empty state (hidden by default) -->
+    <div id="empty-state" style="display:none;text-align:center;padding:60px 20px">
+      <div style="font-size:60px;margin-bottom:16px">🎫</div>
+      <h4 style="font-weight:700;color:#1a1a1a;margin-bottom:8px">No bookings yet</h4>
+      <p style="color:#9ca3af;margin-bottom:20px">Start exploring routes and book your first trip!</p>
+      <a href="../../index.html#routes" class="btn-sm btn-green" style="padding:10px 24px;font-size:14px">Browse Routes →</a>
+    </div>
+
+  </div>
+</div>
+
+<footer>
+  <div class="container">
+    <div style="text-align:center;color:rgba(255,255,255,0.35);font-size:12px">© 2026 QuickReserve. All rights reserved.</div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../../js/script.js"></script>
+<script>
+  var currentUser   = null;
+  var currentFilter = 'all';
+
+  window.addEventListener('load', function() {
+    try {
+      if (typeof Auth === 'undefined') {
+        document.getElementById('bookings-tbody').innerHTML =
+          '<tr><td colspan="9" style="text-align:center;color:red;padding:20px">Error: script.js failed to load. Check file path.</td></tr>';
+        return;
+      }
+
+      if (!Auth.isLoggedIn()) {
+        window.location.href = '../auth/login.html';
+        return;
+      }
+
+      currentUser = Auth.currentUser();
+      document.getElementById('greeting').textContent =
+        'Welcome back, ' + currentUser.name.split(' ')[0] + '!';
+
+      renderTable();
+
+    } catch(e) {
+      console.error('My Bookings error:', e);
+      document.getElementById('bookings-tbody').innerHTML =
+        '<tr><td colspan="9" style="text-align:center;color:red;padding:20px">Error: ' + e.message + '</td></tr>';
+    }
+  });
+
+  function renderStats(all) {
+    document.getElementById('total-count').textContent     = all.length;
+    document.getElementById('confirmed-count').textContent = all.filter(function(b){ return b.status==='confirmed'; }).length;
+    document.getElementById('cancelled-count').textContent = all.filter(function(b){ return b.status==='cancelled'; }).length;
+  }
+
+  function renderTable() {
+    var allBookings = Bookings.forUser(currentUser.id);
+    renderStats(allBookings);
+
+    var filtered = currentFilter === 'all'
+      ? allBookings
+      : allBookings.filter(function(b){ return b.status === currentFilter; });
+
+    var tbody = document.getElementById('bookings-tbody');
+
+    if (allBookings.length === 0) {
+      document.getElementById('table-card').style.display  = 'none';
+      document.getElementById('empty-state').style.display = 'block';
+      return;
+    }
+
+    document.getElementById('table-card').style.display  = 'block';
+    document.getElementById('empty-state').style.display = 'none';
+
+    if (filtered.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;color:#9ca3af;padding:40px">No ' + currentFilter + ' bookings found.</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = filtered.map(function(b) {
+      var statusCap = b.status.charAt(0).toUpperCase() + b.status.slice(1);
+      var action = b.status !== 'cancelled'
+        ? '<button class="btn-sm btn-red" onclick="cancelBooking(\'' + b.id + '\')">Cancel</button>'
+        : '<span style="color:#9ca3af;font-size:12px">—</span>';
+      return '<tr>' +
+        '<td><strong style="color:#0f6e56">' + b.id + '</strong></td>' +
+        '<td>' + b.route + '</td>' +
+        '<td>' + formatDate(b.date) + '</td>' +
+        '<td>' + (b.departure || '—') + '</td>' +
+        '<td><strong>Seat ' + b.seat + '</strong></td>' +
+        '<td>' + formatPeso(b.price) + '</td>' +
+        '<td>' + (b.paymentMethod || '—') + '</td>' +
+        '<td><span class="badge-' + b.status + '">' + statusCap + '</span></td>' +
+        '<td>' + action + '</td>' +
+        '</tr>';
+    }).join('');
+  }
+
+  function filterBookings(status, btn) {
+    currentFilter = status;
+    document.querySelectorAll('.filter-tab').forEach(function(b){
+      b.className = 'btn-sm btn-gray filter-tab';
+    });
+    btn.className = 'btn-sm btn-green filter-tab';
+    renderTable();
+  }
+
+  function cancelBooking(id) {
+    confirmAction('Are you sure you want to cancel this booking?', function() {
+      var b = Bookings.byId(id);
+      if (b) {
+        Bookings.cancel(id);
+        if (b.route && b.date && b.departure) Seats.free(b.route, b.date, b.departure, b.seat);
+        showToast('Booking ' + id + ' cancelled.');
+        renderTable();
+      }
+    });
+  }
+</script>
 </body>
 </html>

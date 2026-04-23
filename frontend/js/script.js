@@ -1,535 +1,263 @@
-// =========================================
-// PASSWORD TOGGLE (called via HTML onclick)
-// =========================================
-function togglePassword() {
-  const pass    = document.getElementById("password");
-  const confirm = document.getElementById("confirmPassword");
-  if (!pass || !confirm) return;
-  const isHidden = pass.type === "password";
-  pass.type    = isHidden ? "text" : "password";
-  confirm.type = isHidden ? "text" : "password";
+/* ═══════════════════════════════════════════
+   QuickReserve — Global JavaScript
+   File: js/script.js
+═══════════════════════════════════════════ */
+
+/* ─── LOCAL STORAGE HELPERS ─── */
+const QR = {
+  get(k, fallback = null) {
+    try {
+      const v = localStorage.getItem(k);
+      if (v === null || v === undefined) return fallback;
+      try { return JSON.parse(v); } catch { return v; }
+    } catch { return fallback; }
+  },
+  set(k, v) {
+    try { localStorage.setItem(k, typeof v === 'object' ? JSON.stringify(v) : String(v)); }
+    catch(e) { console.warn('QR.set error', e); }
+  },
+  remove(k) { try { localStorage.removeItem(k); } catch {} },
+};
+
+/* ─── PATH HELPER ─── */
+function toRoot(rootRelPath) {
+  const p = window.location.pathname;
+  let prefix = '';
+  if (/\/pages\/(admin|auth|user)\//.test(p)) prefix = '../../';
+  else if (/\/pages\//.test(p))               prefix = '../';
+  return prefix + rootRelPath;
 }
 
-// =========================================
-// PROFILE — EDIT / CANCEL / SAVE
-// =========================================
-const EDITABLE = [
-  'firstName', 'lastName', 'email', 'phone',
-  'dob', 'gender', 'street', 'city', 'province', 'region',
-  'curPass', 'newPass', 'conPass'
-];
+/* ─── AUTH ─── */
+const Auth = {
+  isLoggedIn() {
+    const u = this.currentUser();
+    return !!u && typeof u === 'object' && !!u.id;
+  },
+  currentUser() {
+    try {
+      const raw = localStorage.getItem('qr_user');
+      if (!raw) return null;
+      const u = JSON.parse(raw);
+      return (u && u.id) ? u : null;
+    } catch { return null; }
+  },
+  login(user) {
+    localStorage.setItem('qr_user', JSON.stringify(user));
+  },
+  logout() {
+    localStorage.removeItem('qr_user');
+    window.location.href = toRoot('index.html');
+  },
+  requireAuth() { return this.isLoggedIn(); },
+  requireAdmin() {
+    const u = this.currentUser();
+    return !!(u && u.role === 'admin');
+  },
+};
 
-function setEditMode(mode) {
-  const isEdit = mode === 'edit';
-  EDITABLE.forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.disabled = !isEdit;
-  });
-  const editBtn   = document.getElementById('editBtn');
-  const cancelBtn = document.getElementById('cancelBtn');
-  const saveRow   = document.getElementById('saveRow');
-  if (editBtn)   editBtn.style.display   = isEdit ? 'none'         : 'inline-block';
-  if (cancelBtn) cancelBtn.style.display = isEdit ? 'inline-block' : 'none';
-  if (saveRow)   saveRow.style.display   = isEdit ? 'flex'         : 'none';
-}
-
-function toggleEdit()  { setEditMode('edit'); }
-
-function cancelEdit() {
-  setEditMode('view');
-  const picker = document.getElementById('avatarPicker');
-  if (picker) picker.style.display = 'none';
-}
-
-function saveProfile() {
-  const first = document.getElementById('firstName')?.value.trim();
-  const last  = document.getElementById('lastName')?.value.trim();
-  const email = document.getElementById('email')?.value.trim();
-  const np    = document.getElementById('newPass')?.value;
-  const cp    = document.getElementById('conPass')?.value;
-
-  if (!first || !last || !email) { alert("Please fill in required fields."); return; }
-  if (np && np.length < 6)       { alert("New password must be at least 6 characters."); return; }
-  if (np && np !== cp)           { alert("Passwords do not match."); return; }
-
-  const nameEl = document.getElementById('headerName');
-  const mailEl = document.getElementById('headerEmail');
-  if (nameEl) nameEl.textContent = `${first} ${last}`;
-  if (mailEl) mailEl.textContent = email;
-
-  ['curPass', 'newPass', 'conPass'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.value = '';
-  });
-
-  setEditMode('view');
-  showToast("Changes saved!");
-}
-
-// =========================================
-// AVATAR PICKER
-// =========================================
-function togglePicker() {
-  const p = document.getElementById('avatarPicker');
-  if (!p) return;
-  p.style.display = p.style.display === 'block' ? 'none' : 'block';
-}
-
-function pickAvatar(el, emoji) {
-  document.querySelectorAll('.avatar-opt').forEach(o => o.classList.remove('picked'));
-  el.classList.add('picked');
-
-  const main = document.getElementById('mainAvatar');
-  const nav  = document.getElementById('navAvatar');
-  if (main) { main.textContent = emoji; main.style.background = el.style.background; }
-  if (nav)  nav.textContent = emoji;
-
-  setTimeout(() => {
-    const p = document.getElementById('avatarPicker');
-    if (p) p.style.display = 'none';
-  }, 250);
-
-  showToast("Avatar updated!");
-}
-
-// =========================================
-// TOAST
-// =========================================
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  if (!t) return;
-  t.textContent   = msg;
-  t.style.opacity = '1';
-  setTimeout(() => { t.style.opacity = '0'; }, 2000);
-}
-
-// =========================================
-// DELETE ACCOUNT
-// =========================================
-function confirmDelete() {
-  if (confirm("Are you sure? This cannot be undone.")) {
-    window.location.href = "/index.html";
+/* ─── SEED DEFAULT DATA ─── */
+function seedData() {
+  if (!QR.get('qr_users')) {
+    QR.set('qr_users', [
+      { id: 1, name: 'Admin User',     email: 'admin@quickreserve.com', password: 'admin123', role: 'admin', phone: '09001234567', joined: '2024-01-01' },
+      { id: 2, name: 'Maria Santos',   email: 'maria@example.com',      password: 'user123',  role: 'user',  phone: '09171234567', joined: '2024-06-10' },
+      { id: 3, name: 'Juan dela Cruz', email: 'juan@example.com',       password: 'user123',  role: 'user',  phone: '09281234567', joined: '2024-07-22' },
+    ]);
+  }
+  if (!QR.get('qr_trips')) {
+    QR.set('qr_trips', [
+      { id: 1, route: 'Legazpi City \u2192 Sorsogon City', duration: '1-2 hrs',    priceMin: 150, priceMax: 250, departures: ['06:00','09:00','12:00','15:00','18:00'],                        totalSeats: 45 },
+      { id: 2, route: 'Legazpi City \u2192 Naga City',     duration: '2-3 hrs',    priceMin: 200, priceMax: 350, departures: ['06:00','09:00','12:00','18:00','21:00'],                        totalSeats: 45 },
+      { id: 3, route: 'Naga City \u2192 Daet',             duration: '3-4 hrs',    priceMin: 300, priceMax: 450, departures: ['07:00','13:00','19:00'],                                       totalSeats: 45 },
+      { id: 4, route: 'Iriga City \u2192 Naga City',       duration: '1-2 hrs',    priceMin: 150, priceMax: 250, departures: ['06:00','09:00','12:00','15:00','18:00'],                        totalSeats: 45 },
+      { id: 5, route: 'Ligao City \u2192 Legazpi City',    duration: '30-45 mins', priceMin: 80,  priceMax: 150, departures: ['06:00','08:00','10:00','12:00','14:00','16:00','18:00'],        totalSeats: 45 },
+      { id: 6, route: 'Polangui \u2192 Legazpi City',      duration: '45-60 mins', priceMin: 60,  priceMax: 120, departures: ['06:00','08:00','10:00','12:00','14:00','16:00','18:00'],        totalSeats: 45 },
+    ]);
+  }
+  if (!QR.get('qr_bookings')) {
+    QR.set('qr_bookings', [
+      { id: 'QR-0001', userId: 2, userName: 'Maria Santos',   route: 'Legazpi City \u2192 Naga City',     seat: 'A1', date: '2026-05-10', departure: '09:00', price: 250, status: 'confirmed', paymentMethod: 'GCash',       createdAt: '2026-04-20' },
+      { id: 'QR-0002', userId: 3, userName: 'Juan dela Cruz', route: 'Legazpi City \u2192 Sorsogon City', seat: 'B3', date: '2026-05-15', departure: '06:00', price: 200, status: 'confirmed', paymentMethod: 'Cash',        createdAt: '2026-04-21' },
+      { id: 'QR-0003', userId: 2, userName: 'Maria Santos',   route: 'Naga City \u2192 Daet',             seat: 'C2', date: '2026-04-30', departure: '07:00', price: 350, status: 'pending',   paymentMethod: 'Credit Card', createdAt: '2026-04-22' },
+    ]);
   }
 }
 
-// =========================================
-// SHARED HELPERS  (available to all pages)
-// =========================================
-function formatTime(t) {
-  if (!t || t === "—") return "—";
+// Clear stale Albay data and re-seed
+(function migrateRouteData() {
   try {
-    const [h, m] = t.split(":");
-    const hour   = parseInt(h, 10);
-    const ampm   = hour >= 12 ? "PM" : "AM";
-    const h12    = hour % 12 || 12;
-    return `${h12}:${m} ${ampm}`;
-  } catch { return t; }
-}
-
-function isValidEmail(email) {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-}
-
-function isValidPhone(phone) {
-  return /^(09|\+639)\d{9}$/.test(phone.replace(/\s/g, ""));
-}
-
-// =========================================
-// DOM-READY  (single listener — no duplicates)
-// =========================================
-document.addEventListener("DOMContentLoaded", function () {
-
-  // ── SCROLL FADE ANIMATION ─────────────────────────────────
-  const allFadeEls = document.querySelectorAll(
-    ".fade, .step-box, .why-btn, .btn-start, .card"
-  );
-  const fadeObserver = new IntersectionObserver(
-    entries => entries.forEach(e => { if (e.isIntersecting) e.target.classList.add("show"); }),
-    { threshold: 0.15 }
-  );
-  allFadeEls.forEach(el => fadeObserver.observe(el));
-
-  // ── SEARCH TRIP (home page) ───────────────────────────────
-  // Uses absolute path so it works from index.html at the root level
-  window.searchTrip = function () {
-    const from = "Albay";
-    const to   = document.getElementById("to")?.value;
-    const date = document.getElementById("date")?.value;
-    if (!to || !date) { alert("Please enter destination and date"); return; }
-    window.location.href = `/pages/search.html?from=${from}&to=${to}&date=${date}`;
-  };
-
-  // ── SEAT SELECTION ────────────────────────────────────────
-  document.addEventListener("click", function (e) {
-    if (!e.target.classList.contains("seat") || e.target.classList.contains("booked")) return;
-
-    document.querySelectorAll(".seat.selected").forEach(s => {
-      if (s !== e.target) s.classList.remove("selected");
-    });
-    e.target.classList.toggle("selected");
-
-    const selected = document.querySelector(".seat.selected");
-    if (selected) {
-      localStorage.setItem("selectedSeat", selected.dataset.seat || selected.textContent.trim());
-    } else {
-      localStorage.removeItem("selectedSeat");
+    var trips = localStorage.getItem('qr_trips');
+    if (trips && trips.indexOf('Legazpi') === -1) {
+      localStorage.removeItem('qr_trips');
+      localStorage.removeItem('qr_bookings');
     }
+  } catch(e) {}
+})();
+seedData();
 
-    const display = document.getElementById("selectedSeatDisplay");
-    if (display) {
-      display.textContent = selected
-        ? `Seat ${selected.dataset.seat || selected.textContent.trim()} selected`
-        : "No seat selected";
+/* ─── BOOKINGS CRUD ─── */
+const Bookings = {
+  all()        { return QR.get('qr_bookings', []); },
+  forUser(uid) { return this.all().filter(b => Number(b.userId) === Number(uid)); },
+  byId(id)     { return this.all().find(b => b.id === id); },
+  add(booking) {
+    const all = this.all();
+    const id  = 'QR-' + String(all.length + 1).padStart(4, '0');
+    const nb  = { id, ...booking, createdAt: new Date().toISOString().split('T')[0] };
+    all.push(nb);
+    QR.set('qr_bookings', all);
+    return nb;
+  },
+  update(id, data) {
+    const all = this.all();
+    const i   = all.findIndex(b => b.id === id);
+    if (i > -1) { all[i] = { ...all[i], ...data }; QR.set('qr_bookings', all); }
+  },
+  cancel(id) { this.update(id, { status: 'cancelled' }); },
+  delete(id) { QR.set('qr_bookings', this.all().filter(b => b.id !== id)); },
+};
+
+/* ─── TRIPS CRUD ─── */
+const Trips = {
+  all()    { return QR.get('qr_trips', []); },
+  byId(id) { return this.all().find(t => Number(t.id) === Number(id)); },
+  add(trip) {
+    const all = this.all();
+    const id  = Math.max(...all.map(t => t.id), 0) + 1;
+    all.push({ id, ...trip });
+    QR.set('qr_trips', all);
+  },
+  update(id, data) {
+    const all = this.all();
+    const i   = all.findIndex(t => Number(t.id) === Number(id));
+    if (i > -1) { all[i] = { ...all[i], ...data }; QR.set('qr_trips', all); }
+  },
+  delete(id) { QR.set('qr_trips', this.all().filter(t => Number(t.id) !== Number(id))); },
+};
+
+/* ─── USERS CRUD ─── */
+const Users = {
+  all()          { return QR.get('qr_users', []); },
+  byId(id)       { return this.all().find(u => Number(u.id) === Number(id)); },
+  byEmail(email) { return this.all().find(u => u.email === email); },
+  add(user) {
+    const all = this.all();
+    const id  = Math.max(...all.map(u => u.id), 0) + 1;
+    const nu  = { id, role: 'user', joined: new Date().toISOString().split('T')[0], ...user };
+    all.push(nu);
+    QR.set('qr_users', all);
+    return nu;
+  },
+  update(id, data) {
+    const all = this.all();
+    const i   = all.findIndex(u => Number(u.id) === Number(id));
+    if (i > -1) {
+      all[i] = { ...all[i], ...data };
+      QR.set('qr_users', all);
+      const cur = Auth.currentUser();
+      if (cur && Number(cur.id) === Number(id)) Auth.login(all[i]);
     }
-  });
+  },
+  delete(id) { QR.set('qr_users', this.all().filter(u => Number(u.id) !== Number(id))); },
+};
 
-  // ── TRIP CARD SELECTION (results / search page) ──────────
-  // Uses absolute path so redirect works regardless of which folder calls it
-  window.selectTrip = function (route, price, departure, busType) {
-    localStorage.setItem("selectedRoute",     route);
-    localStorage.setItem("selectedPrice",     price);
-    localStorage.setItem("selectedDeparture", departure);
-    localStorage.setItem("selectedBusType",   busType);
-    localStorage.removeItem("selectedSeat");
-    window.location.href = "/pages/seats.html";
-  };
+/* ─── SEAT HELPERS ─── */
+const Seats = {
+  _key(route, date, dep) {
+    return ('seats_' + route + '_' + date + '_' + dep)
+      .replace(/\s*\u2192\s*/g, '_').replace(/\s+/g, '_');
+  },
+  getTaken(route, date, dep) { return QR.get(this._key(route, date, dep), []); },
+  book(route, date, dep, seat) {
+    const key = this._key(route, date, dep);
+    const t   = QR.get(key, []);
+    if (!t.includes(seat)) { t.push(seat); QR.set(key, t); }
+  },
+  free(route, date, dep, seat) {
+    const key = this._key(route, date, dep);
+    QR.set(key, QR.get(key, []).filter(s => s !== seat));
+  },
+};
 
-  // ── PROCEED TO BOOKING (seats page) ──────────────────────
-  // Uses absolute path so redirect works regardless of which folder calls it
-  window.proceedToBooking = function () {
-    if (!localStorage.getItem("selectedSeat")) {
-      alert("Please select a seat before proceeding.");
-      return;
-    }
-    window.location.href = "/pages/user/booking.html";
-  };
-
-  // ── REGISTER FORM VALIDATION ──────────────────────────────
-  const registerForm = document.getElementById("registerForm");
-  if (registerForm) {
-    registerForm.addEventListener("submit", function (e) {
-      const password = document.getElementById("password")?.value;
-      const confirm  = document.getElementById("confirmPassword")?.value;
-      if (!password || !confirm) return;
-      if (password.length < 6) { e.preventDefault(); alert("Password must be at least 6 characters"); return; }
-      if (password !== confirm) { e.preventDefault(); alert("Passwords do not match"); }
-    });
+/* ─── NAVBAR ─── */
+function renderNavUser() {
+  const container = document.getElementById('nav-auth-btns');
+  if (!container) return;
+  const u = Auth.currentUser();
+  if (u && u.id) {
+    container.innerHTML =
+      '<span style="color:rgba(255,255,255,0.75);font-size:13px;font-weight:500">Hi, ' + u.name.split(' ')[0] + '</span>' +
+      (u.role === 'admin' ? '<a href="' + toRoot('pages/admin/admin-dashboard.html') + '" class="btn-register">Admin</a>' : '') +
+      '<button onclick="Auth.logout()" class="nav-login" style="cursor:pointer">Logout</button>';
+  } else {
+    container.innerHTML =
+      '<a href="' + toRoot('pages/auth/login.html') + '" class="nav-login">Login</a>' +
+      '<a href="' + toRoot('pages/auth/register.html') + '" class="btn-register">Register</a>';
   }
+}
 
-  // ===========================================================
-  // ADMIN DASHBOARD
-  // ===========================================================
-  if (document.querySelector(".dash-wrapper")) {
+/* ─── TOAST ─── */
+function showToast(msg, type) {
+  type = type || 'success';
+  let box = document.getElementById('qr-toast-box');
+  if (!box) {
+    box = document.createElement('div');
+    box.id = 'qr-toast-box';
+    box.style.cssText = 'position:fixed;bottom:24px;right:24px;z-index:9999;display:flex;flex-direction:column;gap:8px;pointer-events:none';
+    document.body.appendChild(box);
+  }
+  const t  = document.createElement('div');
+  const bg = type === 'error' ? '#dc2626' : type === 'warning' ? '#d97706' : '#0f6e56';
+  t.style.cssText = 'background:' + bg + ';color:#fff;padding:12px 20px;border-radius:10px;font-size:13.5px;font-weight:600;box-shadow:0 4px 20px rgba(0,0,0,0.2);font-family:Poppins,sans-serif;max-width:320px';
+  t.textContent = msg;
+  box.appendChild(t);
+  setTimeout(function() { t.remove(); }, 3000);
+}
 
-    let trips = JSON.parse(localStorage.getItem("trips") || "[]");
+/* ─── CONFIRM ─── */
+function confirmAction(msg, cb) { if (window.confirm(msg)) cb(); }
 
-    // Sidebar nav
-    document.querySelectorAll(".nav-item").forEach(item => {
-      item.addEventListener("click", () => {
-        const section = item.dataset.section;
-        if (!section) return;
-        document.querySelectorAll(".nav-item").forEach(n => n.classList.remove("active"));
-        item.classList.add("active");
-        document.querySelectorAll("[id^='section-']").forEach(s => s.style.display = "none");
-        const target = document.getElementById("section-" + section);
-        if (target) target.style.display = "block";
-        const labels = {
-          trips:    ["Manage Trips",    "Add, view, and manage all available trips"],
-          bookings: ["Manage Bookings", "View and handle all customer bookings"],
-          users:    ["Manage Users",    "View and manage registered users"],
-          reports:  ["Reports",         "View system reports and analytics"],
-        };
-        const titleEl    = document.getElementById("pageTitle");
-        const subtitleEl = document.getElementById("pageSubtitle");
-        if (titleEl)    titleEl.textContent    = labels[section]?.[0] || section;
-        if (subtitleEl) subtitleEl.textContent = labels[section]?.[1] || "";
+/* ─── FORMATTERS ─── */
+function formatDate(d) {
+  if (!d) return '\u2014';
+  try { return new Date(d + 'T00:00:00').toLocaleDateString('en-PH', { year: 'numeric', month: 'short', day: 'numeric' }); }
+  catch { return d; }
+}
+function formatPeso(n) { return '\u20b1' + Number(n || 0).toLocaleString(); }
 
-        if (section === "bookings") renderAdminBookings();
-      });
-    });
+/* ─── SEARCH / BOOK ─── */
+function searchTrip() {
+  const fromEl = document.getElementById('from');
+  const from   = fromEl ? fromEl.value.trim() : 'Legazpi City';
+  const to     = (document.getElementById('to') ? document.getElementById('to').value : '').trim();
+  const date   = document.getElementById('date') ? document.getElementById('date').value : '';
+  if (!from) { showToast('Please enter an origin.', 'error'); return; }
+  if (!to)   { showToast('Please enter a destination.', 'error'); return; }
+  if (!date) { showToast('Please select a travel date.', 'error'); return; }
+  localStorage.setItem('selectedRoute',    from + ' \u2192 ' + to);
+  localStorage.setItem('selectedDuration', 'varies');
+  localStorage.setItem('selectedPriceMin', '0');
+  localStorage.setItem('selectedPriceMax', '0');
+  localStorage.setItem('selectedDate',     date);
+  localStorage.removeItem('selectedSeat');
+  window.location.href = toRoot('seats.html');
+}
 
-    // Add trip form
-    const tripForm = document.getElementById("tripForm");
-    if (tripForm) {
-      tripForm.addEventListener("submit", function (e) {
-        e.preventDefault();
-        const route     = document.getElementById("route").value.trim();
-        const price     = parseFloat(document.getElementById("price").value);
-        const departure = document.getElementById("departure").value;
-        const busType   = document.getElementById("busType").value;
-        const msg       = document.getElementById("message");
+function quickBook(origin, destination, routeKey, priceMin, priceMax, duration) {
+  var dateEl = document.getElementById('date');
+  localStorage.setItem('selectedRoute',    origin + ' \u2192 ' + destination);
+  localStorage.setItem('selectedDuration', duration);
+  localStorage.setItem('selectedPriceMin', String(priceMin));
+  localStorage.setItem('selectedPriceMax', String(priceMax));
+  localStorage.setItem('selectedDate',     dateEl ? dateEl.value : '');
+  localStorage.removeItem('selectedSeat');
+  window.location.href = toRoot('seats.html');
+}
 
-        if (!route || isNaN(price) || price <= 0) {
-          showAdminMsg(msg, "Please fill in Route and a valid Price.", "danger"); return;
-        }
-        trips.push({ id: Date.now(), route, price, departure: departure || "—", busType: busType || "Standard" });
-        saveTrips();
-        renderTripTable();
-        updateStats();
-        this.reset();
-        showAdminMsg(msg, `✅ Trip "${route}" added successfully!`, "success");
-      });
-    }
-
-    function renderTripTable(filter = "") {
-      const tbody = document.getElementById("tripTable");
-      if (!tbody) return;
-      const filtered = trips.filter(t => t.route.toLowerCase().includes(filter.toLowerCase()));
-      if (filtered.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="6" class="empty-msg">${
-          filter ? "No trips match your search." : "No trips added yet. Add one above."
-        }</td></tr>`;
-        return;
-      }
-      tbody.innerHTML = filtered.map((t, i) => `
-        <tr>
-          <td style="color:var(--text-muted)">${i + 1}</td>
-          <td><span class="route-badge">${t.route}</span></td>
-          <td>₱${Number(t.price).toLocaleString()}</td>
-          <td>${formatTime(t.departure)}</td>
-          <td><span class="type-badge">${t.busType}</span></td>
-          <td><button class="btn-delete" onclick="deleteTrip(${t.id})">Delete</button></td>
-        </tr>
-      `).join("");
-    }
-
-    window.deleteTrip = function (id) {
-      if (!confirm("Delete this trip?")) return;
-      trips = trips.filter(t => t.id !== id);
-      saveTrips();
-      renderTripTable();
-      updateStats();
-    };
-
-    const searchInput = document.getElementById("searchTrip");
-    if (searchInput) searchInput.addEventListener("input", function () { renderTripTable(this.value); });
-
-    function updateStats() {
-      const g = id => document.getElementById(id);
-      if (g("statTotalTrips"))  g("statTotalTrips").textContent  = trips.length;
-      if (g("statRoutes"))      g("statRoutes").textContent      = new Set(trips.map(t => t.route)).size;
-      const avg = trips.length ? Math.round(trips.reduce((s, t) => s + t.price, 0) / trips.length) : 0;
-      if (g("statAvgPrice"))    g("statAvgPrice").textContent    = `₱${avg.toLocaleString()}`;
-    }
-
-    function saveTrips() { localStorage.setItem("trips", JSON.stringify(trips)); }
-
-    function showAdminMsg(el, text, type) {
-      if (!el) return;
-      el.innerHTML = `<div class="alert-${type}">${text}</div>`;
-      setTimeout(() => { el.innerHTML = ""; }, 3000);
-    }
-
-    function renderAdminBookings() {
-      const tbody = document.getElementById("adminBookingsTable");
-      if (!tbody) return;
-      const bookings = JSON.parse(localStorage.getItem("bookings") || "[]").slice().reverse();
-      if (bookings.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="7" class="empty-msg">No bookings yet.</td></tr>`;
-        return;
-      }
-      tbody.innerHTML = bookings.map((b, i) => `
-        <tr>
-          <td style="color:var(--text-muted)">${i + 1}</td>
-          <td>${b.id}</td>
-          <td>${b.passenger}</td>
-          <td><span class="route-badge">${b.route}</span></td>
-          <td>Seat ${b.seat}</td>
-          <td>₱${Number(b.total).toLocaleString()}</td>
-          <td><span class="type-badge status-${(b.status || "confirmed").toLowerCase()}">${b.status || "Confirmed"}</span></td>
-        </tr>
-      `).join("");
-    }
-
-    renderTripTable();
-    updateStats();
-    renderAdminBookings();
-
-  } // end .dash-wrapper
-
-  // ===========================================================
-  // BOOKING PAGE
-  // ===========================================================
-  if (document.querySelector(".booking-container")) {
-
-    const BOOKING_FEE   = 25;
-    let   selectedPayment = "Cash";
-
-    function loadBookingData() {
-      const seat      = localStorage.getItem("selectedSeat");
-      const route     = localStorage.getItem("selectedRoute")     || "—";
-      const price     = parseFloat(localStorage.getItem("selectedPrice"))  || 0;
-      const departure = localStorage.getItem("selectedDeparture") || "—";
-      const busType   = localStorage.getItem("selectedBusType")   || "Standard";
-
-      if (!seat) {
-        const msg = document.getElementById("message");
-        if (msg) {
-          msg.textContent   = "⚠️ No seat selected. Please go back and choose a seat first.";
-          msg.className     = "b-message danger";
-          msg.style.display = "block";
-        }
-      }
-
-      const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
-      set("displayRoute",     route);
-      set("displayDeparture", formatTime(departure));
-      set("displayBusType",   busType);
-      set("displaySeat",      seat ? `Seat ${seat}` : "— (none selected)");
-      set("displayPrice",     `₱${price.toLocaleString("en-PH", { minimumFractionDigits: 2 })}`);
-      set("displayTotal",     `₱${(price + BOOKING_FEE).toLocaleString("en-PH", { minimumFractionDigits: 2 })}`);
-    }
-
-    window.selectPayment = function (el) {
-      document.querySelectorAll(".pay-option").forEach(o => o.classList.remove("active"));
-      el.classList.add("active");
-      selectedPayment = el.dataset.method;
-    };
-
-    function showMsg(el, text, type) {
-      if (!el) return;
-      el.textContent   = text;
-      el.className     = `b-message ${type}`;
-      el.style.display = "block";
-    }
-
-    const confirmBtn = document.getElementById("confirmBtn");
-    if (confirmBtn) {
-      confirmBtn.addEventListener("click", () => {
-        const firstName = document.getElementById("firstName")?.value.trim();
-        const lastName  = document.getElementById("lastName")?.value.trim();
-        const email     = document.getElementById("email")?.value.trim();
-        const phone     = document.getElementById("phone")?.value.trim();
-        const msg       = document.getElementById("message");
-
-        if (!firstName || !lastName || !email || !phone) {
-          showMsg(msg, "⚠️ Please fill in all passenger details.", "danger"); return;
-        }
-        if (!isValidEmail(email)) {
-          showMsg(msg, "⚠️ Please enter a valid email address.", "danger"); return;
-        }
-        if (!isValidPhone(phone)) {
-          showMsg(msg, "⚠️ Please enter a valid PH phone number (e.g. 09XXXXXXXXX).", "danger"); return;
-        }
-
-        const seat      = localStorage.getItem("selectedSeat")      || "—";
-        const route     = localStorage.getItem("selectedRoute")     || "—";
-        const price     = parseFloat(localStorage.getItem("selectedPrice"))  || 0;
-        const departure = localStorage.getItem("selectedDeparture") || "—";
-        const busType   = localStorage.getItem("selectedBusType")   || "Standard";
-
-        const booking = {
-          id:        "BK-" + Date.now(),
-          passenger: `${firstName} ${lastName}`,
-          email, phone,
-          route, seat, price, departure, busType,
-          fee:       BOOKING_FEE,
-          total:     price + BOOKING_FEE,
-          payment:   selectedPayment,
-          status:    "Confirmed",
-          bookedAt:  new Date().toISOString(),
-        };
-
-        const bookings = JSON.parse(localStorage.getItem("bookings") || "[]");
-        bookings.push(booking);
-        localStorage.setItem("bookings",    JSON.stringify(bookings));
-        localStorage.setItem("lastBooking", JSON.stringify(booking));
-        localStorage.removeItem("selectedSeat");
-
-        showMsg(msg, `✅ Booking confirmed! Reference: ${booking.id}`, "success");
-        confirmBtn.disabled         = true;
-        confirmBtn.textContent      = "Booking Confirmed!";
-        confirmBtn.style.background = "#0f6e56";
-
-        // Absolute path so redirect works from pages/user/booking.html
-        setTimeout(() => { window.location.href = "/pages/user/my-bookings.html"; }, 2000);
-      });
-    }
-
-    loadBookingData();
-
-  } // end .booking-container
-
-  // ===========================================================
-  // MY BOOKINGS PAGE
-  // ===========================================================
-  if (document.querySelector(".my-bookings-container")) {
-
-    function formatDate(iso) {
-      if (!iso) return "—";
-      try {
-        return new Date(iso).toLocaleDateString("en-PH", {
-          year: "numeric", month: "long", day: "numeric",
-          hour: "2-digit", minute: "2-digit",
-        });
-      } catch { return iso; }
-    }
-
-    function renderBookings() {
-      const container = document.getElementById("bookingsList");
-      const emptyMsg  = document.getElementById("emptyBookings");
-      if (!container) return;
-
-      const bookings = JSON.parse(localStorage.getItem("bookings") || "[]").slice().reverse();
-
-      if (bookings.length === 0) {
-        container.innerHTML = "";
-        if (emptyMsg) emptyMsg.style.display = "block";
-        return;
-      }
-      if (emptyMsg) emptyMsg.style.display = "none";
-
-      container.innerHTML = bookings.map(b => {
-        const statusKey   = (b.status || "confirmed").toLowerCase();
-        const isCancelled = statusKey === "cancelled";
-        return `
-        <div class="booking-card">
-          <div class="booking-card-header">
-            <span class="booking-ref">${b.id}</span>
-            <span class="booking-status status-${statusKey}">${b.status || "Confirmed"}</span>
-          </div>
-          <div class="booking-card-body">
-            <div class="booking-row"><span class="booking-label">🛣️ Route</span>      <span class="booking-value">${b.route}</span></div>
-            <div class="booking-row"><span class="booking-label">🕐 Departure</span>  <span class="booking-value">${formatTime(b.departure)}</span></div>
-            <div class="booking-row"><span class="booking-label">🚌 Bus Type</span>   <span class="booking-value">${b.busType || "Standard"}</span></div>
-            <div class="booking-row"><span class="booking-label">💺 Seat</span>       <span class="booking-value">${b.seat && b.seat !== "—" ? "Seat " + b.seat : "—"}</span></div>
-            <div class="booking-row"><span class="booking-label">👤 Passenger</span>  <span class="booking-value">${b.passenger}</span></div>
-            <div class="booking-row"><span class="booking-label">📧 Email</span>      <span class="booking-value">${b.email}</span></div>
-            <div class="booking-row"><span class="booking-label">📞 Phone</span>      <span class="booking-value">${b.phone}</span></div>
-            <div class="booking-row"><span class="booking-label">💳 Payment</span>    <span class="booking-value">${b.payment}</span></div>
-            <div class="booking-row booking-row-total">
-              <span class="booking-label">💰 Total Paid</span>
-              <span class="booking-value booking-total">₱${Number(b.total).toLocaleString("en-PH", { minimumFractionDigits: 2 })}</span>
-            </div>
-            <div class="booking-row"><span class="booking-label">📅 Booked On</span>  <span class="booking-value">${formatDate(b.bookedAt)}</span></div>
-          </div>
-          <div class="booking-card-footer">
-            ${isCancelled
-              ? `<span class="cancelled-note">Booking cancelled</span>`
-              : `<button class="btn-cancel-booking" onclick="cancelBooking('${b.id}')">Cancel Booking</button>`
-            }
-          </div>
-        </div>`;
-      }).join("");
-    }
-
-    window.cancelBooking = function (id) {
-      if (!confirm("Are you sure you want to cancel this booking?")) return;
-      const bookings = JSON.parse(localStorage.getItem("bookings") || "[]");
-      const updated  = bookings.map(b => b.id === id ? { ...b, status: "Cancelled" } : b);
-      localStorage.setItem("bookings", JSON.stringify(updated));
-      renderBookings();
-    };
-
-    window.clearAllBookings = function () {
-      if (!confirm("Clear ALL bookings? This cannot be undone.")) return;
-      localStorage.removeItem("bookings");
-      localStorage.removeItem("lastBooking");
-      renderBookings();
-    };
-
-    renderBookings();
-
-  } // end .my-bookings-container
-
-}); // end DOMContentLoaded
+/* ─── INIT ─── */
+document.addEventListener('DOMContentLoaded', function() {
+  renderNavUser();
+  var dateEl = document.getElementById('date');
+  if (dateEl && !dateEl.value) dateEl.min = new Date().toISOString().split('T')[0];
+});

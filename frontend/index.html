@@ -2,346 +2,272 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>QuickReserve</title>
-
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QuickReserve — Book Your Bus Seat</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
 </head>
-
 <body>
 
-<!-- ================= NAVBAR ================= -->
-<nav class="navbar navbar-dark bg-dark navbar-expand-lg px-4 fixed-top">
-
- <a class="navbar-brand fw-bold d-flex align-items-center" href="index.html">
-  <img src="img/rabbit.png" class="logo-icon" alt="Logo">
-  <span><span class="quick">Quick</span>Reserve</span>
-</a>
-
-  <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
-    <span class="navbar-toggler-icon"></span>
-  </button>
-
-  <div class="collapse navbar-collapse" id="nav">
-
-    <ul class="navbar-nav ms-auto">
-      <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
-      <li class="nav-item"><a class="nav-link" href="index.html#routes">Trips</a></li>
-      <li class="nav-item"><a class="nav-link" href="pages/user/booking.html">Booking</a></li>
-      <li class="nav-item"><a class="nav-link" href="pages/user/profile.html">Profile</a></li>
-    </ul>
-
-  <div class="ms-lg-3 mt-2 mt-lg-0 d-flex align-items-center gap-2">
-    <a href="pages/auth/login.html" class="nav-login">Login</a>
-    <a href="pages/auth/register.html" class="btn-register">Register</a>
+<nav class="navbar navbar-expand-lg">
+  <div class="container" style="max-width:1200px">
+    <a class="navbar-brand" href="index.html">
+      <img src="img/rabbit.png" class="logo-icon" alt="Logo">
+      <span><span class="brand-quick">Quick</span>Reserve</span>
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="nav">
+      <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-1">
+        <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+        <li class="nav-item"><a class="nav-link" href="#routes">Routes</a></li>
+        <li class="nav-item"><a class="nav-link" href="pages/user/my-bookings.html">My Bookings</a></li>
+        <li class="nav-item"><a class="nav-link" href="pages/user/profile.html">Profile</a></li>
+      </ul>
+      <div class="ms-lg-3 mt-2 mt-lg-0 d-flex align-items-center gap-2" id="nav-auth-btns"></div>
+    </div>
   </div>
 </nav>
 
-<!-- LIVE AVAILABILITY -->
-<div class="live-bar-wrap text-center py-2 bg-dark text-white" style="margin-top:58px;">
+<div class="live-bar">
   <span class="live-dot"></span>
-  <strong>Live</strong> — Albay → Manila tonight &nbsp;|&nbsp;
-  <span style="color:#16c4a1; font-weight:700;">14 seats left</span>
+  <strong>Live</strong> — Legazpi City → Naga City tonight &nbsp;|&nbsp;
+  <span style="color:#16c4a1;font-weight:700;">14 seats left</span>
+  &nbsp;·&nbsp; Book now before they're gone!
 </div>
 
-<!-- ================= HERO ================= -->
-<header class="hero d-flex align-items-center text-white">
-
-  <div class="hero-content fade">
-    <h1 class="display-5 fw-bold">Your Seat, Just a Click Away.</h1>
-    <p class="lead">Your journey starts here</p>
-  </div>
-
-
-  <!-- SEARCH -->
-  <div class="hero-search fade">
-    <div class="card p-3 shadow-lg">
-      <div class="row g-2">
-
-        <div class="col-md-4">
-          <input type="text" class="form-control" value="Albay" disabled>
-        </div>
-
-        <div class="col-md-4">
-          <input id="to" type="text" class="form-control" placeholder="To (Destination)">
-        </div>
-
-        <div class="col-md-3">
-          <input id="date" type="date" class="form-control">
-        </div>
-
-        <div class="col-md-1">
-          <button class="btn btn-go w-100" onclick="searchTrip()">Go</button>
-        </div>
-
+<header class="hero">
+  <h1>Your Seat, Just a Click Away.</h1>
+  <p>Search your route, pick a seat, and you're on your way.</p>
+  <div class="search-card">
+    <h3>🔍 Find a Trip</h3>
+    <div class="search-row">
+      <div class="search-field">
+        <label>From (Origin)</label>
+        <input id="from" type="text" placeholder="e.g. Legazpi City" list="origins">
+        <datalist id="origins">
+          <option value="Legazpi City">
+          <option value="Naga City">
+          <option value="Iriga City">
+          <option value="Ligao City">
+          <option value="Polangui">
+        </datalist>
+      </div>
+      <div class="search-field">
+        <label>To (Destination)</label>
+        <input id="to" type="text" placeholder="e.g. Naga City" list="destinations">
+        <datalist id="destinations">
+          <option value="Sorsogon City">
+          <option value="Naga City">
+          <option value="Daet">
+          <option value="Iriga City">
+          <option value="Ligao City">
+          <option value="Legazpi City">
+        </datalist>
+      </div>
+      <div class="search-field">
+        <label>Travel Date</label>
+        <input id="date" type="date">
+      </div>
+      <button class="btn-search" onclick="searchTrip()">Search →</button>
+    </div>
+    <div style="margin-top:16px;padding-top:14px;border-top:1px solid #f1f5f9">
+      <div style="font-size:11px;color:#9ca3af;font-weight:600;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px">Popular routes</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="quick-route" onclick="quickBook('Legazpi City','Sorsogon City','legazpi-sorsogon',150,250,'1-2 hrs')">Legazpi → Sorsogon City</button>
+        <button class="quick-route" onclick="quickBook('Legazpi City','Naga City','legazpi-naga',200,350,'2-3 hrs')">Legazpi → Naga City</button>
+        <button class="quick-route" onclick="quickBook('Naga City','Daet','naga-daet',300,450,'3-4 hrs')">Naga → Daet</button>
+        <button class="quick-route" onclick="quickBook('Iriga City','Naga City','iriga-naga',150,250,'1-2 hrs')">Iriga City → Naga City</button>
       </div>
     </div>
   </div>
-
 </header>
 
-<!-- STATS -->
-<section class="py-4 bg-white border-bottom">
+<section class="stats-strip">
   <div class="container">
-    <div class="row text-center g-3">
-      <div class="col-6 col-md-3"><h3 class="fw-bold" style="color:#20b2a6;">12,000+</h3><p class="text-muted small mb-0">Happy passengers</p></div>
-      <div class="col-6 col-md-3"><h3 class="fw-bold" style="color:#20b2a6;">6</h3><p class="text-muted small mb-0">Routes available</p></div>
-      <div class="col-6 col-md-3"><h3 class="fw-bold" style="color:#20b2a6;">99%</h3><p class="text-muted small mb-0">On-time rate</p></div>
-      <div class="col-6 col-md-3"><h3 class="fw-bold" style="color:#20b2a6;">24/7</h3><p class="text-muted small mb-0">Customer support</p></div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;text-align:center">
+      <div class="stat-item"><h3>12,000+</h3><p>Happy passengers</p></div>
+      <div class="stat-item"><h3>6</h3><p>Routes available</p></div>
+      <div class="stat-item"><h3>99%</h3><p>On-time rate</p></div>
+      <div class="stat-item"><h3>24/7</h3><p>Customer support</p></div>
     </div>
   </div>
 </section>
 
-<!-- HOW IT WORKS -->
-<section class="py-5 text-center bg-light fade">
+<section class="steps-section">
   <div class="container">
-    <h2 class="mb-4 fw-bold">How It Works</h2>
-
-    <div class="row g-4">
-      <div class="col-md-3"><div class="step-box">🚌 Choose Route</div></div>
-      <div class="col-md-3"><div class="step-box">🎫 Pick Trip</div></div>
-      <div class="col-md-3"><div class="step-box">💺 Select Seat</div></div>
-      <div class="col-md-3"><div class="step-box">✅ Confirm</div></div>
+    <div class="text-center mb-4">
+      <div class="section-label">Simple Process</div>
+      <h2 class="section-title">Book in 4 Easy Steps</h2>
+      <p class="section-sub">From search to confirmed seat in under 2 minutes.</p>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr auto 1fr auto 1fr auto 1fr;gap:0;align-items:start">
+      <div class="step-card"><div class="step-num">1</div><div class="step-icon">🔍</div><div class="step-title">Search Route</div><div class="step-desc">Enter your origin, destination and travel date above.</div></div>
+      <div class="step-arrow">→</div>
+      <div class="step-card"><div class="step-num">2</div><div class="step-icon">💺</div><div class="step-title">Choose Your Seat</div><div class="step-desc">Pick your preferred seat from the live bus seat map.</div></div>
+      <div class="step-arrow">→</div>
+      <div class="step-card"><div class="step-num">3</div><div class="step-icon">📝</div><div class="step-title">Fill Details</div><div class="step-desc">Enter your passenger info and choose your payment method.</div></div>
+      <div class="step-arrow">→</div>
+      <div class="step-card"><div class="step-num">4</div><div class="step-icon">✅</div><div class="step-title">Confirmed!</div><div class="step-desc">Get your booking reference and show it at the terminal.</div></div>
     </div>
   </div>
 </section>
 
-<!-- PROMO BANNER -->
-<section class="py-3">
+<section style="padding:0 0 40px;background:#fff">
   <div class="container">
-    <div class="p-4 rounded-3 text-white d-flex justify-content-between align-items-center flex-wrap gap-3"
-         style="background: linear-gradient(135deg, #20b2a6, #167c70);">
-      <div>
-        <h5 class="fw-bold mb-1">Summer Sale — Up to 20% off!</h5>
-        <p class="mb-0 small" style="opacity:0.85;">Book any route before June 30 and get a discount on your fare.</p>
-      </div>
-      <a href="pages/booking.html" class="btn fw-bold px-4 py-2 rounded-pill"
-         style="background:#fff; color:#167c70;">Grab the deal</a>
+    <div class="promo-banner">
+      <div><h5>🎉 Summer Sale — Up to 20% off!</h5><p>Book any route before June 30 and get a discount on your fare.</p></div>
+      <a href="#routes" class="btn-promo">View Routes →</a>
     </div>
   </div>
 </section>
 
-<!-- ================= FEATURED ROUTES ================= -->
-<section id="routes" class="py-5">
+<section id="routes" class="routes-section">
   <div class="container">
+    <div class="text-center mb-4">
+      <div class="section-label">Destinations</div>
+      <h2 class="section-title">Popular Routes</h2>
+      <p class="section-sub">Click any route to go straight to seat selection.</p>
+    </div>
+    <div class="route-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px">
 
-    <h2 class="text-center fw-bold mb-4">Popular Destinations</h2>
-
-    <div class="row g-4 justify-content-center">
-
-      <!-- ROUTE 1 -->
-      <div class="col-md-4">
-        <div class="card h-100">
-          <img src="img/baguio.jpg" class="card-img-top" alt="Baguio">
-          <div class="card-body">
-            <h5 class="card-title">Albay → Baguio</h5>
-            <p class="card-text">₱900–1,500 <br> 12–15 hrs</p>
-            <a href="user/booking.html?route=albay-baguio" class="btn btn-primary">Book Now</a>
-          </div>
+      <div class="route-card">
+        <img src="img/sorsogon.jpg" alt="Sorsogon City" onerror="this.src='https://placehold.co/400x160/0f6e56/fff?text=Sorsogon+City'">
+        <div class="route-card-body">
+          <div class="route-name">🚌 Legazpi City → Sorsogon City</div>
+          <div class="route-meta"><div class="route-meta-item"><strong>₱150–250</strong><br>Fare</div><div class="route-meta-item"><strong>1–2 hrs</strong><br>Duration</div></div>
+          <div class="route-badges"><span class="route-badge">Regular</span><span class="route-badge">A/C</span><span class="route-badge">Daily trips</span></div>
+          <button class="btn-book" onclick="quickBook('Legazpi City','Sorsogon City','legazpi-sorsogon',150,250,'1-2 hrs')">Select Seat →</button>
         </div>
       </div>
 
-      <!-- ROUTE 2 -->
-      <div class="col-md-4">
-        <div class="card h-100">
-          <img src="img/batanggas.jpg" class="card-img-top" alt="Batangas">
-          <div class="card-body">
-            <h5 class="card-title">Albay → Batangas</h5>
-            <p class="card-text">₱600–900 <br> 8–10 hrs</p>
-            <a href="user/booking.html?route=albay-batangas" class="btn btn-primary">Book Now</a>
-          </div>
+      <div class="route-card">
+        <img src="img/naga.jpg" alt="Naga City" onerror="this.src='https://placehold.co/400x160/16a37a/fff?text=Naga+City'">
+        <div class="route-card-body">
+          <div class="route-name">🚌 Legazpi City → Naga City</div>
+          <div class="route-meta"><div class="route-meta-item"><strong>₱200–350</strong><br>Fare</div><div class="route-meta-item"><strong>2–3 hrs</strong><br>Duration</div></div>
+          <div class="route-badges"><span class="route-badge">Regular</span><span class="route-badge">A/C</span></div>
+          <button class="btn-book" onclick="quickBook('Legazpi City','Naga City','legazpi-naga',200,350,'2-3 hrs')">Select Seat →</button>
         </div>
       </div>
 
-      <!-- ROUTE 3 -->
-      <div class="col-md-4">
-        <div class="card h-100">
-          <img src="img/laguna.jpg" class="card-img-top" alt="Laguna">
-          <div class="card-body">
-            <h5 class="card-title">Albay → Laguna</h5>
-            <p class="card-text">₱500–800 <br> 7–9 hrs</p>
-            <a href="user/booking.html?route=albay-laguna" class="btn btn-primary">Book Now</a>
-          </div>
+      <div class="route-card">
+        <img src="img/daet.jpg" alt="Daet" onerror="this.src='https://placehold.co/400x160/0a5c47/fff?text=Daet'">
+        <div class="route-card-body">
+          <div class="route-name">🚌 Naga City → Daet</div>
+          <div class="route-meta"><div class="route-meta-item"><strong>₱300–450</strong><br>Fare</div><div class="route-meta-item"><strong>3–4 hrs</strong><br>Duration</div></div>
+          <div class="route-badges"><span class="route-badge">Regular</span><span class="route-badge">A/C</span></div>
+          <button class="btn-book" onclick="quickBook('Naga City','Daet','naga-daet',300,450,'3-4 hrs')">Select Seat →</button>
         </div>
       </div>
 
-      <!-- ROUTE 4 -->
-      <div class="col-md-4">
-        <div class="card h-100">
-          <img src="img/manila.jpg" class="card-img-top" alt="Manila">
-          <div class="card-body">
-            <h5 class="card-title">Albay → Manila</h5>
-            <p class="card-text">₱1,100–1,500 <br> 7–9 hrs</p>
-            <a href="user/booking.html?route=albay-manila" class="btn btn-primary">Book Now</a>
-          </div>
+      <div class="route-card">
+        <img src="img/iriga.jpg" alt="Iriga City" onerror="this.src='https://placehold.co/400x160/1a8c6d/fff?text=Iriga+City'">
+        <div class="route-card-body">
+          <div class="route-name">🚌 Iriga City → Naga City</div>
+          <div class="route-meta"><div class="route-meta-item"><strong>₱150–250</strong><br>Fare</div><div class="route-meta-item"><strong>1–2 hrs</strong><br>Duration</div></div>
+          <div class="route-badges"><span class="route-badge">Regular</span></div>
+          <button class="btn-book" onclick="quickBook('Iriga City','Naga City','iriga-naga',150,250,'1-2 hrs')">Select Seat →</button>
         </div>
       </div>
 
-      <!-- ROUTE 5 -->
-      <div class="col-md-4">
-        <div class="card h-100">
-          <img src="img/tabaco.jpg" class="card-img-top" alt="Tabaco">
-          <div class="card-body">
-            <h5 class="card-title">Albay → Tabaco City</h5>
-            <p class="card-text">₱80–150 <br> 7–9 hrs</p>
-            <a href="user/booking.html?route=albay-tabaco" class="btn btn-primary">Book Now</a>
-          </div>
+      <div class="route-card">
+        <img src="img/ligao.jpg" alt="Ligao City" onerror="this.src='https://placehold.co/400x160/0d5c46/fff?text=Ligao+City'">
+        <div class="route-card-body">
+          <div class="route-name">🚌 Ligao City → Legazpi City</div>
+          <div class="route-meta"><div class="route-meta-item"><strong>₱80–150</strong><br>Fare</div><div class="route-meta-item"><strong>30–45 mins</strong><br>Duration</div></div>
+          <div class="route-badges"><span class="route-badge">Regular</span><span class="route-badge">Frequent trips</span></div>
+          <button class="btn-book" onclick="quickBook('Ligao City','Legazpi City','ligao-legazpi',80,150,'30-45 mins')">Select Seat →</button>
         </div>
       </div>
 
-      <!-- ROUTE 6 -->
-      <div class="col-md-4">
-        <div class="card h-100">
-          <img src="img/qc.jpg" class="card-img-top" alt="Quezon City">
-          <div class="card-body">
-            <h5 class="card-title">Albay → Quezon City</h5>
-            <p class="card-text">₱1,200–1,800 <br> 7–9 hrs</p>
-            <a href="user/booking.html?route=albay-quezon-city" class="btn btn-primary">Book Now</a>
-          </div>
+      <div class="route-card">
+        <img src="img/polangui.jpg" alt="Polangui" onerror="this.src='https://placehold.co/400x160/12805e/fff?text=Polangui'">
+        <div class="route-card-body">
+          <div class="route-name">🚌 Polangui → Legazpi City</div>
+          <div class="route-meta"><div class="route-meta-item"><strong>₱60–120</strong><br>Fare</div><div class="route-meta-item"><strong>45–60 mins</strong><br>Duration</div></div>
+          <div class="route-badges"><span class="route-badge">Regular</span><span class="route-badge">Frequent trips</span></div>
+          <button class="btn-book" onclick="quickBook('Polangui','Legazpi City','polangui-legazpi',60,120,'45-60 mins')">Select Seat →</button>
         </div>
       </div>
 
     </div>
-
   </div>
 </section>
 
-<!-- ================= WHY CHOOSE US ================= -->
-<section class="py-5 bg-light text-center">
+<section class="why-section">
   <div class="container">
-
-    <h2 class="fw-bold mb-4">Why Choose QuickReserve?</h2>
-
-    <div class="row g-4">
-
-      <div class="col-md-3">
-        <button class="why-btn">⚡ Fast Booking</button>
-      </div>
-
-      <div class="col-md-3">
-        <button class="why-btn">🔒 Secure System</button>
-      </div>
-
-      <div class="col-md-3">
-        <button class="why-btn">💺 Easy Seat Selection</button>
-      </div>
-
-      <div class="col-md-3">
-        <button class="why-btn">📞 24/7 Support</button>
-      </div>
-
-    </div>
-
-  </div>
-</section>
-
-<!-- ================= CTA ================= -->
-<section class="py-5 text-center">
-  <h3 class="fw-bold">Ready to travel?</h3>
-  <p>Book Your Seat Today.</p>
-
-  <a href="pages/auth/register.html" class="btn-start">
-    Start Booking
-  </a>
-</section>
-
-<!-- TESTIMONIALS -->
-<section class="py-5">
-  <div class="container">
-    <h2 class="text-center fw-bold mb-4">What Passengers Say</h2>
-    <div class="row g-4">
-      <div class="col-md-4">
-        <div class="card h-100 p-3 border-0 shadow-sm">
-          <div style="color:#f5a623;">★★★★★</div>
-          <p class="mt-2">"Super easy to book! Got my seat in less than 2 minutes."</p>
-          <strong style="color:#20b2a6;">Maria Santos</strong>
-          <small class="text-muted d-block">Albay → Manila</small>
-        </div>
-      </div>
-      <div class="col-md-4">
-        <div class="card h-100 p-3 border-0 shadow-sm">
-          <div style="color:#f5a623;">★★★★★</div>
-          <p class="mt-2">"No more long lines at the terminal. Saved me so much time!"</p>
-          <strong style="color:#20b2a6;">Juan dela Cruz</strong>
-          <small class="text-muted d-block">Albay → Baguio</small>
-        </div>
-      </div>
-      <div class="col-md-4">
-        <div class="card h-100 p-3 border-0 shadow-sm">
-          <div style="color:#f5a623;">★★★★☆</div>
-          <p class="mt-2">"Love the seat selection feature. Always get my window seat!"</p>
-          <strong style="color:#20b2a6;">Ana Reyes</strong>
-          <small class="text-muted d-block">Albay → Quezon City</small>
-        </div>
-      </div>
+    <div class="text-center mb-4"><div class="section-label">Why Us</div><h2 class="section-title">Why Choose QuickReserve?</h2></div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px">
+      <div class="why-card"><div class="why-icon">⚡</div><div class="why-title">Fast Booking</div><div class="why-desc">Book your seat in under 2 minutes from any device.</div></div>
+      <div class="why-card"><div class="why-icon">🔒</div><div class="why-title">Secure System</div><div class="why-desc">Your data and payments are always safe with us.</div></div>
+      <div class="why-card"><div class="why-icon">💺</div><div class="why-title">Seat Selection</div><div class="why-desc">Choose your exact seat from a live seat map.</div></div>
+      <div class="why-card"><div class="why-icon">📞</div><div class="why-title">24/7 Support</div><div class="why-desc">We're always here if you need help with your booking.</div></div>
     </div>
   </div>
 </section>
 
-<!-- FAQ -->
-<section class="py-5 bg-light">
-  <div class="container" style="max-width:700px;">
-    <h2 class="text-center fw-bold mb-4">Frequently Asked Questions</h2>
+<section style="background:#f9fafb;padding:56px 0">
+  <div class="container">
+    <div class="text-center mb-4"><div class="section-label">Reviews</div><h2 class="section-title">What Passengers Say</h2></div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px">
+      <div class="testimonial-card"><div class="stars">★★★★★</div><p class="testimonial-text">"Super easy to book! Got my seat in less than 2 minutes."</p><div class="testimonial-name">Maria Santos</div><div class="testimonial-route">Legazpi → Naga City</div></div>
+      <div class="testimonial-card"><div class="stars">★★★★★</div><p class="testimonial-text">"No more long lines at the terminal. Saved me so much time!"</p><div class="testimonial-name">Juan dela Cruz</div><div class="testimonial-route">Legazpi → Sorsogon City</div></div>
+      <div class="testimonial-card"><div class="stars">★★★★☆</div><p class="testimonial-text">"Love the seat selection feature. Always get my window seat!"</p><div class="testimonial-name">Ana Reyes</div><div class="testimonial-route">Naga City → Daet</div></div>
+    </div>
+  </div>
+</section>
+
+<section class="faq-section">
+  <div class="container" style="max-width:700px">
+    <div class="text-center mb-4"><div class="section-label">FAQ</div><h2 class="section-title">Frequently Asked Questions</h2></div>
     <div class="accordion" id="faqAccordion">
-
       <div class="accordion-item border-0 mb-2 rounded-3 shadow-sm">
-        <h2 class="accordion-header">
-          <button class="accordion-button collapsed fw-bold rounded-3" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
-            How do I cancel or change my booking?
-          </button>
-        </h2>
-        <div id="faq1" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-          <div class="accordion-body text-muted">You can cancel or modify your booking from the Profile page up to 2 hours before departure.</div>
-        </div>
+        <h2 class="accordion-header"><button class="accordion-button collapsed fw-bold rounded-3" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">How do I cancel or change my booking?</button></h2>
+        <div id="faq1" class="accordion-collapse collapse" data-bs-parent="#faqAccordion"><div class="accordion-body text-muted">You can cancel or modify your booking from the My Bookings page up to 2 hours before departure.</div></div>
       </div>
-
       <div class="accordion-item border-0 mb-2 rounded-3 shadow-sm">
-        <h2 class="accordion-header">
-          <button class="accordion-button collapsed fw-bold rounded-3" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
-            Do I need to print my ticket?
-          </button>
-        </h2>
-        <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-          <div class="accordion-body text-muted">No. Just show your booking confirmation on your phone at the terminal.</div>
-        </div>
+        <h2 class="accordion-header"><button class="accordion-button collapsed fw-bold rounded-3" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">Do I need to print my ticket?</button></h2>
+        <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion"><div class="accordion-body text-muted">No. Just show your booking confirmation on your phone at the terminal.</div></div>
       </div>
-
       <div class="accordion-item border-0 mb-2 rounded-3 shadow-sm">
-        <h2 class="accordion-header">
-          <button class="accordion-button collapsed fw-bold rounded-3" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
-            Can I choose my seat?
-          </button>
-        </h2>
-        <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-          <div class="accordion-body text-muted">Yes! After selecting your route and trip, you can pick any available seat on the bus.</div>
-        </div>
+        <h2 class="accordion-header"><button class="accordion-button collapsed fw-bold rounded-3" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">Can I choose my seat?</button></h2>
+        <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion"><div class="accordion-body text-muted">Yes! After selecting your route, you can pick any available seat from the live bus seat map.</div></div>
       </div>
-
+      <div class="accordion-item border-0 mb-2 rounded-3 shadow-sm">
+        <h2 class="accordion-header"><button class="accordion-button collapsed fw-bold rounded-3" type="button" data-bs-toggle="collapse" data-bs-target="#faq4">What payment methods are accepted?</button></h2>
+        <div id="faq4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion"><div class="accordion-body text-muted">We accept Cash, GCash, and Credit/Debit cards.</div></div>
+      </div>
     </div>
   </div>
 </section>
 
-<!-- ================= FOOTER ================= -->
-<footer class="bg-dark text-white py-3">
+<section class="cta-section">
   <div class="container">
-    
-    <div class="d-flex justify-content-between align-items-center flex-wrap text-center text-md-start">
-      
-      <div>© 2026 QuickReserve</div>
-      
-      <div>Email: support@quickreserve.com</div>
-      
-      <div>Phone: +63 963 443 7198</div>
+    <h2>Ready to Travel?</h2>
+    <p>Join 12,000+ passengers who already book smarter with QuickReserve.</p>
+    <a href="pages/auth/register.html" class="btn-cta">Start Booking Now →</a>
+  </div>
+</section>
 
+<footer>
+  <div class="container">
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
+      <div style="font-weight:700;color:#fff"><span style="color:#16c4a1">Quick</span>Reserve</div>
+      <div style="display:flex;gap:24px;flex-wrap:wrap">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Service</a>
+        <a href="pages/user/my-bookings.html">My Bookings</a>
+      </div>
+      <div>📧 support@quickreserve.com &nbsp;|&nbsp; 📞 +63 963 443 7198</div>
     </div>
-
+    <div style="margin-top:14px;text-align:center;color:rgba(255,255,255,0.35);font-size:12px">© 2026 QuickReserve. All rights reserved.</div>
   </div>
 </footer>
 
-<!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="js/script.js"></script>
-
 </body>
 </html>

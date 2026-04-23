@@ -1,211 +1,161 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>My Profile — QuickReserve</title>
- <link rel="stylesheet" href="../../css/style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profile — QuickReserve</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="../../css/style.css">
 </head>
-
 <body>
 
-<!-- ================= NAV ================= -->
-<nav class="main-nav">
-  <a href="index.html" class="nav-logo">
-    <img src="../../img/rabbit.png" class="logo-icon" alt="Logo">
-    <span class="navbar-brand">
-      <span class="quick">Quick</span><span class="reserve">Reserve</span>
-    </span>
-  </a>
-
-  <div class="nav-links">
-    <a href="../../index.html">Home</a>
-    <a href="my-bookings.html">My Bookings</a>
-    <a href="../../dashboard.html">Dashboard</a>
-    <a href="profile.html" class="active">Profile</a>
-  </div>
-
-  <div class="nav-right">
-    <div class="nav-avatar" id="navAvatar">👤</div>
+<nav class="navbar navbar-expand-lg">
+  <div class="container" style="max-width:1200px">
+    <a class="navbar-brand" href="../../index.html"><span><span class="brand-quick">Quick</span>Reserve</span></a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="nav">
+      <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-1">
+        <li class="nav-item"><a class="nav-link" href="../../index.html">Home</a></li>
+        <li class="nav-item"><a class="nav-link" href="my-bookings.html">My Bookings</a></li>
+        <li class="nav-item"><a class="nav-link active" href="profile.html">Profile</a></li>
+      </ul>
+      <div class="ms-lg-3 mt-2 mt-lg-0 d-flex align-items-center gap-2" id="nav-auth-btns"></div>
+    </div>
   </div>
 </nav>
 
-<!-- ================= PAGE WRAPPER ================= -->
-<div class="page">
-
-  <!-- ================= HERO ================= -->
-  <div class="card hero-card">
-    <div class="avatar-wrap">
-      <div id="mainAvatar">👤</div>
-      <button class="avatar-edit-btn" onclick="togglePicker()" title="Change avatar">✎</button>
-    </div>
-
-    <div class="hero-info">
-      <div class="hero-name">
-        <span id="headerName">Juan dela Cruz</span>
-        <span class="badge badge-verified">✓ Verified</span>
-      </div>
-      <div class="hero-email" id="headerEmail">juan.delacruz@email.com</div>
-      <div class="hero-since">Member since April 2026</div>
-    </div>
-
-    <div class="hero-actions">
-      <button class="btn-ghost" id="cancelBtn" style="display:none" onclick="cancelEdit()">Cancel</button>
-      <button class="btn-primary" id="editBtn" onclick="toggleEdit()">Edit profile</button>
-    </div>
+<div class="page-header">
+  <div class="container">
+    <h1>My Profile</h1>
+    <p>Manage your account information</p>
   </div>
-
-  <!-- ================= AVATAR PICKER ================= -->
-  <div class="card" id="avatarPicker" style="display:none">
-    <div class="section-label">Choose your avatar</div>
-    <div class="avatar-grid">
-      <div class="avatar-opt picked"  onclick="pickAvatar(this,'👤')" style="background:#E1F5EE">👤</div>
-      <div class="avatar-opt"         onclick="pickAvatar(this,'🧑')" style="background:#FFF3E0">🧑</div>
-      <div class="avatar-opt"         onclick="pickAvatar(this,'👩')" style="background:#FCE4EC">👩</div>
-      <div class="avatar-opt"         onclick="pickAvatar(this,'🧔')" style="background:#E8EAF6">🧔</div>
-      <div class="avatar-opt"         onclick="pickAvatar(this,'👴')" style="background:#E0F7FA">👴</div>
-      <div class="avatar-opt"         onclick="pickAvatar(this,'👵')" style="background:#F3E5F5">👵</div>
-      <div class="avatar-opt"         onclick="pickAvatar(this,'🧒')" style="background:#E8F5E9">🧒</div>
-      <div class="avatar-opt"         onclick="pickAvatar(this,'👦')" style="background:#FFFDE7">👦</div>
-    </div>
-    <p class="picker-hint">To use real images, replace emojis with <code>&lt;img&gt;</code> tags.</p>
-  </div>
-
-  <!-- ================= STATS ================= -->
-  <div class="stats-grid">
-    <div class="stat">
-      <div class="stat-num">8</div>
-      <div class="stat-lbl">Total trips</div>
-    </div>
-    <div class="stat">
-      <div class="stat-num">₱3,200</div>
-      <div class="stat-lbl">Total spent</div>
-    </div>
-    <div class="stat">
-      <div class="stat-num">2</div>
-      <div class="stat-lbl">Upcoming</div>
-    </div>
-    <div class="stat">
-      <div class="stat-num green">Active</div>
-      <div class="stat-lbl">Account status</div>
-    </div>
-  </div>
-
-  <!-- ================= PERSONAL INFO ================= -->
-  <div class="card">
-    <div class="section-label">Personal details</div>
-    <div class="field-grid">
-
-      <div class="field">
-        <label>First name</label>
-        <input id="firstName" type="text" value="Juan" disabled>
-      </div>
-
-      <div class="field">
-        <label>Last name</label>
-        <input id="lastName" type="text" value="dela Cruz" disabled>
-      </div>
-
-      <div class="field">
-        <label>Email</label>
-        <input id="email" type="email" value="juan.delacruz@email.com" disabled>
-      </div>
-
-      <div class="field">
-        <label>Phone</label>
-        <input id="phone" type="tel" value="09171234567" disabled>
-      </div>
-
-      <div class="field">
-        <label>Date of birth</label>
-        <input id="dob" type="date" value="1995-06-15" disabled>
-      </div>
-
-      <div class="field">
-        <label>Gender</label>
-        <select id="gender" disabled>
-          <option>Male</option>
-          <option>Female</option>
-          <option>Prefer not to say</option>
-        </select>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- ================= ADDRESS ================= -->
-  <div class="card">
-    <div class="section-label">Address</div>
-    <div class="field-grid">
-
-      <div class="field full">
-        <label>Street address</label>
-        <input id="street" type="text" value="123 Peñaranda St." disabled>
-      </div>
-
-      <div class="field">
-        <label>City</label>
-        <input id="city" type="text" value="Legazpi City" disabled>
-      </div>
-
-      <div class="field">
-        <label>Province</label>
-        <input id="province" type="text" value="Albay" disabled>
-      </div>
-
-      <div class="field">
-        <label>Region</label>
-        <input id="region" type="text" value="Bicol Region" disabled>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- ================= PASSWORD ================= -->
-  <div class="card">
-    <div class="section-label">Change password</div>
-    <div class="field-grid">
-
-      <div class="field">
-        <label>Current password</label>
-        <input id="curPass" type="password" placeholder="••••••••" disabled>
-      </div>
-
-      <div class="field">
-        <label>New password</label>
-        <input id="newPass" type="password" placeholder="••••••••" disabled>
-      </div>
-
-      <div class="field">
-        <label>Confirm password</label>
-        <input id="conPass" type="password" placeholder="••••••••" disabled>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- ================= SAVE BUTTONS ================= -->
-  <div id="saveRow" style="display:none">
-    <button class="btn-ghost" onclick="cancelEdit()">Cancel</button>
-    <button class="btn-primary" onclick="saveProfile()">Save changes</button>
-  </div>
-
-  <!-- ================= DANGER ================= -->
-  <div class="card">
-    <div class="section-label">Danger zone</div>
-    <p style="color:#6b7280; font-size:13px; margin-bottom:12px;">
-      Deleting your account is permanent and cannot be undone.
-    </p>
-    <button class="btn-danger" onclick="confirmDelete()">Delete my account</button>
-  </div>
-
 </div>
 
-<!-- ================= TOAST ================= -->
-<div id="toast" style="position:fixed;bottom:24px;right:24px;background:#0F6E56;color:#fff;padding:11px 20px;border-radius:8px;opacity:0;transition:opacity 0.4s;z-index:9999;pointer-events:none;"></div>
+<!-- Content is VISIBLE by default — JS hides it only if not logged in -->
+<div id="page-content" style="background:#f9fafb;padding:32px 0;min-height:60vh">
+  <div class="container" style="max-width:700px">
 
-<!-- SCRIPTS -->
+    <div class="card-white" style="text-align:center;margin-bottom:20px">
+      <div class="profile-avatar" id="avatar-initials">?</div>
+      <h4 id="profile-name" style="font-weight:800;margin-bottom:4px">Loading...</h4>
+      <p id="profile-email" style="color:#6b7280;font-size:13px;margin-bottom:4px"></p>
+      <span id="profile-role" class="badge-confirmed">User</span>
+      <div style="margin-top:12px;font-size:12px;color:#9ca3af">Member since <span id="profile-joined">—</span></div>
+    </div>
+
+    <div class="card-white">
+      <h5 style="font-weight:700;font-size:15px;margin-bottom:20px">✏️ Edit Profile</h5>
+      <div id="edit-success" style="display:none;background:#d1fae5;color:#065f46;padding:10px 14px;border-radius:8px;font-size:13px;margin-bottom:16px;font-weight:600">Profile updated successfully!</div>
+      <div class="form-group">
+        <label>Full Name</label>
+        <input type="text" id="edit-name" placeholder="Your full name">
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div class="form-group"><label>Email</label><input type="email" id="edit-email" placeholder="you@example.com"></div>
+        <div class="form-group"><label>Phone</label><input type="tel" id="edit-phone" placeholder="09XX XXX XXXX"></div>
+      </div>
+      <button class="btn-primary-full" onclick="saveProfile()">Save Changes</button>
+    </div>
+
+    <div class="card-white">
+      <h5 style="font-weight:700;font-size:15px;margin-bottom:20px">🔑 Change Password</h5>
+      <div class="form-group"><label>Current Password</label><input type="password" id="old-pass" placeholder="••••••••"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div class="form-group"><label>New Password</label><input type="password" id="new-pass" placeholder="Min 6 characters"></div>
+        <div class="form-group"><label>Confirm New Password</label><input type="password" id="new-pass-confirm" placeholder="Repeat new password"></div>
+      </div>
+      <button class="btn-primary-full" onclick="changePassword()">Update Password</button>
+    </div>
+
+    <div class="card-white" style="border:1px solid #fee2e2">
+      <h5 style="font-weight:700;font-size:15px;margin-bottom:8px;color:#991b1b">⚠️ Danger Zone</h5>
+      <p style="font-size:13px;color:#6b7280;margin-bottom:16px">Logging out will end your current session.</p>
+      <button class="btn-sm btn-red" style="padding:10px 24px;font-size:14px" onclick="Auth.logout()">Logout</button>
+    </div>
+
+  </div>
+</div>
+
+<footer>
+  <div class="container">
+    <div style="text-align:center;color:rgba(255,255,255,0.35);font-size:12px">© 2026 QuickReserve. All rights reserved.</div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="../../js/script.js"></script>
+<script>
+  window.addEventListener('load', function () {
+    try {
+      // Check if Auth is available (script.js loaded correctly)
+      if (typeof Auth === 'undefined') {
+        document.getElementById('profile-name').textContent = 'Error: script.js not loaded';
+        return;
+      }
 
+      // Auth guard
+      if (!Auth.isLoggedIn()) {
+        window.location.href = '../auth/login.html';
+        return;
+      }
+
+      loadProfile();
+
+    } catch(e) {
+      console.error('Profile init error:', e);
+      document.getElementById('profile-name').textContent = 'Error: ' + e.message;
+    }
+  });
+
+  function loadProfile() {
+    var u = Auth.currentUser();
+    if (!u) { window.location.href = '../auth/login.html'; return; }
+
+    var initials = u.name.split(' ').map(function(n){ return n[0] || ''; }).join('').slice(0,2).toUpperCase();
+    document.getElementById('avatar-initials').textContent = initials || '?';
+    document.getElementById('profile-name').textContent    = u.name;
+    document.getElementById('profile-email').textContent   = u.email;
+    document.getElementById('profile-role').textContent    = u.role === 'admin' ? 'Admin' : 'Passenger';
+    document.getElementById('profile-joined').textContent  = formatDate(u.joined);
+    document.getElementById('edit-name').value  = u.name;
+    document.getElementById('edit-email').value = u.email;
+    document.getElementById('edit-phone').value = u.phone || '';
+  }
+
+  function saveProfile() {
+    var u = Auth.currentUser();
+    if (!u) return;
+    var name  = document.getElementById('edit-name').value.trim();
+    var email = document.getElementById('edit-email').value.trim();
+    var phone = document.getElementById('edit-phone').value.trim();
+    if (!name || !email) { showToast('Name and email are required.', 'error'); return; }
+    Users.update(u.id, { name: name, email: email, phone: phone });
+    loadProfile();
+    document.getElementById('edit-success').style.display = 'block';
+    setTimeout(function(){ document.getElementById('edit-success').style.display = 'none'; }, 3000);
+    showToast('Profile updated!');
+  }
+
+  function changePassword() {
+    var u       = Auth.currentUser();
+    if (!u) return;
+    var oldPass = document.getElementById('old-pass').value;
+    var newPass = document.getElementById('new-pass').value;
+    var confirm = document.getElementById('new-pass-confirm').value;
+    if (!oldPass || !newPass || !confirm) { showToast('Please fill in all password fields.', 'error'); return; }
+    var dbUser  = Users.byId(u.id);
+    if (!dbUser || dbUser.password !== oldPass) { showToast('Current password is incorrect.', 'error'); return; }
+    if (newPass.length < 6) { showToast('New password must be at least 6 characters.', 'error'); return; }
+    if (newPass !== confirm) { showToast('Passwords do not match.', 'error'); return; }
+    Users.update(u.id, { password: newPass });
+    document.getElementById('old-pass').value = '';
+    document.getElementById('new-pass').value = '';
+    document.getElementById('new-pass-confirm').value = '';
+    showToast('Password updated successfully!');
+  }
+</script>
 </body>
 </html>

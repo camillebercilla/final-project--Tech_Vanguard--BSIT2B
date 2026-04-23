@@ -3,502 +3,134 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Select Seat — QuickReserve</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <title>Dashboard — QuickReserve</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css">
-
-  <style>
-    body {
-      background: #f4f6f5;
-      font-family: 'Poppins', sans-serif;
-    }
-
-    /* ── Page wrapper ── */
-    .seats-page {
-      max-width: 960px;
-      margin: 0 auto;
-      padding: 28px 16px 60px;
-    }
-
-    /* ── Back + title ── */
-    .seats-topnav {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      margin-bottom: 22px;
-    }
-
-    .back-btn {
-      background: #fff;
-      border: 1px solid #e5e7eb;
-      border-radius: 8px;
-      padding: 7px 16px;
-      font-size: 13px;
-      color: #6b7280;
-      cursor: pointer;
-      text-decoration: none;
-      transition: background 0.15s;
-      white-space: nowrap;
-    }
-    .back-btn:hover { background: #f9fafb; color: #1a1a1a; }
-
-    .seats-title { font-size: 20px; font-weight: 700; color: #1a1a1a; margin: 0; }
-    .seats-sub   { font-size: 13px; color: #6b7280; margin: 2px 0 0; }
-
-    /* ── Layout grid ── */
-    .seats-layout {
-      display: grid;
-      grid-template-columns: 1fr 320px;
-      gap: 16px;
-      align-items: start;
-    }
-
-    /* ── Panel shared ── */
-    .s-panel {
-      background: #fff;
-      border: 1px solid rgba(0,0,0,0.08);
-      border-radius: 14px;
-      padding: 20px;
-    }
-
-    .s-panel-title {
-      font-size: 14px;
-      font-weight: 700;
-      color: #1a1a1a;
-      margin-bottom: 16px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .s-panel-icon {
-      width: 28px;
-      height: 28px;
-      border-radius: 8px;
-      background: #e8f5ef;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 14px;
-    }
-
-    /* ── Bus shell ── */
-    .bus-shell {
-      background: #f8faf9;
-      border: 2px solid #d1d5db;
-      border-radius: 16px;
-      padding: 16px 20px 20px;
-      position: relative;
-    }
-
-    .bus-front {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 14px;
-      padding-bottom: 12px;
-      border-bottom: 2px dashed #d1d5db;
-    }
-
-    .bus-label {
-      font-size: 11px;
-      font-weight: 700;
-      color: #6b7280;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    .driver-icon {
-      font-size: 22px;
-    }
-
-    /* ── Seat grid — 4 columns with aisle gap ── */
-    .bus-seats {
-      display: grid;
-      grid-template-columns: 1fr 1fr 24px 1fr 1fr;
-      gap: 8px;
-    }
-
-    .seat {
-      width: 100%;
-      aspect-ratio: 1;
-      background: #e5e7eb;
-      border: 2px solid #d1d5db;
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 12px;
-      font-weight: 600;
-      color: #374151;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      user-select: none;
-    }
-
-    .seat:hover:not(.booked) {
-      background: #b0e4cc;
-      border-color: #4ba486;
-      color: #1f4638;
-      transform: translateY(-2px);
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    }
-
-    .seat.selected {
-      background: #16c4a1;
-      border-color: #0f9a7e;
-      color: #fff;
-      transform: translateY(-2px);
-      box-shadow: 0 4px 10px rgba(22,196,161,0.35);
-    }
-
-    .seat.booked {
-      background: #fce8e8;
-      border-color: #f09595;
-      color: #a32d2d;
-      cursor: not-allowed;
-      opacity: 0.7;
-    }
-
-    .aisle {
-      /* spacer column for the aisle */
-    }
-
-    /* ── Legend ── */
-    .legend {
-      display: flex;
-      gap: 16px;
-      margin-top: 14px;
-      flex-wrap: wrap;
-    }
-
-    .legend-item {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 12px;
-      color: #6b7280;
-    }
-
-    .legend-dot {
-      width: 16px;
-      height: 16px;
-      border-radius: 4px;
-      border: 2px solid;
-    }
-
-    .legend-dot.available { background: #e5e7eb; border-color: #d1d5db; }
-    .legend-dot.selected  { background: #16c4a1; border-color: #0f9a7e; }
-    .legend-dot.booked    { background: #fce8e8; border-color: #f09595; }
-
-    /* ── Right panel — trip info ── */
-    .s-panel-right { position: sticky; top: 20px; }
-
-    .trip-info-row {
-      background: #f8faf9;
-      border-radius: 8px;
-      padding: 11px 14px;
-      margin-bottom: 10px;
-    }
-
-    .trip-info-label {
-      font-size: 10.5px;
-      color: #6b7280;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      margin-bottom: 3px;
-    }
-
-    .trip-info-value {
-      font-size: 15px;
-      font-weight: 700;
-      color: #1a1a1a;
-    }
-
-    .trip-info-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin-bottom: 10px;
-    }
-
-    .trip-info-grid .trip-info-row { margin-bottom: 0; }
-
-    .divider { height: 1px; background: #e5e7eb; margin: 14px 0; }
-
-    /* Selected seat display */
-    .selected-seat-box {
-      background: #e8f5ef;
-      border: 1.5px solid #9FE1CB;
-      border-radius: 10px;
-      padding: 12px 14px;
-      text-align: center;
-      margin-bottom: 14px;
-    }
-
-    .selected-seat-box .label {
-      font-size: 11px;
-      color: #6b7280;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      margin-bottom: 4px;
-    }
-
-    .selected-seat-box .value {
-      font-size: 22px;
-      font-weight: 700;
-      color: #1f4638;
-    }
-
-    /* Price summary */
-    .price-line {
-      display: flex;
-      justify-content: space-between;
-      font-size: 13.5px;
-      color: #6b7280;
-      margin-bottom: 8px;
-    }
-
-    .price-line span:last-child { font-weight: 600; color: #1a1a1a; }
-
-    .price-total {
-      display: flex;
-      justify-content: space-between;
-      font-size: 17px;
-      font-weight: 700;
-      color: #1a1a1a;
-    }
-
-    .price-total span:last-child { color: #1f4638; }
-
-    /* Confirm button */
-    .btn-confirm {
-      width: 100%;
-      background: #1f4638;
-      color: #fff;
-      border: none;
-      border-radius: 9px;
-      padding: 13px;
-      font-size: 14.5px;
-      font-weight: 700;
-      cursor: pointer;
-      font-family: 'Poppins', sans-serif;
-      transition: background 0.15s, transform 0.15s;
-      margin-top: 16px;
-    }
-
-    .btn-confirm:hover  { background: #285A48; transform: translateY(-1px); }
-    .btn-confirm:active { transform: scale(0.98); }
-    .btn-confirm:disabled { background: #9ca3af; cursor: not-allowed; transform: none; }
-
-    .secure-note {
-      text-align: center;
-      font-size: 11.5px;
-      color: #9ca3af;
-      margin-top: 10px;
-    }
-
-    /* ── Responsive ── */
-    @media (max-width: 700px) {
-      .seats-layout { grid-template-columns: 1fr; }
-      .s-panel-right { position: static; }
-    }
-  </style>
+  <link rel="stylesheet" href="/frontend/css/style.css">
 </head>
-
 <body>
 
-<div class="seats-page">
-
-  <!-- Top nav -->
-  <div class="seats-topnav">
-      <a href="index.html" class="back-btn">← Back</a>
-    <div>
-      <h1 class="seats-title">Select Your Seat</h1>
-      <p class="seats-sub">Tap an available seat to select it</p>
+<nav class="navbar navbar-expand-lg">
+  <div class="container" style="max-width:1200px">
+    <a class="navbar-brand" href="../index.html"><span><span class="brand-quick">Quick</span>Reserve</span></a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="nav">
+      <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-1">
+        <li class="nav-item"><a class="nav-link" href="../index.html">Home</a></li>
+        <li class="nav-item"><a class="nav-link" href="user/my-bookings.html">My Bookings</a></li>
+        <li class="nav-item"><a class="nav-link" href="user/profile.html">Profile</a></li>
+      </ul>
+      <div class="ms-lg-3 mt-2 mt-lg-0 d-flex align-items-center gap-2" id="nav-auth-btns"></div>
     </div>
   </div>
+</nav>
 
-  <div class="seats-layout">
+<div class="page-header">
+  <div class="container">
+    <h1 id="dash-greeting">My Dashboard</h1>
+    <p>Your travel overview at a glance</p>
+  </div>
+</div>
 
-    <!-- LEFT — Bus seat map -->
-    <div class="s-panel">
-      <div class="s-panel-title">
-        <div class="s-panel-icon">🚌</div>
-        Bus Seat Map — 40 Seats
+<div style="background:#f9fafb;padding:32px 0;min-height:60vh">
+  <div class="container">
+
+    <!-- Quick book -->
+    <div class="card-white" style="margin-bottom:24px">
+      <h5 style="font-weight:700;font-size:15px;margin-bottom:16px">🔍 Quick Book a Trip</h5>
+      <div class="search-row">
+        <div class="search-field">
+          <label>From</label>
+          <input type="text" value="Albay" disabled style="background:#f3f4f6;color:#6b7280">
+        </div>
+        <div class="search-field">
+          <label>To</label>
+          <input id="to" type="text" placeholder="e.g. Manila" list="dests">
+          <datalist id="dests">
+            <option value="Manila"><option value="Baguio"><option value="Batangas">
+            <option value="Laguna"><option value="Quezon City"><option value="Tabaco City">
+          </datalist>
+        </div>
+        <div class="search-field">
+          <label>Date</label>
+          <input id="date" type="date">
+        </div>
+        <button class="btn-search" onclick="searchTrip()">Search →</button>
       </div>
-
-      <div class="bus-shell">
-
-        <!-- Front of bus -->
-        <div class="bus-front">
-          <span class="bus-label">Front of Bus</span>
-          <span class="driver-icon" title="Driver">🧑‍✈️</span>
-        </div>
-
-        <!-- Seat grid: col A | col B | aisle | col C | col D -->
-        <div class="bus-seats" id="seatGrid">
-          <!-- Seats generated by JS below -->
-        </div>
-
-      </div>
-
-      <!-- Legend -->
-      <div class="legend">
-        <div class="legend-item">
-          <div class="legend-dot available"></div> Available
-        </div>
-        <div class="legend-item">
-          <div class="legend-dot selected"></div> Selected
-        </div>
-        <div class="legend-item">
-          <div class="legend-dot booked"></div> Booked
-        </div>
-      </div>
-
     </div>
 
-    <!-- RIGHT — Trip info + summary -->
-    <div class="s-panel s-panel-right">
-
-      <div class="s-panel-title">
-        <div class="s-panel-icon">🎫</div>
-        Trip Details
+    <!-- Stats -->
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px">
+      <div class="stat-card">
+        <div class="stat-card-icon">🎫</div>
+        <div><h4 id="my-total">0</h4><p>Total Bookings</p></div>
       </div>
-
-      <!-- Route -->
-      <div class="trip-info-row">
-        <div class="trip-info-label">Route</div>
-        <div class="trip-info-value" id="displayRoute">—</div>
+      <div class="stat-card">
+        <div class="stat-card-icon">✅</div>
+        <div><h4 id="my-confirmed">0</h4><p>Confirmed</p></div>
       </div>
-
-      <!-- Departure + Bus Type -->
-      <div class="trip-info-grid">
-        <div class="trip-info-row">
-          <div class="trip-info-label">Departure</div>
-          <div class="trip-info-value" id="displayDeparture">—</div>
-        </div>
-        <div class="trip-info-row">
-          <div class="trip-info-label">Bus Type</div>
-          <div class="trip-info-value" id="displayBusType">—</div>
-        </div>
+      <div class="stat-card">
+        <div class="stat-card-icon">💰</div>
+        <div><h4 id="my-spent">₱0</h4><p>Total Spent</p></div>
       </div>
+    </div>
 
-      <div class="divider"></div>
-
-      <!-- Selected seat display -->
-      <div class="selected-seat-box">
-        <div class="label">Selected Seat</div>
-        <div class="value" id="selectedSeatDisplay">None</div>
+    <!-- Recent bookings -->
+    <div class="card-white">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+        <h6 style="font-weight:700;margin-bottom:0">Recent Trips</h6>
+        <a href="user/my-bookings.html" class="btn-sm btn-green">View All</a>
       </div>
-
-      <!-- Price breakdown -->
-      <div class="price-line">
-        <span>Base fare</span>
-        <span id="displayPrice">—</span>
-      </div>
-      <div class="price-line">
-        <span>Booking fee</span>
-        <span>₱25.00</span>
-      </div>
-
-      <div class="divider"></div>
-
-      <div class="price-total">
-        <span>Total</span>
-        <span id="displayTotal">—</span>
-      </div>
-
-      <!-- Confirm -->
-      <button class="btn-confirm" id="confirmBtn" disabled onclick="proceedToBooking()">
-        Confirm Seat & Continue
-      </button>
-
-      <p class="secure-note">🔒 Your seat will be held for 10 minutes</p>
-
+      <div id="recent-container"></div>
     </div>
 
   </div>
 </div>
 
+<footer>
+  <div class="container">
+    <div style="text-align:center;color:rgba(255,255,255,0.35);font-size:12px">© 2026 QuickReserve. All rights reserved.</div>
+  </div>
+</footer>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<script src="../../js/script.js"></script>
-
+<script src="../js/script.js"></script>
 <script>
-  // ── Pre-booked seats (simulate already taken seats) ──────
-  const BOOKED_SEATS = [3, 7, 12, 15, 19, 23, 28, 31, 35, 38];
-  const BOOKING_FEE  = 25;
-  const TOTAL_SEATS  = 40;
+  if (!Auth.isLoggedIn()) { window.location.href = 'auth/login.html'; }
 
-  // ── Load trip data from localStorage ─────────────────────
-  const route     = localStorage.getItem("selectedRoute")     || "Albay → Manila";
-  const price     = parseFloat(localStorage.getItem("selectedPrice"))  || 0;
-  const departure = localStorage.getItem("selectedDeparture") || "—";
-  const busType   = localStorage.getItem("selectedBusType")   || "Standard";
+  const user = Auth.currentUser();
+  document.getElementById('dash-greeting').textContent = `Welcome, ${user.name.split(' ')[0]}! 👋`;
 
-  function fmt(t) {
-    if (!t || t === "—") return "—";
-    try {
-      const [h, m] = t.split(":");
-      const hour = parseInt(h, 10);
-      return `${hour % 12 || 12}:${m} ${hour >= 12 ? "PM" : "AM"}`;
-    } catch { return t; }
-  }
+  const myBookings = Bookings.forUser(user.id);
+  const confirmed  = myBookings.filter(b => b.status === 'confirmed');
+  const spent      = confirmed.reduce((s, b) => s + (b.price||0), 0);
 
-  document.getElementById("displayRoute").textContent     = route;
-  document.getElementById("displayDeparture").textContent = fmt(departure);
-  document.getElementById("displayBusType").textContent   = busType;
-  document.getElementById("displayPrice").textContent     =
-    price ? `₱${price.toLocaleString("en-PH", { minimumFractionDigits: 2 })}` : "—";
-  document.getElementById("displayTotal").textContent     =
-    price ? `₱${(price + BOOKING_FEE).toLocaleString("en-PH", { minimumFractionDigits: 2 })}` : "—";
+  document.getElementById('my-total').textContent     = myBookings.length;
+  document.getElementById('my-confirmed').textContent = confirmed.length;
+  document.getElementById('my-spent').textContent     = formatPeso(spent);
 
-  // ── Build seat grid ───────────────────────────────────────
-  const grid = document.getElementById("seatGrid");
-  let selectedSeat = null;
-
-  for (let i = 1; i <= TOTAL_SEATS; i++) {
-    const col = ((i - 1) % 4); // 0=A, 1=B, 2=C, 3=D
-
-    // Insert aisle spacer before column C (index 2) each row
-    if (col === 2) {
-      const aisle = document.createElement("div");
-      aisle.className = "aisle";
-      grid.appendChild(aisle);
-    }
-
-    const seat = document.createElement("div");
-    seat.className = "seat" + (BOOKED_SEATS.includes(i) ? " booked" : "");
-    seat.textContent = i;
-    seat.dataset.seat = i;
-
-    if (!BOOKED_SEATS.includes(i)) {
-      seat.addEventListener("click", () => selectSeat(seat, i));
-    }
-
-    grid.appendChild(seat);
-  }
-
-  function selectSeat(el, num) {
-    // Deselect previous
-    document.querySelectorAll(".seat.selected").forEach(s => s.classList.remove("selected"));
-
-    if (selectedSeat === num) {
-      // Clicking same seat deselects
-      selectedSeat = null;
-      localStorage.removeItem("selectedSeat");
-      document.getElementById("selectedSeatDisplay").textContent = "None";
-      document.getElementById("confirmBtn").disabled = true;
-    } else {
-      el.classList.add("selected");
-      selectedSeat = num;
-      localStorage.setItem("selectedSeat", num);
-      document.getElementById("selectedSeatDisplay").textContent = `Seat ${num}`;
-      document.getElementById("confirmBtn").disabled = false;
-    }
+  const recent = myBookings.slice(-5).reverse();
+  const rc = document.getElementById('recent-container');
+  if (!recent.length) {
+    rc.innerHTML = `<div style="text-align:center;padding:40px 20px;color:#9ca3af">
+      <div style="font-size:40px;margin-bottom:12px">🚌</div>
+      <p>No trips yet. <a href="../index.html#routes" style="color:#0f6e56;font-weight:700">Browse routes →</a></p>
+    </div>`;
+  } else {
+    rc.innerHTML = `<div class="table-wrap"><table>
+      <thead><tr><th>ID</th><th>Route</th><th>Date</th><th>Seat</th><th>Fare</th><th>Status</th></tr></thead>
+      <tbody>${recent.map(b => `<tr>
+        <td><strong style="color:#0f6e56">${b.id}</strong></td>
+        <td>${b.route}</td>
+        <td>${formatDate(b.date)}</td>
+        <td>Seat ${b.seat}</td>
+        <td>${formatPeso(b.price)}</td>
+        <td><span class="badge-${b.status}">${b.status.charAt(0).toUpperCase()+b.status.slice(1)}</span></td>
+      </tr>`).join('')}</tbody>
+    </table></div>`;
   }
 </script>
-
 </body>
 </html>
