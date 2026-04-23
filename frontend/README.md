@@ -77,7 +77,9 @@ Make sure your backend server is running.
 
 ---
 ## 📸 Screenshot
+
 ![QuickReserve UI](./img/quickreserve.png)
+
 
 ## 🧑‍💻 Contributors
 - Nathaniel O. Raynada
