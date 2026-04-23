@@ -1,4 +1,4 @@
-🚌 Bus Booking System — Frontend
+🚌 Quickreserve — Frontend
 ---
 📌 Overview
 This is the frontend of a Bus Booking System that allows users to browse routes, book tickets, and manage reservations through a simple and responsive interface.
@@ -77,7 +77,7 @@ Make sure your backend server is running.
 
 ---
 ## 📸 Screenshot
-![QuickReserve UI](./frontend/img/quickreserve.png)
+![QuickReserve UI](./img/quickreserve.png)
 
 ## 🧑‍💻 Contributors
 - Nathaniel O. Raynada
