@@ -1,4 +1,4 @@
-# 🚌 Bus Booking System Backend
+# 🚌 Quickreserve Backend
 
 A RESTful backend API for a **Bus Booking System**, built with **Node.js**, **Express**, and **MongoDB**.
 This project follows the **MVC (Model–View–Controller)** architecture and implements **JWT-based authentication** with **role-based access control (Admin & User)**.
