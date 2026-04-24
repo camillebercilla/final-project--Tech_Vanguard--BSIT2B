@@ -5,6 +5,22 @@ This project follows the **MVC (Model–View–Controller)** architecture and im
 
 ---
 
+## 👨‍💻 Developers 
+
+- Nathaniel O. Raynada
+- Anna Mae Broma
+- Camille Bercilla
+- Mariel Odoño
+- John Edmar Bongcodin
+- Justine James Dasallas
+---
+## 📌 Project Info
+Details	Description
+- 📚 Course	IT 112 – Web Systems and Technologies
+- 👨‍🏫 Instructor	Guillermo V. Red, Jr.
+- 📅 Date	March 28, 2026
+
+---
 ## 🚀 Features
 
 ### 👤 User Capabilities
