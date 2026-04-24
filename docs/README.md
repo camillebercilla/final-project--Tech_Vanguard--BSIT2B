@@ -33,7 +33,7 @@ Instead of dealing with long queues and manual ticketing, users can enjoy a fast
 ---
 ## 📸 Preview
 
-![QuickReserve UI](./frontend/img/quickreserve.png)
+![QuickReserve UI](./img/quickreserve.png)
 
 ---
 ## 🎯 Purpose
