@@ -1,5 +1,4 @@
-# 🚌 QuickReserve  
-### Online Bus & Travel Booking System  
+# 🚌 QuickReserve: Online Bus & Travel Booking System  
 
 ---
 
