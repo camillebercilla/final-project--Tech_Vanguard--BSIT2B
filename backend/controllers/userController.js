@@ -5,21 +5,17 @@ const jwt = require("jsonwebtoken");
 // Register
 exports.register = async (req, res) => {
   try {
-    const { userId, name, email, password, role } = req.body;
+    const { userId, name, email, password, phone, role } = req.body;
 
     if (!name || !email || !password) {
-      return res.status(400).json({
-        message: "Name, email, and password are required"
-      });
+      return res.status(400).json({ message: "Name, email, and password are required" });
     }
 
-    // check duplicate email
     const existingEmail = await User.findOne({ email });
     if (existingEmail) {
       return res.status(400).json({ message: "Email already exists" });
     }
 
-    // OPTIONAL: if userId is provided (admin sets it)
     if (userId) {
       const existingUserId = await User.findOne({ userId });
       if (existingUserId) {
@@ -30,14 +26,22 @@ exports.register = async (req, res) => {
     const hashed = await bcrypt.hash(password, 10);
 
     const user = await User.create({
-      userId, // 👈 admin-controlled (optional)
+      userId,
       name,
       email,
+      phone: phone || "",
       password: hashed,
-      role
+      role: role || "user"
     });
 
-    res.json(user);
+    // Return shape that frontend expects
+    res.status(201).json({
+      _id:   user._id,
+      name:  user.name,
+      email: user.email,
+      phone: user.phone,
+      role:  user.role
+    });
 
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -46,27 +50,40 @@ exports.register = async (req, res) => {
 
 // Login
 exports.login = async (req, res) => {
-  const { email, password } = req.body;
+  try {
+    const { email, password } = req.body;
 
-  const user = await User.findOne({ email });
-  if (!user) return res.status(400).json("User not found");
-
-  const isMatch = await bcrypt.compare(password, user.password);
-  if (!isMatch) return res.status(400).json("Wrong password");
-
-  const token = jwt.sign(
-    { id: user._id, userId: user.userId },
-    "secret",
-    { expiresIn: "1d" }
-  );
-
-  res.json({
-    token,
-    user: {
-      userId: user.userId,
-      name: user.name,
-      email: user.email,
-      role: user.role
+    if (!email || !password) {
+      return res.status(400).json({ message: "Email and password are required" });
     }
-  });
+
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(401).json({ message: "Invalid email or password" });
+    }
+
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(401).json({ message: "Invalid email or password" });
+    }
+
+    const token = jwt.sign(
+      { id: user._id, userId: user.userId },
+      process.env.JWT_SECRET || "secret",
+      { expiresIn: "1d" }
+    );
+
+    // Return shape that frontend expects
+    res.json({
+      token,
+      _id:   user._id,
+      name:  user.name,
+      email: user.email,
+      phone: user.phone || "",
+      role:  user.role
+    });
+
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 };

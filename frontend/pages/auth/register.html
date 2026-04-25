@@ -61,7 +61,7 @@
 <script>
   if (Auth.isLoggedIn()) window.location.href = '../../index.html';
 
-  function doRegister() {
+  async function doRegister() {
     const name     = document.getElementById('name').value.trim();
     const email    = document.getElementById('email').value.trim();
     const phone    = document.getElementById('phone').value.trim();
@@ -70,6 +70,7 @@
     const errEl    = document.getElementById('reg-error');
     errEl.style.display = 'none';
 
+    // Frontend validation (same as before)
     if (!name || !email || !phone || !password || !confirm) {
       errEl.textContent = 'Please fill in all fields.'; errEl.style.display = 'block'; return;
     }
@@ -79,17 +80,34 @@
     if (password !== confirm) {
       errEl.textContent = 'Passwords do not match.'; errEl.style.display = 'block'; return;
     }
-    if (Users.byEmail(email)) {
-      errEl.textContent = 'An account with this email already exists.'; errEl.style.display = 'block'; return;
-    }
 
-    const newUser = Users.add({ name, email, phone, password });
-    Auth.login(newUser);
-    showToast('Account created! Welcome, ' + name.split(' ')[0] + '! 🎉');
-    setTimeout(() => { window.location.href = '../../index.html'; }, 600);
+    try {
+      const response = await fetch('http://localhost:5000/api/users/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, phone, password, role: 'user' })
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        // Save to localStorage session (keeps your existing Auth system working)
+        const newUser = { id: data._id || data.id, name: data.name, email: data.email, phone: data.phone || phone, role: data.role || 'user' };
+        Auth.login(newUser);
+        // Also add to local Users store so existing pages still work
+        Users.add({ ...newUser, password });
+        showToast('Account created! Welcome, ' + name.split(' ')[0] + '! 🎉');
+        setTimeout(() => { window.location.href = '../../index.html'; }, 600);
+      } else {
+        errEl.textContent = data.message || 'Registration failed. Try again.';
+        errEl.style.display = 'block';
+      }
+    } catch (err) {
+      errEl.textContent = 'Cannot reach server. Make sure your backend is running on port 5000.';
+      errEl.style.display = 'block';
+      console.error(err);
+    }
   }
 
   document.addEventListener('keydown', (e) => { if (e.key === 'Enter') doRegister(); });
 </script>
-</body>
-</html>

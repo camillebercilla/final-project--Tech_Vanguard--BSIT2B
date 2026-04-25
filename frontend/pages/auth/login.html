@@ -52,8 +52,6 @@
 <script src="../../js/script.js"></script>
 <script>
   document.addEventListener('DOMContentLoaded', function() {
-
-    // If already logged in, redirect away from login page
     if (Auth.isLoggedIn()) {
       var u = Auth.currentUser();
       window.location.href = (u && u.role === 'admin')
@@ -61,14 +59,12 @@
         : '../../index.html';
       return;
     }
-
     document.getElementById('password').addEventListener('keydown', function(e){
       if (e.key === 'Enter') doLogin();
     });
-
   });
 
-  function doLogin() {
+  async function doLogin() {
     var email    = document.getElementById('email').value.trim();
     var password = document.getElementById('password').value;
     var errEl    = document.getElementById('login-error');
@@ -80,35 +76,73 @@
       return;
     }
 
-    var users = Users.all();
-    var user  = null;
-    for (var i = 0; i < users.length; i++) {
-      if (users[i].email === email && users[i].password === password) {
-        user = users[i]; break;
-      }
-    }
+    try {
+      const response = await fetch('http://localhost:5000/api/users/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
 
-    if (!user) {
-      errEl.textContent = 'Invalid email or password. Please try again.';
-      errEl.style.display = 'block';
-      return;
-    }
+      const data = await response.json();
 
-    Auth.login(user);
-    showToast('Welcome back, ' + user.name.split(' ')[0] + '! 👋');
+      if (response.ok) {
+        // Save session to localStorage (keeps your existing Auth system working)
+        const user = { id: data._id || data.id, name: data.name, email: data.email, phone: data.phone || '', role: data.role || 'user' };
+        Auth.login(user);
+        showToast('Welcome back, ' + user.name.split(' ')[0] + '! 👋');
 
-    setTimeout(function() {
-      var redirect = null;
-      try { redirect = localStorage.getItem('loginRedirect'); localStorage.removeItem('loginRedirect'); } catch(e){}
-      if (user.role === 'admin') {
-        window.location.href = '../admin/admin-dashboard.html';
-      } else if (redirect && redirect.indexOf('login') === -1) {
-        window.location.href = redirect;
+        setTimeout(function() {
+          var redirect = null;
+          try { redirect = localStorage.getItem('loginRedirect'); localStorage.removeItem('loginRedirect'); } catch(e){}
+          if (user.role === 'admin') {
+            window.location.href = '../admin/admin-dashboard.html';
+          } else if (redirect && redirect.indexOf('login') === -1) {
+            window.location.href = redirect;
+          } else {
+            window.location.href = '../../index.html';
+          }
+        }, 600);
+
       } else {
-        window.location.href = '../../index.html';
+        // Fallback: try localStorage (for demo accounts that aren't in MongoDB)
+        var users = Users.all();
+        var localUser = null;
+        for (var i = 0; i < users.length; i++) {
+          if (users[i].email === email && users[i].password === password) {
+            localUser = users[i]; break;
+          }
+        }
+        if (localUser) {
+          Auth.login(localUser);
+          showToast('Welcome back, ' + localUser.name.split(' ')[0] + '! 👋');
+          setTimeout(function() {
+            window.location.href = localUser.role === 'admin' ? '../admin/admin-dashboard.html' : '../../index.html';
+          }, 600);
+        } else {
+          errEl.textContent = data.message || 'Invalid email or password.';
+          errEl.style.display = 'block';
+        }
       }
-    }, 600);
+    } catch (err) {
+      // If backend is down, fall back to localStorage demo accounts
+      var users = Users.all();
+      var localUser = null;
+      for (var i = 0; i < users.length; i++) {
+        if (users[i].email === email && users[i].password === password) {
+          localUser = users[i]; break;
+        }
+      }
+      if (localUser) {
+        Auth.login(localUser);
+        showToast('Welcome back, ' + localUser.name.split(' ')[0] + '! 👋');
+        setTimeout(function() {
+          window.location.href = localUser.role === 'admin' ? '../admin/admin-dashboard.html' : '../../index.html';
+        }, 600);
+      } else {
+        errEl.textContent = 'Cannot reach server. Backend may be offline.';
+        errEl.style.display = 'block';
+        console.error(err);
+      }
+    }
   }
 </script>
-</body>
-</html>

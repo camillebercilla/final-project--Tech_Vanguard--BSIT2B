@@ -1,20 +1,47 @@
 const Booking = require("../models/Booking");
 const User = require("../models/User");
 
-// Book seat
+// Create booking — now accepts full frontend payload
 exports.createBooking = async (req, res) => {
   try {
-    const { userId, tripId } = req.body;
+    const {
+      userId,
+      userName,
+      route,
+      seat,
+      date,
+      departure,
+      price,
+      status,
+      paymentMethod,
+      passengerName,
+      passengerEmail,
+      passengerPhone
+    } = req.body;
 
-    const user = await User.findOne({ userId: userId });
+    if (!userId) {
+      return res.status(400).json({ message: "userId is required" });
+    }
 
+    // Find user by MongoDB _id (what your frontend sends after login)
+    const user = await User.findById(userId);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
     const booking = await Booking.create({
-      userId: user._id,
-      tripId: tripId
+      userId:         user._id,
+      userName:       userName       || user.name,
+      route:          route          || "",
+      seat:           seat           || "",
+      date:           date           || "",
+      departure:      departure      || "",
+      price:          price          || 0,
+      status:         status         || "confirmed",
+      paymentMethod:  paymentMethod  || "Cash",
+      passengerName:  passengerName  || user.name,
+      passengerEmail: passengerEmail || user.email,
+      passengerPhone: passengerPhone || user.phone || ""
     });
 
     res.status(201).json(booking);
@@ -28,11 +55,21 @@ exports.createBooking = async (req, res) => {
 exports.getBookings = async (req, res) => {
   try {
     const bookings = await Booking.find()
-      .populate("tripId")
-      .populate("userId");
+      .populate("userId", "name email phone role");
 
     res.json(bookings);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
 
+// Get bookings of a specific user by MongoDB _id
+exports.getUserBookings = async (req, res) => {
+  try {
+    const bookings = await Booking.find({ userId: req.params.id })
+      .populate("userId", "name email phone role");
+
+    res.json(bookings);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -41,49 +78,30 @@ exports.getBookings = async (req, res) => {
 // Cancel booking
 exports.cancelBooking = async (req, res) => {
   try {
-    await Booking.findByIdAndUpdate(req.params.id, { status: "cancelled" });
-    res.json({ message: "Booking cancelled" });
+    const booking = await Booking.findByIdAndUpdate(
+      req.params.id,
+      { status: "cancelled" },
+      { new: true }
+    );
 
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-};
-
-// Get bookings of a specific user
-exports.getUserBookings = async (req, res) => {
-  try {
-    const user = await User.findOne({ userId: req.params.id });
-
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
+    if (!booking) {
+      return res.status(404).json({ message: "Booking not found" });
     }
 
-    const bookings = await Booking.find({ userId: user._id })
-      .populate("tripId")
-      .populate("userId");
-
-    res.json(bookings);
-
+    res.json({ message: "Booking cancelled", booking });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
 
-
-
-// 🔁 RESCHEDULE BOOKING (ADD THIS)
+// Reschedule booking
 exports.rescheduleBooking = async (req, res) => {
   try {
-    const { id } = req.params;
-    const { tripId, seatNumber } = req.body;
+    const { route, seat, date, departure, price } = req.body;
 
     const updatedBooking = await Booking.findByIdAndUpdate(
-      id,
-      {
-        tripId,
-        seatNumber,
-        status: "rescheduled"
-      },
+      req.params.id,
+      { route, seat, date, departure, price, status: "rescheduled" },
       { new: true }
     );
 
@@ -92,7 +110,6 @@ exports.rescheduleBooking = async (req, res) => {
     }
 
     res.json(updatedBooking);
-
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

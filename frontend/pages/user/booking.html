@@ -106,7 +106,6 @@
 <script>
   document.addEventListener('DOMContentLoaded', function() {
 
-    // Auth guard
     if (!Auth.isLoggedIn()) {
       try { localStorage.setItem('loginRedirect', window.location.href); } catch(e){}
       window.location.href = '../auth/login.html';
@@ -126,19 +125,17 @@
 
     document.getElementById('page-content').style.display = 'block';
 
-    // Pre-fill user info
     document.getElementById('pax-name').value  = user.name  || '';
     document.getElementById('pax-email').value = user.email || '';
     document.getElementById('pax-phone').value = user.phone || '';
 
-    // Fill summary
     document.getElementById('b-route').textContent  = route;
     document.getElementById('b-date').textContent   = formatDate(date);
     document.getElementById('b-depart').textContent = departure || '—';
     document.getElementById('b-seat').textContent   = 'Seat ' + seat;
     document.getElementById('b-price').textContent  = formatPeso(price);
 
-    window.confirmBooking = function() {
+    window.confirmBooking = async function() {
       var name    = document.getElementById('pax-name').value.trim();
       var email   = document.getElementById('pax-email').value.trim();
       var phone   = document.getElementById('pax-phone').value.trim();
@@ -151,26 +148,54 @@
       btn.disabled = true;
       btn.textContent = 'Processing...';
 
-      // Book seat and save
+      var bookingPayload = {
+        userId:          user.id,
+        userName:        user.name,
+        route:           route,
+        seat:            seat,
+        date:            date,
+        departure:       departure,
+        price:           price,
+        status:          'confirmed',
+        paymentMethod:   method,
+        passengerName:   name,
+        passengerEmail:  email,
+        passengerPhone:  phone
+      };
+
+      var bookingId = null;
+
+      try {
+        const response = await fetch('http://localhost:5000/api/bookings', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(bookingPayload)
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          bookingId = data._id || data.id || null;
+        } else {
+          showToast('API warning: ' + (data.message || 'Booking saved locally only.'), 'warning');
+        }
+      } catch (err) {
+        showToast('Backend unreachable. Saving booking locally.', 'warning');
+        console.error(err);
+      }
+
+      // Always save to localStorage too (keeps your existing UI working)
       Seats.book(route, date, departure, seat);
+      var localBooking = Bookings.add(bookingPayload);
 
-      var booking = Bookings.add({
-        userId: user.id,
-        userName: user.name,
-        route: route, seat: seat, date: date, departure: departure,
-        price: price, status: 'confirmed',
-        paymentMethod: method,
-        passengerName: name, passengerEmail: email, passengerPhone: phone,
-      });
+      var displayId = bookingId || localBooking.id;
 
-      // Clear selection
       localStorage.removeItem('selectedSeat');
       localStorage.removeItem('selectedDeparture');
 
-      // Show success
       document.getElementById('booking-form-state').style.display = 'none';
       document.getElementById('success-state').style.display = 'block';
-      document.getElementById('booking-ref').textContent   = booking.id;
+      document.getElementById('booking-ref').textContent   = displayId;
       document.getElementById('conf-route').textContent    = route;
       document.getElementById('conf-date').textContent     = formatDate(date);
       document.getElementById('conf-depart').textContent   = departure || '—';
@@ -180,5 +205,3 @@
 
   });
 </script>
-</body>
-</html>
