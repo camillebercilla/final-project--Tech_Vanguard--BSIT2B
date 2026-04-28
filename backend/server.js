@@ -12,7 +12,7 @@ const userRoutes    = require("./routes/userRoutes");
 const tripRoutes    = require("./routes/tripRoutes");
 const bookingRoutes = require("./routes/bookingRoutes");
 const busRoutes     = require("./routes/busRoutes");
-const adminRoutes   = require("./routes/adminRoutes");   // ← ADD LINE 1
+const adminRoutes   = require("./routes/adminRoutes");   
 
 const app = express();
 
@@ -34,7 +34,7 @@ app.use("/api/users",    userRoutes);
 app.use("/api/trips",    tripRoutes);
 app.use("/api/bookings", bookingRoutes);
 app.use("/api",          busRoutes);
-app.use("/api/admin",    adminRoutes);                   // ← ADD LINE 2
+app.use("/api/admin",    adminRoutes);                  
 
 const PORT = process.env.PORT || 5000;
 
