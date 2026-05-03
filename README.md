@@ -35,11 +35,11 @@ Welcome to the official repository of <Tech_Vanguard/> for the IT112 Final Proje
 
 # 📊 GitHub Stats
 
-![](https://github-readme-stats.vercel.app/api?username=camillebercilla&theme=synthwave&hide_border=false&include_all_commits=false&count_private=false)
+![](https://github-readme-stats.vercel.app/api?username=camillebercilla&theme=synthwave&hide_border=false&count_private=true&cache_seconds=0)
 
-![](https://nirzak-streak-stats.vercel.app/?user=camillebercilla&theme=synthwave&hide_border=false)
+![](https://github-readme-streak-stats.herokuapp.com/?user=camillebercilla&theme=synthwave&hide_border=false)
 
-![](https://github-readme-stats.vercel.app/api/top-langs/?username=camillebercilla&theme=synthwave&hide_border=false&include_all_commits=false&count_private=false&layout=compact)
+![](https://github-readme-stats.vercel.app/api/top-langs/?username=camillebercilla&theme=synthwave&layout=compact&cache_seconds=0)
 
 ### 🚀 Tech Vanguard Motto
 > "Great software is built by great teamwork."
