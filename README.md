@@ -1,23 +1,12 @@
 ## 🚌 QuickReserve: Online Bus & Travel Booking System
 ---
 
-## 👨‍💻 Developers
-
-- Nathaniel O. Raynada
-- Anna Mae Broma
-- Camille Bercilla
-- Mariel Odoño 
-- John Edmar Bongcodin
-- Justine James Dasallas
-
----
-
 # 💫 About Us:
 Welcome to the official repository of <Tech_Vanguard/> for the IT112 Final Project Web System. 🚀<br><br>This repository contains the source code, documentation, and development progress of our group project created as part of the IT112 – Full Stack Web Development course. Our team collaborates through GitHub to design, develop, and manage a functional web-based system while applying modern web development practices and version control.<br><br>Through this project, we aim to demonstrate teamwork, technical skills, and practical knowledge in building a complete web system.
 
 
 ---
-## 🌐 Socials
+## 🌐 Developers and Socials
 
 <details>
 <summary>Click to view our social links</summary>
