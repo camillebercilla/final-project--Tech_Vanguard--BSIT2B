@@ -4,22 +4,19 @@
 # 💫 About Us:
 Welcome to the official repository of <Tech_Vanguard/> for the IT112 Final Project Web System. 🚀<br><br>This repository contains the source code, documentation, and development progress of our group project created as part of the IT112 – Full Stack Web Development course. Our team collaborates through GitHub to design, develop, and manage a functional web-based system while applying modern web development practices and version control.<br><br>Through this project, we aim to demonstrate teamwork, technical skills, and practical knowledge in building a complete web system.
 
+---
+## 🌐 Developers
 
 ---
-## 🌐 Developers and Socials
 
-<details>
-<summary>Click to view our social links</summary>
+ - Nataniel Raynada (Project Manager/Front End Dev)
+ - Camille Bercilla (GitHub Manager)
+ - Mariel Odoño (Documentation Officer)
+ - Anna Mae Broma (Back End Dev)
+ - John Edmar Bongcodin (Tester/Debugger)
+ - Justin James Dasallas (Database manager)
 
-<br>
 
-- Camille: https://www.facebook.com/camille.bercilla  
-- Nathaniel: https://www.facebook.com/riondegenisis  
-- Mariel: https://www.facebook.com/mariel.odono.2025  
-- Anna: https://www.facebook.com/profile.php?id=61586995230937  
-- Edmar: https://www.facebook.com/johnedmar.bongcodin.28
-- Justin: https://www.facebook.com/share/14cZMxp8hVo/
-</details>
 
 ---
 
