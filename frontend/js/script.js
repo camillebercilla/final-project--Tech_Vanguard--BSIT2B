@@ -1,8 +1,3 @@
-/* ═══════════════════════════════════════════
-   QuickReserve — Global JavaScript
-   File: js/script.js
-═══════════════════════════════════════════ */
-
 /* ─── LOCAL STORAGE HELPERS ─── */
 const QR = {
   get(k, fallback = null) {
@@ -47,12 +42,42 @@ const Auth = {
   },
   logout() {
     localStorage.removeItem('qr_user');
+    localStorage.removeItem('qr_token');
     window.location.href = toRoot('index.html');
   },
   requireAuth() { return this.isLoggedIn(); },
   requireAdmin() {
     const u = this.currentUser();
     return !!(u && u.role === 'admin');
+  },
+
+  /* ── ADMIN GUARD ──
+     Checks for admin session. If not found, redirects to login.
+     Returns true if admin is logged in, false otherwise. */
+  guardAdmin() {
+    try {
+      const u = this.currentUser();
+      if (!u || u.role !== 'admin') {
+        console.warn('[QuickReserve] guardAdmin: no admin session. Redirecting to login.', u);
+        window.location.replace(toRoot('pages/auth/login.html'));
+        return false;
+      }
+      return true;
+    } catch(e) {
+      console.error('[QuickReserve] guardAdmin error:', e);
+      window.location.replace(toRoot('pages/auth/login.html'));
+      return false;
+    }
+  },
+
+  /* ── DEV BYPASS ──
+     Call this to instantly log in as admin for testing.
+     Open browser console and type: Auth.devLogin() */
+  devLogin() {
+    const adminUser = { id: 1, name: 'Admin User', email: 'admin@quickreserve.com', role: 'admin' };
+    this.login(adminUser);
+    console.log('[QuickReserve] Dev admin login successful. Reloading page...');
+    window.location.reload();
   },
 };
 
@@ -67,24 +92,24 @@ function seedData() {
   }
   if (!QR.get('qr_trips')) {
     QR.set('qr_trips', [
-      { id: 1, route: 'Legazpi City \u2192 Sorsogon City', duration: '1-2 hrs',    priceMin: 150, priceMax: 250, departures: ['06:00','09:00','12:00','15:00','18:00'],                        totalSeats: 45 },
-      { id: 2, route: 'Legazpi City \u2192 Naga City',     duration: '2-3 hrs',    priceMin: 200, priceMax: 350, departures: ['06:00','09:00','12:00','18:00','21:00'],                        totalSeats: 45 },
-      { id: 3, route: 'Naga City \u2192 Daet',             duration: '3-4 hrs',    priceMin: 300, priceMax: 450, departures: ['07:00','13:00','19:00'],                                       totalSeats: 45 },
-      { id: 4, route: 'Iriga City \u2192 Naga City',       duration: '1-2 hrs',    priceMin: 150, priceMax: 250, departures: ['06:00','09:00','12:00','15:00','18:00'],                        totalSeats: 45 },
-      { id: 5, route: 'Ligao City \u2192 Legazpi City',    duration: '30-45 mins', priceMin: 80,  priceMax: 150, departures: ['06:00','08:00','10:00','12:00','14:00','16:00','18:00'],        totalSeats: 45 },
-      { id: 6, route: 'Polangui \u2192 Legazpi City',      duration: '45-60 mins', priceMin: 60,  priceMax: 120, departures: ['06:00','08:00','10:00','12:00','14:00','16:00','18:00'],        totalSeats: 45 },
+      { id: 1, route: 'Legazpi City → Sorsogon City', duration: '1-2 hrs',    priceMin: 150, priceMax: 250, departures: ['06:00','09:00','12:00','15:00','18:00'],                     totalSeats: 45 },
+      { id: 2, route: 'Legazpi City → Naga City',     duration: '2-3 hrs',    priceMin: 200, priceMax: 350, departures: ['06:00','09:00','12:00','18:00','21:00'],                     totalSeats: 45 },
+      { id: 3, route: 'Naga City → Daet',             duration: '3-4 hrs',    priceMin: 300, priceMax: 450, departures: ['07:00','13:00','19:00'],                                    totalSeats: 45 },
+      { id: 4, route: 'Iriga City → Naga City',       duration: '1-2 hrs',    priceMin: 150, priceMax: 250, departures: ['06:00','09:00','12:00','15:00','18:00'],                     totalSeats: 45 },
+      { id: 5, route: 'Ligao City → Legazpi City',    duration: '30-45 mins', priceMin: 80,  priceMax: 150, departures: ['06:00','08:00','10:00','12:00','14:00','16:00','18:00'],     totalSeats: 45 },
+      { id: 6, route: 'Polangui → Legazpi City',      duration: '45-60 mins', priceMin: 60,  priceMax: 120, departures: ['06:00','08:00','10:00','12:00','14:00','16:00','18:00'],     totalSeats: 45 },
     ]);
   }
   if (!QR.get('qr_bookings')) {
     QR.set('qr_bookings', [
-      { id: 'QR-0001', userId: 2, userName: 'Maria Santos',   route: 'Legazpi City \u2192 Naga City',     seat: 'A1', date: '2026-05-10', departure: '09:00', price: 250, status: 'confirmed', paymentMethod: 'GCash',       createdAt: '2026-04-20' },
-      { id: 'QR-0002', userId: 3, userName: 'Juan dela Cruz', route: 'Legazpi City \u2192 Sorsogon City', seat: 'B3', date: '2026-05-15', departure: '06:00', price: 200, status: 'confirmed', paymentMethod: 'Cash',        createdAt: '2026-04-21' },
-      { id: 'QR-0003', userId: 2, userName: 'Maria Santos',   route: 'Naga City \u2192 Daet',             seat: 'C2', date: '2026-04-30', departure: '07:00', price: 350, status: 'pending',   paymentMethod: 'Credit Card', createdAt: '2026-04-22' },
+      { id: 'QR-0001', userId: 2, userName: 'Maria Santos',   route: 'Legazpi City → Naga City',     seat: 'A1', date: '2026-05-10', departure: '09:00', price: 250, status: 'confirmed', paymentMethod: 'GCash',       createdAt: '2026-04-20' },
+      { id: 'QR-0002', userId: 3, userName: 'Juan dela Cruz', route: 'Legazpi City → Sorsogon City', seat: 'B3', date: '2026-05-15', departure: '06:00', price: 200, status: 'confirmed', paymentMethod: 'Cash',        createdAt: '2026-04-21' },
+      { id: 'QR-0003', userId: 2, userName: 'Maria Santos',   route: 'Naga City → Daet',             seat: 'C2', date: '2026-04-30', departure: '07:00', price: 350, status: 'pending',   paymentMethod: 'Credit Card', createdAt: '2026-04-22' },
     ]);
   }
 }
 
-// Clear stale Albay data and re-seed
+// Clear stale data and re-seed if routes are missing
 (function migrateRouteData() {
   try {
     var trips = localStorage.getItem('qr_trips');
@@ -166,7 +191,7 @@ const Users = {
 const Seats = {
   _key(route, date, dep) {
     return ('seats_' + route + '_' + date + '_' + dep)
-      .replace(/\s*\u2192\s*/g, '_').replace(/\s+/g, '_');
+      .replace(/\s*→\s*/g, '_').replace(/\s+/g, '_');
   },
   getTaken(route, date, dep) { return QR.get(this._key(route, date, dep), []); },
   book(route, date, dep, seat) {
@@ -220,11 +245,11 @@ function confirmAction(msg, cb) { if (window.confirm(msg)) cb(); }
 
 /* ─── FORMATTERS ─── */
 function formatDate(d) {
-  if (!d) return '\u2014';
+  if (!d) return '—';
   try { return new Date(d + 'T00:00:00').toLocaleDateString('en-PH', { year: 'numeric', month: 'short', day: 'numeric' }); }
   catch { return d; }
 }
-function formatPeso(n) { return '\u20b1' + Number(n || 0).toLocaleString(); }
+function formatPeso(n) { return '₱' + Number(n || 0).toLocaleString(); }
 
 /* ─── SEARCH / BOOK ─── */
 function searchTrip() {
@@ -235,7 +260,7 @@ function searchTrip() {
   if (!from) { showToast('Please enter an origin.', 'error'); return; }
   if (!to)   { showToast('Please enter a destination.', 'error'); return; }
   if (!date) { showToast('Please select a travel date.', 'error'); return; }
-  localStorage.setItem('selectedRoute',    from + ' \u2192 ' + to);
+  localStorage.setItem('selectedRoute',    from + ' → ' + to);
   localStorage.setItem('selectedDuration', 'varies');
   localStorage.setItem('selectedPriceMin', '0');
   localStorage.setItem('selectedPriceMax', '0');
@@ -245,12 +270,19 @@ function searchTrip() {
 }
 
 function quickBook(origin, destination, routeKey, priceMin, priceMax, duration) {
-  var dateEl = document.getElementById('date');
-  localStorage.setItem('selectedRoute',    origin + ' \u2192 ' + destination);
+  var dateEl  = document.getElementById('date');
+  var dateVal = dateEl ? dateEl.value : '';
+
+  // If no date selected by user, default to today
+  if (!dateVal) {
+    dateVal = new Date().toISOString().split('T')[0];
+  }
+
+  localStorage.setItem('selectedRoute',    origin + ' → ' + destination);
   localStorage.setItem('selectedDuration', duration);
   localStorage.setItem('selectedPriceMin', String(priceMin));
   localStorage.setItem('selectedPriceMax', String(priceMax));
-  localStorage.setItem('selectedDate',     dateEl ? dateEl.value : '');
+  localStorage.setItem('selectedDate',     dateVal);
   localStorage.removeItem('selectedSeat');
   window.location.href = toRoot('seats.html');
 }

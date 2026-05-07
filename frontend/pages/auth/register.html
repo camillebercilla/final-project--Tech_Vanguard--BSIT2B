@@ -50,7 +50,7 @@
       <input type="password" id="confirm" placeholder="Repeat your password">
     </div>
 
-    <button class="btn-primary-full" onclick="doRegister()">Create Account →</button>
+    <button class="btn-primary-full" id="reg-btn" onclick="doRegister()">Create Account →</button>
     <p class="auth-link">Already have an account? <a href="login.html">Login here</a></p>
     <p class="auth-link" style="margin-top:6px"><a href="../../index.html">← Back to Home</a></p>
   </div>
@@ -61,53 +61,72 @@
 <script>
   if (Auth.isLoggedIn()) window.location.href = '../../index.html';
 
-  async function doRegister() {
-    const name     = document.getElementById('name').value.trim();
-    const email    = document.getElementById('email').value.trim();
-    const phone    = document.getElementById('phone').value.trim();
-    const password = document.getElementById('password').value;
-    const confirm  = document.getElementById('confirm').value;
-    const errEl    = document.getElementById('reg-error');
-    errEl.style.display = 'none';
+async function doRegister() {
+  var name     = document.getElementById('name').value.trim();
+  var email    = document.getElementById('email').value.trim();
+  var phone    = document.getElementById('phone').value.trim();
+  var password = document.getElementById('password').value;
+  var confirm  = document.getElementById('confirm').value;
+  var errEl    = document.getElementById('reg-error');
+  var btn      = document.getElementById('reg-btn');
+  errEl.style.display = 'none';
 
-    // Frontend validation (same as before)
-    if (!name || !email || !phone || !password || !confirm) {
-      errEl.textContent = 'Please fill in all fields.'; errEl.style.display = 'block'; return;
-    }
-    if (password.length < 6) {
-      errEl.textContent = 'Password must be at least 6 characters.'; errEl.style.display = 'block'; return;
-    }
-    if (password !== confirm) {
-      errEl.textContent = 'Passwords do not match.'; errEl.style.display = 'block'; return;
-    }
-
-    try {
-      const response = await fetch('http://localhost:5000/api/users/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email, phone, password, role: 'user' })
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        // Save to localStorage session (keeps your existing Auth system working)
-        const newUser = { id: data._id || data.id, name: data.name, email: data.email, phone: data.phone || phone, role: data.role || 'user' };
-        Auth.login(newUser);
-        // Also add to local Users store so existing pages still work
-        Users.add({ ...newUser, password });
-        showToast('Account created! Welcome, ' + name.split(' ')[0] + '! 🎉');
-        setTimeout(() => { window.location.href = '../../index.html'; }, 600);
-      } else {
-        errEl.textContent = data.message || 'Registration failed. Try again.';
-        errEl.style.display = 'block';
-      }
-    } catch (err) {
-      errEl.textContent = 'Cannot reach server. Make sure your backend is running on port 5000.';
-      errEl.style.display = 'block';
-      console.error(err);
-    }
+  if (!name || !email || !phone || !password || !confirm) {
+    errEl.textContent = 'Please fill in all fields.'; errEl.style.display = 'block'; return;
+  }
+  if (password.length < 6) {
+    errEl.textContent = 'Password must be at least 6 characters.'; errEl.style.display = 'block'; return;
+  }
+  if (password !== confirm) {
+    errEl.textContent = 'Passwords do not match.'; errEl.style.display = 'block'; return;
   }
 
-  document.addEventListener('keydown', (e) => { if (e.key === 'Enter') doRegister(); });
+  var existing = Users.all().find(function(u){ return u.email.toLowerCase() === email.toLowerCase(); });
+  if (existing) {
+    errEl.textContent = 'An account with this email already exists.'; errEl.style.display = 'block'; return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'Creating account...';
+
+  var today = new Date().toISOString(); // ← captures exact registration date
+  var newUser = null;
+
+  try {
+    var response = await fetch('http://localhost:5000/api/users/register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: name, email: email, phone: phone, password: password, role: 'user', joined: today })
+    });
+    var data = await response.json();
+    if (response.ok) {
+      newUser = {
+        id:     data._id || data.id,
+        name:   data.name,
+        email:  data.email,
+        phone:  data.phone || phone,
+        role:   data.role || 'user',
+        joined: data.joined || data.createdAt || today  // ← use server date or fallback
+      };
+    } else {
+      errEl.textContent = data.message || 'Registration failed. Try again.';
+      errEl.style.display = 'block';
+      btn.disabled = false;
+      btn.textContent = 'Create Account →';
+      return;
+    }
+  } catch (err) {
+    // Backend unreachable — save locally with joined date
+    var localUser = Users.add({ name: name, email: email, phone: phone, password: password, role: 'user', joined: today });
+    newUser = { id: localUser.id, name: localUser.name, email: localUser.email, phone: localUser.phone, role: localUser.role, joined: today };
+  }
+
+  Auth.login(newUser);
+  showToast('Welcome, ' + name.split(' ')[0] + '! Account created 🎉');
+  setTimeout(function(){ window.location.href = '../../index.html'; }, 600);
+}
+
+document.addEventListener('keydown', function(e){ if (e.key === 'Enter') doRegister(); });
 </script>
+</body>
+</html>

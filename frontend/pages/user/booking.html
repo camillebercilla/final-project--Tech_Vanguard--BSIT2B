@@ -42,8 +42,7 @@
       </div>
       <p style="font-size:13px;color:#9ca3af;margin-bottom:20px">Show this reference at the terminal. Safe travels! 🚌</p>
       <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
-        <a href="my-bookings.html" class="btn-sm btn-green" style="padding:10px 24px;font-size:14px">View My Bookings</a>
-        <a href="../../index.html" class="btn-sm btn-gray" style="padding:10px 24px;font-size:14px">Back to Home</a>
+        <a href="../../index.html" class="btn-sm btn-green" style="padding:10px 24px;font-size:14px">Back to Home</a>
       </div>
     </div>
 
@@ -184,11 +183,16 @@
         console.error(err);
       }
 
-      // Always save to localStorage too (keeps your existing UI working)
-      Seats.book(route, date, departure, seat);
-      var localBooking = Bookings.add(bookingPayload);
+     // Always save to localStorage too (keeps your existing UI working)
+Seats.book(route, date, departure, seat);
+var localBooking = Bookings.add(bookingPayload);
 
-      var displayId = bookingId || localBooking.id;
+// If backend returned an _id, also store it on the local booking so lookup works
+if (bookingId) {
+  Bookings.update(localBooking.id, { _id: bookingId });
+}
+
+var displayId = localBooking.id; // Always show QR-XXXX to user
 
       localStorage.removeItem('selectedSeat');
       localStorage.removeItem('selectedDeparture');
@@ -205,3 +209,5 @@
 
   });
 </script>
+</body>
+</html>

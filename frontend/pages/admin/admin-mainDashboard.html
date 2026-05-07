@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard — QuickReserve</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --green: #0f6e56;
+      --green-light: #16c4a1;
+      --bg: #f5f7fa;
+      --white: #ffffff;
+      --border: #e5e7eb;
+      --text: #1a1a1a;
+      --muted: #6b7280;
+      --red: #dc2626;
+      --yellow: #d97706;
+      --sidebar-w: 220px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Poppins', sans-serif; background: var(--bg); color: var(--text); }
+
+    .admin-layout { display: flex; min-height: 100vh; }
+
+    .sidebar {
+      width: var(--sidebar-w);
+      background: #0a2e24;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      padding: 28px 0 24px;
+      position: fixed;
+      top: 0; left: 0; bottom: 0;
+      z-index: 100;
+    }
+    .sidebar-brand {
+      padding: 0 24px 28px;
+      font-size: 20px;
+      font-weight: 800;
+      line-height: 1.3;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      margin-bottom: 16px;
+    }
+    .sidebar-nav { display: flex; flex-direction: column; gap: 2px; padding: 0 12px; flex: 1; }
+    .sidebar-nav a {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      border-radius: 10px;
+      color: rgba(255,255,255,0.65);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 500;
+      transition: all 0.15s;
+    }
+    .sidebar-nav a:hover { background: rgba(255,255,255,0.07); color: #fff; }
+    .sidebar-nav a.active { background: var(--green); color: #fff; }
+    .sidebar-icon { font-size: 16px; }
+
+    .admin-main { margin-left: var(--sidebar-w); flex: 1; display: flex; flex-direction: column; }
+    .admin-topbar {
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 28px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 14px;
+      position: sticky; top: 0; z-index: 50;
+    }
+    .admin-content { padding: 28px; flex: 1; }
+
+    .stat-card {
+      background: var(--white);
+      border-radius: 14px;
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+      border: 1px solid var(--border);
+    }
+    .stat-card-icon { font-size: 28px; }
+    .stat-card h4 { font-size: 24px; font-weight: 800; color: var(--green); }
+    .stat-card p  { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+    .card-white {
+      background: var(--white);
+      border-radius: 14px;
+      padding: 22px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+      border: 1px solid var(--border);
+    }
+
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    thead th {
+      text-align: left;
+      padding: 10px 12px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      border-bottom: 1.5px solid var(--border);
+      white-space: nowrap;
+    }
+    tbody tr { border-bottom: 1px solid var(--border); }
+    tbody tr:last-child { border-bottom: none; }
+    tbody td { padding: 12px 12px; vertical-align: middle; }
+
+    /* ── ID CHIP — truncates long hex IDs cleanly ── */
+    .id-chip {
+      display: inline-block;
+      font-family: 'Courier New', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      background: #f0fdf4;
+      color: #0f6e56;
+      border: 1px solid #bbf7d0;
+      border-radius: 6px;
+      padding: 3px 8px;
+      max-width: 110px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      vertical-align: middle;
+      cursor: default;
+    }
+    .id-chip.hex {
+      background: #f5f3ff;
+      color: #6d28d9;
+      border-color: #ddd6fe;
+      max-width: 90px;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: capitalize;
+    }
+    .badge-confirmed { background: #d1fae5; color: #065f46; }
+    .badge-pending   { background: #fef3c7; color: #92400e; }
+    .badge-cancelled { background: #fee2e2; color: #991b1b; }
+    .badge-admin     { background: #dbeafe; color: #1d4ed8; }
+    .badge-user      { background: #f3f4f6; color: #374151; }
+
+    .btn-sm {
+      display: inline-block;
+      padding: 6px 14px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      font-family: 'Poppins', sans-serif;
+      cursor: pointer;
+      border: none;
+      text-decoration: none;
+      transition: opacity 0.15s;
+      white-space: nowrap;
+    }
+    .btn-sm:hover { opacity: 0.85; }
+    .btn-green  { background: var(--green); color: #fff; }
+    .btn-yellow { background: #fef3c7; color: #92400e; }
+    .btn-red    { background: #fee2e2; color: #991b1b; }
+    .btn-gray   { background: #f3f4f6; color: #374151; }
+
+    .chart-bar-bg  { background: #f3f4f6; border-radius: 20px; height: 8px; }
+    .chart-bar-fill{ height: 8px; border-radius: 20px; }
+
+    #access-gate {
+      position: fixed; inset: 0; background: #0a2e24;
+      display: flex; align-items: center; justify-content: center; z-index: 9999;
+    }
+    .gate-box {
+      background: #fff; border-radius: 20px; padding: 40px 36px; width: 340px; text-align: center;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
+    .gate-box h2 { font-size: 22px; font-weight: 800; margin-bottom: 6px; }
+    .gate-box p  { font-size: 13px; color: var(--muted); margin-bottom: 22px; }
+    .gate-input {
+      width: 100%; border: 1.5px solid var(--border); border-radius: 10px;
+      padding: 11px 14px; font-size: 14px; font-family: 'Poppins', sans-serif;
+      outline: none; margin-bottom: 12px;
+    }
+    .gate-input:focus { border-color: var(--green); }
+    .gate-btn {
+      width: 100%; background: var(--green); color: #fff; border: none;
+      border-radius: 10px; padding: 12px; font-size: 14px; font-weight: 700;
+      font-family: 'Poppins', sans-serif; cursor: pointer;
+    }
+    .gate-error { color: var(--red); font-size: 12px; margin-top: 8px; display: none; }
+
+    #toast {
+      position: fixed; bottom: 24px; right: 24px;
+      background: #1a1a1a; color: #fff; padding: 12px 20px;
+      border-radius: 10px; font-size: 13px; font-weight: 500;
+      opacity: 0; transition: opacity 0.3s; z-index: 9000; pointer-events: none;
+    }
+    #toast.show { opacity: 1; }
+
+    .filter-bar { display: flex; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; align-items: center; }
+    .filter-bar input, .filter-bar select {
+      border: 1.5px solid var(--border); border-radius: 10px;
+      padding: 8px 14px; font-size: 13px; font-family: 'Poppins', sans-serif;
+      outline: none;
+    }
+    .filter-bar input { width: 260px; }
+    .filter-bar input:focus, .filter-bar select:focus { border-color: var(--green); }
+
+    .modal-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.5); z-index: 2000;
+      align-items: center; justify-content: center;
+    }
+    .modal-box {
+      background: #fff; border-radius: 16px; padding: 28px;
+      width: 400px; max-width: 90vw;
+    }
+    .modal-box h5 { font-weight: 700; margin-bottom: 20px; }
+    .form-group { margin-bottom: 14px; }
+    .form-group label { font-size: 12px; font-weight: 600; color: var(--muted); display: block; margin-bottom: 6px; }
+    .form-group input, .form-group select {
+      width: 100%; border: 1.5px solid var(--border); border-radius: 10px;
+      padding: 10px 14px; font-size: 14px; font-family: 'Poppins', sans-serif; outline: none;
+    }
+    .form-group input:focus, .form-group select:focus { border-color: var(--green); }
+
+    .section { display: none; }
+    .section.active { display: block; }
+
+    #confirm-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.5); z-index: 3000;
+      align-items: center; justify-content: center;
+    }
+    .confirm-box {
+      background: #fff; border-radius: 16px; padding: 28px 24px;
+      width: 360px; max-width: 90vw; text-align: center;
+    }
+    .confirm-box p { font-size: 14px; margin-bottom: 20px; line-height: 1.6; }
+    .confirm-box .btn-row { display: flex; gap: 10px; justify-content: center; }
+  </style>
+</head>
+<body>
+
+<!-- ACCESS GATE -->
+<div id="access-gate">
+  <div class="gate-box">
+    <div style="font-size:36px;margin-bottom:12px">🛡️</div>
+    <h2><span style="color:#16c4a1">Quick</span>Reserve</h2>
+    <p>Admin Panel — Enter the admin password to continue</p>
+    <input class="gate-input" type="password" id="gate-pw" placeholder="Admin password" onkeydown="if(event.key==='Enter')checkGate()">
+    <button class="gate-btn" onclick="checkGate()">Access Dashboard</button>
+    <p class="gate-error" id="gate-error">❌ Incorrect password. Try again.</p>
+    <p style="font-size:11px;color:#9ca3af;margin-top:16px">Default password: <strong>admin123</strong></p>
+  </div>
+</div>
+
+<!-- LAYOUT -->
+<div class="admin-layout" id="app" style="display:none">
+  <aside class="sidebar">
+    <div class="sidebar-brand"><span style="color:#16c4a1">Quick</span>Reserve<br><span style="font-size:11px;font-weight:400;opacity:0.5">Admin Panel</span></div>
+    <nav class="sidebar-nav">
+      <a href="#" class="active" onclick="showSection('dashboard',this)"><span class="sidebar-icon">📊</span> Dashboard</a>
+      <a href="#" onclick="showSection('bookings',this)"><span class="sidebar-icon">🎫</span> Bookings</a>
+      <a href="#" onclick="showSection('trips',this)"><span class="sidebar-icon">🚌</span> Trips</a>
+      <a href="#" onclick="showSection('users',this)"><span class="sidebar-icon">👥</span> Users</a>
+      <a href="/frontend/index.html"><span class="sidebar-icon">🌐</span> View Site</a>
+      <a href="#" onclick="doLogout()"><span class="sidebar-icon">🚪</span> Logout</a>
+    </nav>
+  </aside>
+
+  <main class="admin-main">
+    <div class="admin-topbar">
+      <span style="font-weight:700;color:#1a1a1a" id="topbar-title">Dashboard Overview</span>
+      <span style="color:#6b7280;font-size:13px">Welcome, Admin 👋</span>
+    </div>
+
+    <div class="admin-content">
+
+      <!-- DASHBOARD -->
+      <div class="section active" id="section-dashboard">
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:28px">
+          <div class="stat-card"><div class="stat-card-icon">🎫</div><div><h4 id="dash-bookings">0</h4><p>Total Bookings</p></div></div>
+          <div class="stat-card"><div class="stat-card-icon">👥</div><div><h4 id="dash-users">0</h4><p>Registered Users</p></div></div>
+          <div class="stat-card"><div class="stat-card-icon">🚌</div><div><h4 id="dash-trips">0</h4><p>Active Routes</p></div></div>
+          <div class="stat-card"><div class="stat-card-icon">💰</div><div><h4 id="dash-revenue">₱0</h4><p>Total Revenue</p></div></div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:28px">
+          <div class="card-white"><h6 style="font-weight:700;margin-bottom:16px">Bookings by Route</h6><div id="route-chart"></div></div>
+          <div class="card-white"><h6 style="font-weight:700;margin-bottom:16px">Booking Status</h6><div id="status-chart"></div></div>
+        </div>
+        <div class="card-white">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+            <h6 style="font-weight:700;margin-bottom:0">Recent Bookings</h6>
+            <button class="btn-sm btn-green" onclick="showSection('bookings',null)">View All →</button>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>ID</th><th>Passenger</th><th>Route</th><th>Date</th><th>Seat</th><th>Fare</th><th>Status</th></tr></thead>
+              <tbody id="recent-tbody"><tr><td colspan="7" style="text-align:center;padding:30px;color:#9ca3af">Loading…</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- BOOKINGS -->
+      <div class="section" id="section-bookings">
+        <div class="filter-bar">
+          <input type="text" id="b-search" placeholder="Search by ID, passenger, route…" oninput="renderBookings()">
+          <select id="b-status" onchange="renderBookings()">
+            <option value="">All Statuses</option>
+            <option value="confirmed">Confirmed</option>
+            <option value="pending">Pending</option>
+            <option value="cancelled">Cancelled</option>
+          </select>
+          <span id="b-count" style="color:var(--muted);font-size:13px;margin-left:auto"></span>
+        </div>
+        <div class="card-white">
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>ID</th><th>Passenger</th><th>Route</th><th>Date</th><th>Departure</th><th>Seat</th><th>Fare</th><th>Payment</th><th>Status</th><th>Actions</th></tr></thead>
+              <tbody id="bookings-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- TRIPS -->
+      <div class="section" id="section-trips">
+        <div style="display:flex;justify-content:flex-end;margin-bottom:16px">
+          <button class="btn-sm btn-green" onclick="openTripModal()">+ Add Trip</button>
+        </div>
+        <div class="card-white">
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>ID</th><th>Route</th><th>Duration</th><th>Fare Range</th><th>Departures</th><th>Seats</th><th>Actions</th></tr></thead>
+              <tbody id="trips-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- USERS -->
+      <div class="section" id="section-users">
+        <div class="filter-bar">
+          <input type="text" id="u-search" placeholder="Search by name, email…" oninput="renderUsers()">
+          <span id="u-count" style="color:var(--muted);font-size:13px;margin-left:auto"></span>
+        </div>
+        <div class="card-white">
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>ID</th><th>Name</th><th>Email</th><th>Phone</th><th>Role</th><th>Joined</th><th>Bookings</th><th>Actions</th></tr></thead>
+              <tbody id="users-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<!-- BOOKING EDIT MODAL -->
+<div class="modal-overlay" id="bk-modal">
+  <div class="modal-box">
+    <h5>Edit Booking Status</h5>
+    <input type="hidden" id="bk-modal-id">
+    <div class="form-group"><label>Booking ID</label><input type="text" id="bk-modal-bid" disabled style="background:#f3f4f6"></div>
+    <div class="form-group">
+      <label>Status</label>
+      <select id="bk-modal-status">
+        <option value="confirmed">Confirmed</option>
+        <option value="pending">Pending</option>
+        <option value="cancelled">Cancelled</option>
+      </select>
+    </div>
+    <div style="display:flex;gap:10px;margin-top:16px">
+      <button class="btn-sm btn-green" style="flex:1;padding:12px" onclick="saveBkEdit()">Save</button>
+      <button class="btn-sm btn-gray" style="flex:1;padding:12px" onclick="closeModal('bk-modal')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- TRIP MODAL -->
+<div class="modal-overlay" id="trip-modal">
+  <div class="modal-box" style="width:480px;max-height:90vh;overflow-y:auto">
+    <h5 id="trip-modal-title">Add Trip</h5>
+    <input type="hidden" id="tm-id">
+    <div class="form-group"><label>Route (e.g. Legazpi City → Manila)</label><input type="text" id="tm-route" placeholder="Origin → Destination"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div class="form-group"><label>Duration</label><input type="text" id="tm-duration" placeholder="2-3 hrs"></div>
+      <div class="form-group"><label>Total Seats</label><input type="number" id="tm-seats" value="45" min="1"></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div class="form-group"><label>Fare Min (₱)</label><input type="number" id="tm-pmin" placeholder="200"></div>
+      <div class="form-group"><label>Fare Max (₱)</label><input type="number" id="tm-pmax" placeholder="350"></div>
+    </div>
+    <div class="form-group"><label>Departure Times (comma-separated)</label><input type="text" id="tm-deps" placeholder="06:00, 12:00, 18:00"></div>
+    <div style="display:flex;gap:10px;margin-top:16px">
+      <button class="btn-sm btn-green" style="flex:1;padding:12px" onclick="saveTrip()">Save Trip</button>
+      <button class="btn-sm btn-gray" style="flex:1;padding:12px" onclick="closeModal('trip-modal')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- USER EDIT MODAL -->
+<div class="modal-overlay" id="user-modal">
+  <div class="modal-box">
+    <h5>Edit User</h5>
+    <input type="hidden" id="um-id">
+    <div class="form-group"><label>Full Name</label><input type="text" id="um-name"></div>
+    <div class="form-group"><label>Email</label><input type="email" id="um-email"></div>
+    <div class="form-group"><label>Phone</label><input type="tel" id="um-phone"></div>
+    <div class="form-group">
+      <label>Role</label>
+      <select id="um-role"><option value="user">User</option><option value="admin">Admin</option></select>
+    </div>
+    <div style="display:flex;gap:10px;margin-top:16px">
+      <button class="btn-sm btn-green" style="flex:1;padding:12px" onclick="saveUser()">Save</button>
+      <button class="btn-sm btn-gray" style="flex:1;padding:12px" onclick="closeModal('user-modal')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- CONFIRM OVERLAY -->
+<div id="confirm-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:3000;align-items:center;justify-content:center">
+  <div class="confirm-box">
+    <p id="confirm-msg"></p>
+    <div class="btn-row">
+      <button class="btn-sm btn-red" style="padding:10px 24px" id="confirm-yes">Yes, proceed</button>
+      <button class="btn-sm btn-gray" style="padding:10px 24px" onclick="closeConfirm()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ── GATE ──────────────────────────────────────────────────────────────────
+var ADMIN_PASSWORD = 'admin123';
+
+function checkGate() {
+  var pw = document.getElementById('gate-pw').value;
+  if (pw === ADMIN_PASSWORD) {
+    document.getElementById('access-gate').style.display = 'none';
+    document.getElementById('app').style.display = 'flex';
+    loadAll();
+  } else {
+    document.getElementById('gate-error').style.display = 'block';
+    document.getElementById('gate-pw').value = '';
+    document.getElementById('gate-pw').focus();
+  }
+}
+function doLogout() {
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('access-gate').style.display = 'flex';
+  document.getElementById('gate-pw').value = '';
+  document.getElementById('gate-error').style.display = 'none';
+}
+
+// ── UTILS ─────────────────────────────────────────────────────────────────
+function peso(n) { return '₱' + Number(n||0).toLocaleString('en-PH', {minimumFractionDigits:2,maximumFractionDigits:2}); }
+function fmtDate(d) {
+  if (!d) return '—';
+  var dt = new Date(d);
+  return isNaN(dt) ? d : dt.toLocaleDateString('en-PH',{year:'numeric',month:'short',day:'numeric'});
+}
+function badge(s, type) {
+  var cls = type ? 'badge-' + type : 'badge-' + (s||'pending');
+  return '<span class="badge ' + cls + '">' + (s||'—') + '</span>';
+}
+
+// ── ID CHIP — shows short IDs normally, truncates hex IDs with full tooltip ──
+function idChip(id) {
+  if (!id) return '<span class="id-chip">—</span>';
+  var str = String(id);
+  var isHex = /^[0-9a-f]{20,}$/i.test(str);
+  if (isHex) {
+    var short = str.slice(0, 8) + '…';
+    return '<span class="id-chip hex" title="' + str + '">' + short + '</span>';
+  }
+  return '<span class="id-chip" title="' + str + '">' + str + '</span>';
+}
+
+// ── Store edit targets by index instead of using ID in onclick attr ──
+var _editTargets = {};
+var _editCounter = 0;
+function storeTarget(obj) {
+  var key = 'k' + (_editCounter++);
+  _editTargets[key] = obj;
+  return key;
+}
+
+function showToast(msg, type) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.background = type === 'error' ? '#dc2626' : '#0f6e56';
+  t.classList.add('show');
+  setTimeout(function(){ t.classList.remove('show'); }, 3000);
+}
+
+var _confirmCb = null;
+function confirmAction(msg, cb) {
+  _confirmCb = cb;
+  document.getElementById('confirm-msg').textContent = msg;
+  var ov = document.getElementById('confirm-overlay');
+  ov.style.display = 'flex';
+  document.getElementById('confirm-yes').onclick = function() { closeConfirm(); if(_confirmCb) _confirmCb(); };
+}
+function closeConfirm() { document.getElementById('confirm-overlay').style.display = 'none'; }
+
+function openModal(id) { document.getElementById(id).style.display = 'flex'; }
+function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+
+// ── NAV ───────────────────────────────────────────────────────────────────
+var sections = ['dashboard','bookings','trips','users'];
+function showSection(name, el) {
+  sections.forEach(function(s){
+    document.getElementById('section-'+s).classList.toggle('active', s===name);
+  });
+  document.querySelectorAll('.sidebar-nav a').forEach(function(a){ a.classList.remove('active'); });
+  if (el) el.classList.add('active');
+  var titles = {dashboard:'Dashboard Overview',bookings:'Manage Bookings',trips:'Manage Trips / Routes',users:'Manage Users'};
+  document.getElementById('topbar-title').textContent = titles[name] || name;
+  if (name === 'bookings') renderBookings();
+  if (name === 'trips')    renderTrips();
+  if (name === 'users')    renderUsers();
+}
+
+// ── DATA HELPERS ─────────────────────────────────────────────────────────
+function getBookings() { try { return JSON.parse(localStorage.getItem('qr_bookings') || '[]'); } catch(e){ return []; } }
+function getUsers()    { try { return JSON.parse(localStorage.getItem('qr_users')    || '[]'); } catch(e){ return []; } }
+function getTrips()    { try { return JSON.parse(localStorage.getItem('qr_trips')    || '[]'); } catch(e){ return []; } }
+function saveBookings(data) { localStorage.setItem('qr_bookings', JSON.stringify(data)); }
+function saveUsers(data)    { localStorage.setItem('qr_users',    JSON.stringify(data)); }
+function saveTrips(data)    { localStorage.setItem('qr_trips',    JSON.stringify(data)); }
+
+// ── DASHBOARD ─────────────────────────────────────────────────────────────
+function loadDashboard() {
+  var bookings = getBookings();
+  var users    = getUsers().filter(function(u){ return u.role !== 'admin'; });
+  var trips    = getTrips();
+  var revenue  = bookings.filter(function(b){ return b.status === 'confirmed'; })
+    .reduce(function(s,b){ return s + Number(b.price||b.fare||0); }, 0);
+
+  document.getElementById('dash-bookings').textContent = bookings.length;
+  document.getElementById('dash-users').textContent    = users.length;
+  document.getElementById('dash-trips').textContent    = trips.length;
+  document.getElementById('dash-revenue').textContent  = peso(revenue);
+
+  var rc = {};
+  bookings.forEach(function(b){ var r=b.route||'Unknown'; rc[r]=(rc[r]||0)+1; });
+  var mx = Math.max.apply(null, Object.values(rc).concat([1]));
+  document.getElementById('route-chart').innerHTML = Object.entries(rc).map(function(e){
+    return '<div style="margin-bottom:10px">'+
+      '<div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px">'+
+        '<span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:180px">'+e[0]+'</span>'+
+        '<span style="font-weight:700;color:#0f6e56;flex-shrink:0;margin-left:8px">'+e[1]+'</span></div>'+
+      '<div class="chart-bar-bg"><div class="chart-bar-fill" style="background:#0f6e56;width:'+Math.round((e[1]/mx)*100)+'%"></div></div>'+
+    '</div>';
+  }).join('') || '<p style="color:#9ca3af;font-size:13px">No data yet</p>';
+
+  var st = {confirmed:0,pending:0,cancelled:0};
+  bookings.forEach(function(b){ if(st[b.status]!==undefined) st[b.status]++; });
+  var tot = bookings.length || 1;
+  var col = {confirmed:'#0f6e56',pending:'#d97706',cancelled:'#dc2626'};
+  document.getElementById('status-chart').innerHTML = Object.entries(st).map(function(e){
+    return '<div style="margin-bottom:10px">'+
+      '<div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px">'+
+        '<span style="text-transform:capitalize">'+e[0]+'</span>'+
+        '<span style="font-weight:700;color:'+col[e[0]]+'">'+e[1]+' ('+Math.round(e[1]/tot*100)+'%)</span></div>'+
+      '<div class="chart-bar-bg"><div class="chart-bar-fill" style="background:'+col[e[0]]+';width:'+Math.round((e[1]/tot)*100)+'%"></div></div>'+
+    '</div>';
+  }).join('');
+
+  var recent = bookings.slice().sort(function(a,b){ return (b.createdAt||'').localeCompare(a.createdAt||''); }).slice(0,8);
+  document.getElementById('recent-tbody').innerHTML = recent.map(function(b){
+    var name = b.userName||b.passengerName||(b.user&&b.user.name)||'—';
+    return '<tr>'+
+      '<td>'+idChip(b.id||b._id)+'</td>'+
+      '<td>'+name+'</td><td>'+(b.route||'—')+'</td>'+
+      '<td>'+fmtDate(b.date)+'</td>'+
+      '<td>Seat '+(b.seat||'—')+'</td>'+
+      '<td>'+peso(b.price||b.fare||0)+'</td>'+
+      '<td>'+badge(b.status)+'</td>'+
+    '</tr>';
+  }).join('') || '<tr><td colspan="7" style="text-align:center;color:#9ca3af;padding:30px">No bookings yet</td></tr>';
+}
+
+// ── BOOKINGS ──────────────────────────────────────────────────────────────
+function renderBookings() {
+  var search = (document.getElementById('b-search').value||'').toLowerCase();
+  var status = document.getElementById('b-status').value;
+  var data   = getBookings();
+  if (search) data = data.filter(function(b){
+    return String(b.id||b._id||'').toLowerCase().includes(search) ||
+           (b.userName||b.passengerName||(b.user&&b.user.name)||'').toLowerCase().includes(search) ||
+           (b.route||'').toLowerCase().includes(search);
+  });
+  if (status) data = data.filter(function(b){ return b.status === status; });
+  document.getElementById('b-count').textContent = data.length + ' bookings';
+
+  // Reset edit targets for bookings
+  document.getElementById('bookings-tbody').innerHTML = data.map(function(b){
+    var id   = b.id || b._id;
+    var name = b.userName||b.passengerName||(b.user&&b.user.name)||'—';
+    var editKey   = storeTarget({type:'bk-edit',   id: id});
+    var deleteKey = storeTarget({type:'bk-delete', id: id});
+    return '<tr>'+
+      '<td>'+idChip(id)+'</td>'+
+      '<td>'+name+'</td>'+
+      '<td>'+(b.route||'—')+'</td>'+
+      '<td>'+fmtDate(b.date)+'</td>'+
+      '<td>'+(b.departure||'—')+'</td>'+
+      '<td><strong>Seat '+(b.seat||'—')+'</strong></td>'+
+      '<td>'+peso(b.price||b.fare||0)+'</td>'+
+      '<td>'+(b.paymentMethod||'—')+'</td>'+
+      '<td>'+badge(b.status)+'</td>'+
+      '<td style="display:flex;gap:6px">'+
+        '<button class="btn-sm btn-yellow" onclick="handleTarget(\''+editKey+'\')">Edit</button>'+
+        '<button class="btn-sm btn-red"    onclick="handleTarget(\''+deleteKey+'\')">Delete</button>'+
+      '</td>'+
+    '</tr>';
+  }).join('') || '<tr><td colspan="10" style="text-align:center;color:#9ca3af;padding:40px">No bookings found</td></tr>';
+}
+
+function openBkEdit(id) {
+  var b = getBookings().find(function(x){ return (x.id||x._id) == id; });
+  if (!b) return;
+  document.getElementById('bk-modal-id').value     = id;
+  document.getElementById('bk-modal-bid').value    = id;
+  document.getElementById('bk-modal-status').value = b.status;
+  openModal('bk-modal');
+}
+function saveBkEdit() {
+  var id     = document.getElementById('bk-modal-id').value;
+  var status = document.getElementById('bk-modal-status').value;
+  var data   = getBookings().map(function(b){ return (b.id||b._id)==id ? Object.assign({},b,{status:status}) : b; });
+  saveBookings(data);
+  closeModal('bk-modal');
+  showToast('Booking updated!');
+  renderBookings();
+  loadDashboard();
+}
+function deleteBk(id) {
+  confirmAction('Permanently delete booking ' + id + '?', function(){
+    saveBookings(getBookings().filter(function(b){ return (b.id||b._id) != id; }));
+    showToast('Booking deleted.', 'error');
+    renderBookings();
+    loadDashboard();
+  });
+}
+
+// ── TRIPS ─────────────────────────────────────────────────────────────────
+function renderTrips() {
+  var trips = getTrips();
+  document.getElementById('trips-tbody').innerHTML = trips.map(function(t){
+    var id = t.id||t._id;
+    var editKey   = storeTarget({type:'trip-edit',   id: id});
+    var deleteKey = storeTarget({type:'trip-delete', id: id});
+    return '<tr>'+
+      '<td>'+idChip(id)+'</td>'+
+      '<td><strong>'+t.route+'</strong></td>'+
+      '<td>'+t.duration+'</td>'+
+      '<td>'+peso(t.priceMin)+' – '+peso(t.priceMax)+'</td>'+
+      '<td style="font-size:12px">'+((t.departures||[]).join(', '))+'</td>'+
+      '<td>'+(t.totalSeats||45)+'</td>'+
+      '<td style="display:flex;gap:6px">'+
+        '<button class="btn-sm btn-yellow" onclick="handleTarget(\''+editKey+'\')">Edit</button>'+
+        '<button class="btn-sm btn-red"    onclick="handleTarget(\''+deleteKey+'\')">Delete</button>'+
+      '</td>'+
+    '</tr>';
+  }).join('') || '<tr><td colspan="7" style="text-align:center;color:#9ca3af;padding:40px">No trips found</td></tr>';
+}
+function openTripModal(id) {
+  document.getElementById('trip-modal-title').textContent = id ? 'Edit Trip' : 'Add Trip';
+  document.getElementById('tm-id').value = id||'';
+  if (id) {
+    var t = getTrips().find(function(x){ return (x.id||x._id)==id; });
+    if (!t) return;
+    document.getElementById('tm-route').value    = t.route;
+    document.getElementById('tm-duration').value = t.duration;
+    document.getElementById('tm-seats').value    = t.totalSeats||45;
+    document.getElementById('tm-pmin').value     = t.priceMin;
+    document.getElementById('tm-pmax').value     = t.priceMax;
+    document.getElementById('tm-deps').value     = (t.departures||[]).join(', ');
+  } else {
+    ['tm-route','tm-duration','tm-pmin','tm-pmax','tm-deps'].forEach(function(fid){ document.getElementById(fid).value=''; });
+    document.getElementById('tm-seats').value = 45;
+  }
+  openModal('trip-modal');
+}
+function saveTrip() {
+  var id   = document.getElementById('tm-id').value;
+  var data = {
+    route:      document.getElementById('tm-route').value.trim(),
+    duration:   document.getElementById('tm-duration').value.trim(),
+    totalSeats: parseInt(document.getElementById('tm-seats').value)||45,
+    priceMin:   parseInt(document.getElementById('tm-pmin').value)||0,
+    priceMax:   parseInt(document.getElementById('tm-pmax').value)||0,
+    departures: document.getElementById('tm-deps').value.split(',').map(function(d){ return d.trim(); }).filter(Boolean),
+  };
+  if (!data.route) { showToast('Route is required.','error'); return; }
+  var trips = getTrips();
+  if (id) {
+    trips = trips.map(function(t){ return (t.id||t._id)==id ? Object.assign({},t,data) : t; });
+    showToast('Trip updated!');
+  } else {
+    data.id = 'T' + Date.now();
+    trips.push(data);
+    showToast('Trip added!');
+  }
+  saveTrips(trips);
+  closeModal('trip-modal');
+  renderTrips();
+}
+function deleteTrip(id) {
+  confirmAction('Delete this trip? This cannot be undone.', function(){
+    saveTrips(getTrips().filter(function(t){ return (t.id||t._id)!=id; }));
+    showToast('Trip deleted.','error');
+    renderTrips();
+  });
+}
+
+// ── USERS ─────────────────────────────────────────────────────────────────
+function renderUsers() {
+  var search = (document.getElementById('u-search').value||'').toLowerCase();
+  var users  = getUsers();
+  if (search) users = users.filter(function(u){
+    return (u.name||'').toLowerCase().includes(search)||(u.email||'').toLowerCase().includes(search);
+  });
+  document.getElementById('u-count').textContent = users.length + ' users';
+  var allBk = getBookings();
+
+  document.getElementById('users-tbody').innerHTML = users.map(function(u){
+    var uid    = u._id || u.id;
+    var bCount = allBk.filter(function(b){ return String(b.userId) === String(uid); }).length;
+    var editKey   = storeTarget({type:'user-edit',   uid: uid});
+    var deleteKey = storeTarget({type:'user-delete', uid: uid});
+    var isAdmin   = u.role === 'admin';
+    return '<tr>'+
+      '<td>'+idChip(uid)+'</td>'+
+      '<td><strong>'+u.name+'</strong></td>'+
+      '<td style="font-size:12px">'+u.email+'</td>'+
+      '<td style="font-size:12px">'+(u.phone||'—')+'</td>'+
+      '<td>'+badge(u.role, u.role)+'</td>'+
+      '<td>'+fmtDate(u.joined||u.createdAt)+'</td>'+
+      '<td style="font-weight:700;color:#0f6e56">'+bCount+'</td>'+
+      '<td style="display:flex;gap:6px">'+
+        '<button class="btn-sm btn-yellow" onclick="handleTarget(\''+editKey+'\')">Edit</button>'+
+        (!isAdmin ? '<button class="btn-sm btn-red" onclick="handleTarget(\''+deleteKey+'\')">Delete</button>' : '')+
+      '</td>'+
+    '</tr>';
+  }).join('') || '<tr><td colspan="8" style="text-align:center;color:#9ca3af;padding:40px">No users found</td></tr>';
+}
+
+// ── Central handler — avoids passing raw IDs through onclick strings ──────
+function handleTarget(key) {
+  var t = _editTargets[key];
+  if (!t) return;
+  if (t.type === 'bk-edit')     openBkEdit(t.id);
+  if (t.type === 'bk-delete')   deleteBk(t.id);
+  if (t.type === 'trip-edit')   openTripModal(t.id);
+  if (t.type === 'trip-delete') deleteTrip(t.id);
+  if (t.type === 'user-edit')   openUserEdit(t.uid);
+  if (t.type === 'user-delete') deleteUser(t.uid);
+}
+
+function openUserEdit(uid) {
+  var users = getUsers();
+  var u = users.find(function(x){ return (x._id||x.id) == uid; });
+  if (!u) return;
+  document.getElementById('um-id').value    = uid;
+  document.getElementById('um-name').value  = u.name;
+  document.getElementById('um-email').value = u.email;
+  document.getElementById('um-phone').value = u.phone||'';
+  document.getElementById('um-role').value  = u.role;
+  openModal('user-modal');
+}
+function saveUser() {
+  var uid  = document.getElementById('um-id').value;
+  var data = {
+    name:  document.getElementById('um-name').value.trim(),
+    email: document.getElementById('um-email').value.trim(),
+    phone: document.getElementById('um-phone').value.trim(),
+    role:  document.getElementById('um-role').value,
+  };
+  if (!data.name||!data.email) { showToast('Name and email are required.','error'); return; }
+  var users = getUsers().map(function(u){
+    return (String(u._id||u.id) === String(uid)) ? Object.assign({},u,data) : u;
+  });
+  saveUsers(users);
+  showToast('User updated!');
+  closeModal('user-modal');
+  renderUsers();
+}
+function deleteUser(uid) {
+  confirmAction('Delete this user? This cannot be undone.', function(){
+    saveUsers(getUsers().filter(function(u){ return String(u._id||u.id) !== String(uid); }));
+    showToast('User deleted.','error');
+    renderUsers();
+    loadDashboard();
+  });
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────
+function loadAll() { loadDashboard(); }
+</script>
+</body>
+</html>

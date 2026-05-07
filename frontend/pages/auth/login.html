@@ -42,7 +42,7 @@
       👤 User: maria@example.com / user123
     </div>
 
-    <button class="btn-primary-full" onclick="doLogin()">Login →</button>
+    <button class="btn-primary-full" id="login-btn" onclick="doLogin()">Login →</button>
     <p class="auth-link">Don't have an account? <a href="register.html">Register here</a></p>
     <p class="auth-link" style="margin-top:6px"><a href="../../index.html">← Back to Home</a></p>
   </div>
@@ -52,97 +52,118 @@
 <script src="../../js/script.js"></script>
 <script>
   document.addEventListener('DOMContentLoaded', function() {
+    // If already logged in, skip the login page entirely
     if (Auth.isLoggedIn()) {
       var u = Auth.currentUser();
-      window.location.href = (u && u.role === 'admin')
+      window.location.replace(u && u.role === 'admin'
         ? '../admin/admin-dashboard.html'
-        : '../../index.html';
+        : '../../index.html');
       return;
     }
-    document.getElementById('password').addEventListener('keydown', function(e){
+    document.getElementById('password').addEventListener('keydown', function(e) {
       if (e.key === 'Enter') doLogin();
     });
   });
 
+  /* ── Build a clean user object from API or local data ── */
+  function buildUserObject(data) {
+    return {
+      id:     data._id   || data.id,
+      name:   data.name,
+      email:  data.email,
+      phone:  data.phone  || '',
+      role:   data.role   || 'user',
+      joined: data.joined || ''
+    };
+  }
+
+  /* ── Save session + optional JWT, then redirect ── */
+  function saveAndRedirect(userRaw) {
+    var user = buildUserObject(userRaw);
+    Auth.login(user);                                        // saves to qr_user
+    if (userRaw.token) localStorage.setItem('qr_token', userRaw.token);
+
+    showToast('Welcome back, ' + user.name.split(' ')[0] + '! 👋');
+
+    setTimeout(function() {
+      var redirect = null;
+      try { redirect = localStorage.getItem('loginRedirect'); localStorage.removeItem('loginRedirect'); } catch(e) {}
+
+      if (user.role === 'admin') {
+        window.location.href = '../admin/admin-dashboard.html';
+      } else if (redirect && redirect.indexOf('login') === -1) {
+        window.location.href = redirect;
+      } else {
+        window.location.href = '../../index.html';
+      }
+    }, 600);
+  }
+
+  /* ── Check seeded localStorage accounts (offline fallback) ── */
+  function tryLocalLogin(email, password) {
+    var users = QR.get('qr_users', []);
+    return users.find(function(u) {
+      return u.email.toLowerCase() === email.toLowerCase() && u.password === password;
+    }) || null;
+  }
+
+  /* ── Main login handler ── */
   async function doLogin() {
-    var email    = document.getElementById('email').value.trim();
-    var password = document.getElementById('password').value;
+    var email    = (document.getElementById('email').value    || '').trim();
+    var password = (document.getElementById('password').value || '');
     var errEl    = document.getElementById('login-error');
+    var btn      = document.getElementById('login-btn');
+
     errEl.style.display = 'none';
 
     if (!email || !password) {
-      errEl.textContent = 'Please fill in all fields.';
+      errEl.textContent   = 'Please fill in all fields.';
       errEl.style.display = 'block';
       return;
     }
 
-    try {
-      const response = await fetch('http://localhost:5000/api/users/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password })
-      });
+    btn.textContent = 'Signing in…';
+    btn.disabled    = true;
 
-      const data = await response.json();
+    try {
+      var response = await fetch('http://localhost:5000/api/users/login', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({ email: email, password: password })
+      });
+      var data = await response.json();
 
       if (response.ok) {
-        // Save session to localStorage (keeps your existing Auth system working)
-        const user = { id: data._id || data.id, name: data.name, email: data.email, phone: data.phone || '', role: data.role || 'user' };
-        Auth.login(user);
-        showToast('Welcome back, ' + user.name.split(' ')[0] + '! 👋');
-
-        setTimeout(function() {
-          var redirect = null;
-          try { redirect = localStorage.getItem('loginRedirect'); localStorage.removeItem('loginRedirect'); } catch(e){}
-          if (user.role === 'admin') {
-            window.location.href = '../admin/admin-dashboard.html';
-          } else if (redirect && redirect.indexOf('login') === -1) {
-            window.location.href = redirect;
-          } else {
-            window.location.href = '../../index.html';
-          }
-        }, 600);
-
-      } else {
-        // Fallback: try localStorage (for demo accounts that aren't in MongoDB)
-        var users = Users.all();
-        var localUser = null;
-        for (var i = 0; i < users.length; i++) {
-          if (users[i].email === email && users[i].password === password) {
-            localUser = users[i]; break;
-          }
-        }
-        if (localUser) {
-          Auth.login(localUser);
-          showToast('Welcome back, ' + localUser.name.split(' ')[0] + '! 👋');
-          setTimeout(function() {
-            window.location.href = localUser.role === 'admin' ? '../admin/admin-dashboard.html' : '../../index.html';
-          }, 600);
-        } else {
-          errEl.textContent = data.message || 'Invalid email or password.';
-          errEl.style.display = 'block';
-        }
+        // ✅ Backend online + credentials valid
+        saveAndRedirect(data.user || data);
+        return;
       }
-    } catch (err) {
-      // If backend is down, fall back to localStorage demo accounts
-      var users = Users.all();
-      var localUser = null;
-      for (var i = 0; i < users.length; i++) {
-        if (users[i].email === email && users[i].password === password) {
-          localUser = users[i]; break;
-        }
-      }
+
+      // Backend online but credentials rejected — still try local
+      var localUser = tryLocalLogin(email, password);
       if (localUser) {
-        Auth.login(localUser);
-        showToast('Welcome back, ' + localUser.name.split(' ')[0] + '! 👋');
-        setTimeout(function() {
-          window.location.href = localUser.role === 'admin' ? '../admin/admin-dashboard.html' : '../../index.html';
-        }, 600);
+        saveAndRedirect(localUser);
       } else {
-        errEl.textContent = 'Cannot reach server. Backend may be offline.';
+        errEl.textContent   = data.message || 'Invalid email or password.';
         errEl.style.display = 'block';
-        console.error(err);
+        btn.textContent     = 'Login →';
+        btn.disabled        = false;
+      }
+
+    } catch (err) {
+      // 🔌 Backend offline — fall back to localStorage demo accounts
+      console.warn('[QuickReserve] Backend offline, trying local accounts:', err.message);
+      var localUser = tryLocalLogin(email, password);
+      if (localUser) {
+        saveAndRedirect(localUser);
+      } else {
+        errEl.textContent   = 'Wrong email or password.';
+        errEl.style.display = 'block';
+        btn.textContent     = 'Login →';
+        btn.disabled        = false;
       }
     }
   }
 </script>
+</body>
+</html>

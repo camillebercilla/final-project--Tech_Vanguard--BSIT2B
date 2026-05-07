@@ -12,6 +12,7 @@
 
 <nav class="navbar navbar-expand-lg">
   <div class="container" style="max-width:1200px">
+    <img src="/frontend/img/rabbit.png" style="width:28px;height:28px;border-radius:8px;object-fit:cover;flex-shrink:0;" alt="Logo">
     <a class="navbar-brand" href="../../index.html"><span><span class="brand-quick">Quick</span>Reserve</span></a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
       <span class="navbar-toggler-icon"></span>
@@ -19,7 +20,6 @@
     <div class="collapse navbar-collapse" id="nav">
       <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-1">
         <li class="nav-item"><a class="nav-link" href="../../index.html">Home</a></li>
-        <li class="nav-item"><a class="nav-link" href="my-bookings.html">My Bookings</a></li>
         <li class="nav-item"><a class="nav-link active" href="profile.html">Profile</a></li>
       </ul>
       <div class="ms-lg-3 mt-2 mt-lg-0 d-flex align-items-center gap-2" id="nav-auth-btns"></div>
@@ -34,7 +34,6 @@
   </div>
 </div>
 
-<!-- Content is VISIBLE by default — JS hides it only if not logged in -->
 <div id="page-content" style="background:#f9fafb;padding:32px 0;min-height:60vh">
   <div class="container" style="max-width:700px">
 
@@ -90,25 +89,55 @@
 <script>
   window.addEventListener('load', function () {
     try {
-      // Check if Auth is available (script.js loaded correctly)
       if (typeof Auth === 'undefined') {
         document.getElementById('profile-name').textContent = 'Error: script.js not loaded';
         return;
       }
-
-      // Auth guard
       if (!Auth.isLoggedIn()) {
         window.location.href = '../auth/login.html';
         return;
       }
-
       loadProfile();
-
     } catch(e) {
       console.error('Profile init error:', e);
       document.getElementById('profile-name').textContent = 'Error: ' + e.message;
     }
   });
+
+  function getJoinedDate(u) {
+    // Try every possible field where joined date might be stored
+    var raw = u.joined || u.createdAt || u.created_at || u.registeredAt || null;
+
+    if (raw) {
+      var d = new Date(raw);
+      if (!isNaN(d)) {
+        return d.toLocaleDateString('en-PH', { year: 'numeric', month: 'long', day: 'numeric' });
+      }
+    }
+
+    // If still nothing, check the full Users store record (session object may be stripped)
+    try {
+      var dbUser = Users.byId(u.id);
+      if (dbUser) {
+        var dbRaw = dbUser.joined || dbUser.createdAt || dbUser.created_at || dbUser.registeredAt || null;
+        if (dbRaw) {
+          var d2 = new Date(dbRaw);
+          if (!isNaN(d2)) {
+            return d2.toLocaleDateString('en-PH', { year: 'numeric', month: 'long', day: 'numeric' });
+          }
+        }
+      }
+    } catch(e) {}
+
+    // Last resort: patch the user record with today's date so it shows next time
+    try {
+      var today = new Date().toISOString();
+      Users.update(u.id, { joined: today });
+      return new Date(today).toLocaleDateString('en-PH', { year: 'numeric', month: 'long', day: 'numeric' });
+    } catch(e) {}
+
+    return 'Unknown';
+  }
 
   function loadProfile() {
     var u = Auth.currentUser();
@@ -119,7 +148,7 @@
     document.getElementById('profile-name').textContent    = u.name;
     document.getElementById('profile-email').textContent   = u.email;
     document.getElementById('profile-role').textContent    = u.role === 'admin' ? 'Admin' : 'Passenger';
-    document.getElementById('profile-joined').textContent  = formatDate(u.joined);
+    document.getElementById('profile-joined').textContent  = getJoinedDate(u);
     document.getElementById('edit-name').value  = u.name;
     document.getElementById('edit-email').value = u.email;
     document.getElementById('edit-phone').value = u.phone || '';
@@ -140,13 +169,13 @@
   }
 
   function changePassword() {
-    var u       = Auth.currentUser();
+    var u = Auth.currentUser();
     if (!u) return;
     var oldPass = document.getElementById('old-pass').value;
     var newPass = document.getElementById('new-pass').value;
     var confirm = document.getElementById('new-pass-confirm').value;
     if (!oldPass || !newPass || !confirm) { showToast('Please fill in all password fields.', 'error'); return; }
-    var dbUser  = Users.byId(u.id);
+    var dbUser = Users.byId(u.id);
     if (!dbUser || dbUser.password !== oldPass) { showToast('Current password is incorrect.', 'error'); return; }
     if (newPass.length < 6) { showToast('New password must be at least 6 characters.', 'error'); return; }
     if (newPass !== confirm) { showToast('Passwords do not match.', 'error'); return; }

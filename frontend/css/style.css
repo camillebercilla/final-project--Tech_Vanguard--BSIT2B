@@ -45,16 +45,16 @@ body { font-family: 'Poppins', sans-serif; color: var(--text); background: #f9fa
 .navbar .nav-link { color: rgba(255,255,255,0.75) !important; font-size: 14px; font-weight: 500; transition: color 0.2s; }
 .navbar .nav-link:hover { color: #fff !important; }
 .nav-login {
-  color: rgb(255, 255, 255);
-  background: #0d654f;
+  color: var(--green);
+  background: #fff;
   font-size: 14px; font-weight: 600;
   text-decoration: none;
   padding: 7px 16px;
   border-radius: 8px;
-  border: 1px solid rgba(255,255,255,0.25);
+  border: 1.5px solid var(--green);
   transition: all 0.2s;
 }
-.nav-login:hover { background: rgba(255,255,255,0.1); color: #fff; }
+.nav-login:hover { background: var(--green); color: #fff; border-color: var(--green); }
 .btn-register {
   background: var(--green);
   color: #fff;
@@ -62,9 +62,10 @@ body { font-family: 'Poppins', sans-serif; color: var(--text); background: #f9fa
   text-decoration: none;
   padding: 8px 20px;
   border-radius: 8px;
-  transition: background 0.2s;
+  border: 1.5px solid var(--green);
+  transition: all 0.2s;
 }
-.btn-register:hover { background: var(--green-lt); color: #fff; }
+.btn-register:hover { background: var(--green-lt); color: #fff; border-color: var(--green-lt); }
 
 /* ── LIVE BAR ── */
 .live-bar {
@@ -176,32 +177,229 @@ body { font-family: 'Poppins', sans-serif; color: var(--text); background: #f9fa
 .section-title { font-size: clamp(1.3rem, 3vw, 1.8rem); font-weight: 800; color: #1a1a1a; margin-bottom: 6px; }
 .section-sub   { color: var(--muted); font-size: 14px; }
 
-/* ── HOW IT WORKS ── */
-.steps-section { background: #fff; padding: 56px 0; }
-.step-card {
-  background: var(--green-bg);
-  border-radius: var(--radius);
-  padding: 28px 20px;
-  text-align: center;
-  border: 1px solid #c3e8d8;
-  transition: transform 0.2s, box-shadow 0.2s;
-  margin: 0 8px;
+/* ══════════════════════════════════════════
+   ── STEPS SECTION ──
+══════════════════════════════════════════ */
+.steps-section {
+  background: #f9fafb;
+  padding: 72px 0 64px;
+  position: relative;
+  overflow: hidden;
 }
-.step-card:hover { transform: translateY(-4px); box-shadow: var(--shadow); }
-.step-num {
-  width: 36px; height: 36px;
-  background: var(--green);
-  color: #fff; font-weight: 800; font-size: 15px;
+.steps-section::before {
+  content: '';
+  position: absolute;
+  top: -80px; right: -80px;
+  width: 320px; height: 320px;
+  background: radial-gradient(circle, rgba(22,163,122,0.08) 0%, transparent 70%);
   border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  margin: 0 auto 14px;
+  pointer-events: none;
 }
-.step-icon { font-size: 28px; margin-bottom: 10px; }
-.step-title { font-weight: 700; font-size: 14px; color: #1a1a1a; margin-bottom: 6px; }
-.step-desc  { font-size: 12px; color: var(--muted); line-height: 1.5; }
+.steps-section::after {
+  content: '';
+  position: absolute;
+  bottom: -60px; left: -60px;
+  width: 260px; height: 260px;
+  background: radial-gradient(circle, rgba(15,110,86,0.07) 0%, transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+/* Section label pill */
+.section-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #e8f5ef;
+  color: #0f6e56;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 5px 14px;
+  border-radius: 20px;
+  border: 1px solid #c3e8d8;
+  margin-bottom: 12px;
+}
+.section-pill-dot {
+  width: 6px; height: 6px;
+  background: #0f6e56;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+/* Steps track grid */
+.steps-track {
+  display: grid;
+  grid-template-columns: 1fr 48px 1fr 48px 1fr 48px 1fr;
+  gap: 0;
+  align-items: center;
+  position: relative;
+}
+
+/* Step card */
+.step-card {
+  background: #fff;
+  border-radius: 20px;
+  padding: 32px 24px 28px;
+  text-align: center;
+  border: 1.5px solid #e5e7eb;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+  position: relative;
+  overflow: hidden;
+}
+.step-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #0f6e56, #16a37a);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s ease;
+  border-radius: 20px 20px 0 0;
+}
+.step-card:hover::before { transform: scaleX(1); }
+.step-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 16px 40px rgba(15,110,86,0.14);
+  border-color: #c3e8d8;
+}
+
+/* Step number badge */
+.step-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px; height: 40px;
+  background: linear-gradient(135deg, #0f6e56, #16a37a);
+  color: #fff;
+  font-weight: 800;
+  font-size: 16px;
+  border-radius: 50%;
+  margin: 0 auto 20px;
+  box-shadow: 0 4px 14px rgba(15,110,86,0.35);
+  position: relative;
+}
+.step-num::after {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(15,110,86,0.2);
+}
+
+/* Step icon wrapper */
+.step-icon {
+  width: 64px; height: 64px;
+  background: #e8f5ef;
+  border-radius: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 16px;
+  font-size: 28px;
+  transition: background 0.25s, transform 0.25s;
+}
+.step-card:hover .step-icon {
+  background: #d1fae5;
+  transform: scale(1.06);
+}
+
+.step-title {
+  font-weight: 800;
+  font-size: 15px;
+  color: #111827;
+  margin-bottom: 8px;
+  letter-spacing: -0.2px;
+}
+.step-desc {
+  font-size: 13px;
+  color: #6b7280;
+  line-height: 1.6;
+}
+
+/* Arrow connector between steps */
 .step-arrow {
-  display: flex; align-items: center; justify-content: center;
-  font-size: 22px; color: #d1d5db; padding-top: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: -20px;
+}
+
+/* ── PROMO BANNER ── */
+.promo-banner {
+  background: linear-gradient(135deg, #0a2e24 0%, #0f6e56 55%, #16a37a 100%);
+  border-radius: 22px;
+  padding: 36px 40px;
+  color: #fff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 12px 40px rgba(15,110,86,0.3);
+}
+.promo-banner::before {
+  content: '';
+  position: absolute;
+  right: -40px; top: -40px;
+  width: 200px; height: 200px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255,255,255,0.08);
+}
+.promo-banner::after {
+  content: '';
+  position: absolute;
+  right: 10px; top: 10px;
+  width: 120px; height: 120px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255,255,255,0.06);
+}
+.promo-tag {
+  display: inline-block;
+  background: rgba(255,255,255,0.18);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 3px 12px;
+  border-radius: 20px;
+  border: 1px solid rgba(255,255,255,0.25);
+  margin-bottom: 8px;
+}
+.promo-banner h5 {
+  font-weight: 800;
+  font-size: 1.25rem;
+  margin-bottom: 4px;
+  letter-spacing: -0.3px;
+}
+.promo-banner p { font-size: 13.5px; opacity: 0.8; margin: 0; }
+.promo-content { position: relative; z-index: 1; }
+.btn-promo {
+  background: #fff;
+  color: var(--green);
+  font-weight: 800;
+  font-size: 14px;
+  padding: 12px 28px;
+  border-radius: 30px;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.btn-promo:hover {
+  transform: scale(1.04) translateY(-1px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+  color: var(--green);
 }
 
 /* ── ROUTE CARDS ── */
@@ -217,7 +415,25 @@ body { font-family: 'Poppins', sans-serif; color: var(--text); background: #f9fa
   flex-direction: column;
 }
 .route-card:hover { transform: translateY(-4px); box-shadow: 0 8px 28px rgba(0,0,0,0.12); }
-.route-card img { width: 100%; height: 160px; object-fit: cover; }
+
+/* ── IMAGE ZOOM ON HOVER ── */
+.route-card .img-wrap {
+  overflow: hidden;
+  width: 100%;
+  height: 160px;
+  flex-shrink: 0;
+}
+.route-card img {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+.route-card:hover img {
+  transform: scale(1.1);
+}
+
 .route-card-body { padding: 16px; flex: 1; display: flex; flex-direction: column; gap: 10px; }
 .route-name { font-weight: 700; font-size: 15px; color: #1a1a1a; }
 .route-meta { display: flex; gap: 16px; }
@@ -246,29 +462,6 @@ body { font-family: 'Poppins', sans-serif; color: var(--text); background: #f9fa
 }
 .btn-book:hover { background: var(--green-lt); color: #fff; }
 
-/* ── PROMO BANNER ── */
-.promo-banner {
-  background: linear-gradient(135deg, var(--green) 0%, #16a37a 100%);
-  border-radius: var(--radius);
-  padding: 28px 32px;
-  color: #fff;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 16px;
-}
-.promo-banner h5 { font-weight: 800; font-size: 1.1rem; margin-bottom: 4px; }
-.promo-banner p  { font-size: 13px; opacity: 0.85; }
-.btn-promo {
-  background: #fff; color: var(--green);
-  font-weight: 700; font-size: 14px;
-  padding: 10px 24px; border-radius: 30px;
-  text-decoration: none; white-space: nowrap;
-  transition: transform 0.2s;
-}
-.btn-promo:hover { transform: scale(1.03); color: var(--green); }
-
 /* ── WHY US ── */
 .why-section { background: #fff; padding: 56px 0; }
 .why-card {
@@ -277,7 +470,7 @@ body { font-family: 'Poppins', sans-serif; color: var(--text); background: #f9fa
   border-radius: var(--radius);
   padding: 24px 18px;
   text-align: center;
-  transition: all 0.2s;
+  transition: transform 0.2s, border-color 0.2s, background 0.2s;
 }
 .why-card:hover { border-color: var(--green); background: var(--green-bg); transform: translateY(-2px); }
 .why-icon { font-size: 30px; margin-bottom: 10px; }
@@ -584,17 +777,93 @@ tr:hover td { background: #f9fafb; }
 .justify-between { justify-content: space-between; }
 .flex-wrap { flex-wrap: wrap; }
 
-/* Responsive admin */
+/* ── RESPONSIVE ── */
 @media(max-width:768px) {
   .sidebar { display: none; }
   .admin-main { margin-left: 0; }
 }
 @media(max-width:900px) {
-  .steps-section [class*="grid"] .step-arrow { display: none; }
+  .steps-track { grid-template-columns: 1fr 1fr; gap: 16px; }
+  .step-arrow { display: none; }
+  .promo-banner { padding: 28px 24px; }
 }
 @media(max-width:860px) {
   .route-grid { grid-template-columns: repeat(2,1fr) !important; }
 }
 @media(max-width:560px) {
+  .steps-track { grid-template-columns: 1fr !important; }
   .route-grid { grid-template-columns: 1fr !important; }
 }
+
+/* ══════════════════════════════════════════
+   ── FADE-IN ON SCROLL ──
+══════════════════════════════════════════ */
+
+.fade-in {
+  opacity: 0;
+  transform: translateY(32px);
+  transition: opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+              transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.fade-in.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.fade-in:nth-child(1) { transition-delay: 0s; }
+.fade-in:nth-child(2) { transition-delay: 0.08s; }
+.fade-in:nth-child(3) { transition-delay: 0.16s; }
+.fade-in:nth-child(4) { transition-delay: 0.24s; }
+.fade-in:nth-child(5) { transition-delay: 0.32s; }
+.fade-in:nth-child(6) { transition-delay: 0.40s; }
+.fade-in:nth-child(7) { transition-delay: 0.48s; }
+.fade-in:nth-child(8) { transition-delay: 0.56s; }
+
+.fade-in-left {
+  opacity: 0;
+  transform: translateX(-32px);
+  transition: opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+              transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.fade-in-left.visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.fade-in-right {
+  opacity: 0;
+  transform: translateX(32px);
+  transition: opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+              transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.fade-in-right.visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fade-in,
+  .fade-in-left,
+  .fade-in-right {
+    opacity: 1;
+    transform: translateY(0);
+    transition: none;
+  }
+}
+
+.navbar-brand span {
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.35rem;
+  letter-spacing: -0.3px; /* tighter like logo */
+}
+
+.brand-quick {
+  color: #16c4a1;
+  font-weight: 700;
+}
+
+.navbar-brand span:not(.brand-quick) {
+  color: #ffffff;
+  font-weight: 600;
+}
+

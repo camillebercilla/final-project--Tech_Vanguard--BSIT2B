@@ -67,11 +67,15 @@ exports.login = async (req, res) => {
       return res.status(401).json({ message: "Invalid email or password" });
     }
 
-    const token = jwt.sign(
-      { id: user._id, userId: user.userId },
-      process.env.JWT_SECRET || "secret",
-      { expiresIn: "1d" }
-    );
+  const token = jwt.sign(
+  {
+    id: user._id,
+    userId: user.userId,
+    role: user.role   // 🔥 ADD THIS LINE
+  },
+  process.env.JWT_SECRET || "secret",
+  { expiresIn: "1d" }
+);
 
     // Return shape that frontend expects
     res.json({

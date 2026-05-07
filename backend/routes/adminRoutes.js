@@ -1,7 +1,8 @@
-const router = require("express").Router();
-const auth = require("../middleware/authMiddleware");
+const express = require("express");
+const router = express.Router();
 
-router.use(auth);
+const authMiddleware = require("../middleware/authMiddleware");
+const adminMiddleware = require("../middleware/adminMiddleware");
 
 const {
   addTrip,
@@ -13,17 +14,21 @@ const {
   cancelBooking
 } = require("../controllers/adminController");
 
+
 // ─── TRIP ROUTES ───
-router.post("/trip",          addTrip);
-router.put("/trip/:id",       editTrip);
-router.delete("/trip/:id",    deleteTrip);
+router.post("/trips", authMiddleware, adminMiddleware, addTrip);
+router.put("/trips/:id", authMiddleware, adminMiddleware, editTrip);
+router.delete("/trips/:id", authMiddleware, adminMiddleware, deleteTrip);
+
 
 // ─── USER ROUTES ───
-router.get("/users",          getUsers);
-router.delete("/users/:id",   deleteUser);
+router.get("/users", authMiddleware, adminMiddleware, getUsers);
+router.delete("/users/:id", authMiddleware, adminMiddleware, deleteUser);
+
 
 // ─── BOOKING ROUTES ───
-router.get("/bookings",       getBookings);
-router.put("/bookings/:id",   cancelBooking);
+router.get("/bookings", authMiddleware, adminMiddleware, getBookings);
+router.put("/bookings/:id", authMiddleware, adminMiddleware, cancelBooking);
+
 
 module.exports = router;
