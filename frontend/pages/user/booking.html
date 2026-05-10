@@ -42,7 +42,8 @@
       </div>
       <p style="font-size:13px;color:#9ca3af;margin-bottom:20px">Show this reference at the terminal. Safe travels! 🚌</p>
       <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
-        <a href="../../index.html" class="btn-sm btn-green" style="padding:10px 24px;font-size:14px">Back to Home</a>
+        <a href="my-bookings.html" class="btn-sm btn-green" style="padding:10px 24px;font-size:14px">View My Bookings</a>
+        <a href="../../index.html" class="btn-sm btn-gray" style="padding:10px 24px;font-size:14px">Back to Home</a>
       </div>
     </div>
 
@@ -97,16 +98,17 @@
   padding:12px 14px;border-radius:10px;border:1.5px solid var(--border);
   cursor:pointer;font-size:14px;font-weight:500;transition:all 0.15s;
 }
-.payment-option:has(input:checked){border-color:var(--green);background:var(--green-bg);}
+.payment-option:has(input:checked) { border-color:var(--green);background:var(--green-bg); }
 </style>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="../../js/script.js"></script>
+<script src="../../js/api.js"></script>
 <script>
-  document.addEventListener('DOMContentLoaded', function() {
+  document.addEventListener('DOMContentLoaded', function () {
 
     if (!Auth.isLoggedIn()) {
-      try { localStorage.setItem('loginRedirect', window.location.href); } catch(e){}
+      try { localStorage.setItem('loginRedirect', window.location.href); } catch (e) {}
       window.location.href = '../auth/login.html';
       return;
     }
@@ -118,7 +120,9 @@
     var departure = localStorage.getItem('selectedDeparture') || '';
     var priceMin  = parseInt(localStorage.getItem('selectedPriceMin')) || 0;
     var priceMax  = parseInt(localStorage.getItem('selectedPriceMax')) || 0;
-    var price     = priceMin > 0 ? priceMin + Math.floor(Math.random() * Math.max(priceMax - priceMin, 1)) : 1100;
+    var price     = priceMin > 0
+      ? priceMin + Math.floor(Math.random() * Math.max(priceMax - priceMin, 1))
+      : 1100;
 
     if (!seat || !route) { window.location.href = '../../index.html'; return; }
 
@@ -134,77 +138,62 @@
     document.getElementById('b-seat').textContent   = 'Seat ' + seat;
     document.getElementById('b-price').textContent  = formatPeso(price);
 
-    window.confirmBooking = async function() {
+    window.confirmBooking = async function () {
       var name    = document.getElementById('pax-name').value.trim();
       var email   = document.getElementById('pax-email').value.trim();
       var phone   = document.getElementById('pax-phone').value.trim();
       var payment = document.querySelector('input[name="payment"]:checked');
       var method  = payment ? payment.value : 'Cash';
 
-      if (!name || !email || !phone) { showToast('Please fill in all passenger details.', 'error'); return; }
-
-      var btn = document.getElementById('confirm-btn');
-      btn.disabled = true;
-      btn.textContent = 'Processing...';
-
-      var bookingPayload = {
-        userId:          user.id,
-        userName:        user.name,
-        route:           route,
-        seat:            seat,
-        date:            date,
-        departure:       departure,
-        price:           price,
-        status:          'confirmed',
-        paymentMethod:   method,
-        passengerName:   name,
-        passengerEmail:  email,
-        passengerPhone:  phone
-      };
-
-      var bookingId = null;
-
-      try {
-        const response = await fetch('http://localhost:5000/api/bookings', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(bookingPayload)
-        });
-
-        const data = await response.json();
-
-        if (response.ok) {
-          bookingId = data._id || data.id || null;
-        } else {
-          showToast('API warning: ' + (data.message || 'Booking saved locally only.'), 'warning');
-        }
-      } catch (err) {
-        showToast('Backend unreachable. Saving booking locally.', 'warning');
-        console.error(err);
+      if (!name || !email || !phone) {
+        showToast('Please fill in all passenger details.', 'error'); return;
       }
 
-     // Always save to localStorage too (keeps your existing UI working)
-Seats.book(route, date, departure, seat);
-var localBooking = Bookings.add(bookingPayload);
+      var btn = document.getElementById('confirm-btn');
+      btn.disabled    = true;
+      btn.textContent = 'Processing…';
 
-// If backend returned an _id, also store it on the local booking so lookup works
-if (bookingId) {
-  Bookings.update(localBooking.id, { _id: bookingId });
-}
+      var bookingPayload = {
+        userId:         user._id || user.id,
+        userName:       user.name,
+        route:          route,
+        seat:           seat,
+        date:           date,
+        departure:      departure,
+        price:          price,
+        status:         'confirmed',
+        paymentMethod:  method,
+        passengerName:  name,
+        passengerEmail: email,
+        passengerPhone: phone
+      };
 
-var displayId = localBooking.id; // Always show QR-XXXX to user
+      try {
+        // ── Save to MongoDB ──────────────────────────────────────────────
+        var saved = await ApiBookings.create(bookingPayload);
 
-      localStorage.removeItem('selectedSeat');
-      localStorage.removeItem('selectedDeparture');
+        // Also mark the seat taken locally so the seat map stays accurate
+        Seats.book(route, date, departure, seat);
 
-      document.getElementById('booking-form-state').style.display = 'none';
-      document.getElementById('success-state').style.display = 'block';
-      document.getElementById('booking-ref').textContent   = displayId;
-      document.getElementById('conf-route').textContent    = route;
-      document.getElementById('conf-date').textContent     = formatDate(date);
-      document.getElementById('conf-depart').textContent   = departure || '—';
-      document.getElementById('conf-seat').textContent     = 'Seat ' + seat;
-      document.getElementById('conf-price').textContent    = formatPeso(price);
+        var displayId = saved._id || saved.id || 'Confirmed';
+
+        localStorage.removeItem('selectedSeat');
+        localStorage.removeItem('selectedDeparture');
+
+        document.getElementById('booking-form-state').style.display = 'none';
+        document.getElementById('success-state').style.display      = 'block';
+        document.getElementById('booking-ref').textContent          = displayId;
+        document.getElementById('conf-route').textContent           = route;
+        document.getElementById('conf-date').textContent            = formatDate(date);
+        document.getElementById('conf-depart').textContent          = departure || '—';
+        document.getElementById('conf-seat').textContent            = 'Seat ' + seat;
+        document.getElementById('conf-price').textContent           = formatPeso(price);
+
+      } catch (err) {
+        showToast(err.message || 'Booking failed. Please try again.', 'error');
+        btn.disabled    = false;
+        btn.textContent = 'Confirm Booking ✓';
+      }
     };
 
   });

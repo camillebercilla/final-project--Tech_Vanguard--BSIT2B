@@ -23,7 +23,6 @@ exports.createBooking = async (req, res) => {
       return res.status(400).json({ message: "userId is required" });
     }
 
-    // Find user by MongoDB _id (what your frontend sends after login)
     const user = await User.findById(userId);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
@@ -60,6 +59,23 @@ exports.getBookings = async (req, res) => {
     res.json(bookings);
   } catch (err) {
     res.status(500).json({ error: err.message });
+  }
+};
+
+// Get a single booking by its MongoDB _id  ← NEW
+exports.getBookingById = async (req, res) => {
+  try {
+    const booking = await Booking.findById(req.params.id)
+      .populate("userId", "name email phone role");
+
+    if (!booking) {
+      return res.status(404).json({ message: "Booking not found" });
+    }
+
+    res.json(booking);
+  } catch (err) {
+    // Mongoose CastError = malformed ObjectId
+    res.status(400).json({ message: "Invalid booking ID" });
   }
 };
 

@@ -58,75 +58,62 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="../../js/script.js"></script>
+<script src="../../js/api.js"></script>
 <script>
-  if (Auth.isLoggedIn()) window.location.href = '../../index.html';
-
-async function doRegister() {
-  var name     = document.getElementById('name').value.trim();
-  var email    = document.getElementById('email').value.trim();
-  var phone    = document.getElementById('phone').value.trim();
-  var password = document.getElementById('password').value;
-  var confirm  = document.getElementById('confirm').value;
-  var errEl    = document.getElementById('reg-error');
-  var btn      = document.getElementById('reg-btn');
-  errEl.style.display = 'none';
-
-  if (!name || !email || !phone || !password || !confirm) {
-    errEl.textContent = 'Please fill in all fields.'; errEl.style.display = 'block'; return;
-  }
-  if (password.length < 6) {
-    errEl.textContent = 'Password must be at least 6 characters.'; errEl.style.display = 'block'; return;
-  }
-  if (password !== confirm) {
-    errEl.textContent = 'Passwords do not match.'; errEl.style.display = 'block'; return;
+  if (Auth.isLoggedIn()) {
+    window.location.href = '../../index.html';
   }
 
-  var existing = Users.all().find(function(u){ return u.email.toLowerCase() === email.toLowerCase(); });
-  if (existing) {
-    errEl.textContent = 'An account with this email already exists.'; errEl.style.display = 'block'; return;
-  }
+  async function doRegister() {
+    var name     = document.getElementById('name').value.trim();
+    var email    = document.getElementById('email').value.trim();
+    var phone    = document.getElementById('phone').value.trim();
+    var password = document.getElementById('password').value;
+    var confirm  = document.getElementById('confirm').value;
+    var errEl    = document.getElementById('reg-error');
+    var btn      = document.getElementById('reg-btn');
 
-  btn.disabled = true;
-  btn.textContent = 'Creating account...';
+    errEl.style.display = 'none';
 
-  var today = new Date().toISOString(); // ← captures exact registration date
-  var newUser = null;
-
-  try {
-    var response = await fetch('http://localhost:5000/api/users/register', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name: name, email: email, phone: phone, password: password, role: 'user', joined: today })
-    });
-    var data = await response.json();
-    if (response.ok) {
-      newUser = {
-        id:     data._id || data.id,
-        name:   data.name,
-        email:  data.email,
-        phone:  data.phone || phone,
-        role:   data.role || 'user',
-        joined: data.joined || data.createdAt || today  // ← use server date or fallback
-      };
-    } else {
-      errEl.textContent = data.message || 'Registration failed. Try again.';
-      errEl.style.display = 'block';
-      btn.disabled = false;
-      btn.textContent = 'Create Account →';
-      return;
+    // ── Validation ───────────────────────────────────────────────────
+    if (!name || !email || !phone || !password || !confirm) {
+      errEl.textContent   = 'Please fill in all fields.';
+      errEl.style.display = 'block'; return;
     }
-  } catch (err) {
-    // Backend unreachable — save locally with joined date
-    var localUser = Users.add({ name: name, email: email, phone: phone, password: password, role: 'user', joined: today });
-    newUser = { id: localUser.id, name: localUser.name, email: localUser.email, phone: localUser.phone, role: localUser.role, joined: today };
+    if (password.length < 6) {
+      errEl.textContent   = 'Password must be at least 6 characters.';
+      errEl.style.display = 'block'; return;
+    }
+    if (password !== confirm) {
+      errEl.textContent   = 'Passwords do not match.';
+      errEl.style.display = 'block'; return;
+    }
+
+    btn.disabled    = true;
+    btn.textContent = 'Creating account…';
+
+    try {
+      // ── Register in MongoDB ──────────────────────────────────────────
+      await ApiAuth.register({ name, email, phone, password, role: 'user' });
+
+      // ── Auto-login after registration ────────────────────────────────
+      await ApiAuth.login(email, password);
+
+      var user = Auth.currentUser();
+      showToast('Welcome, ' + name.split(' ')[0] + '! Account created 🎉');
+      setTimeout(function () { window.location.href = '../../index.html'; }, 600);
+
+    } catch (err) {
+      errEl.textContent   = err.message || 'Registration failed. Try again.';
+      errEl.style.display = 'block';
+      btn.disabled        = false;
+      btn.textContent     = 'Create Account →';
+    }
   }
 
-  Auth.login(newUser);
-  showToast('Welcome, ' + name.split(' ')[0] + '! Account created 🎉');
-  setTimeout(function(){ window.location.href = '../../index.html'; }, 600);
-}
-
-document.addEventListener('keydown', function(e){ if (e.key === 'Enter') doRegister(); });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter') doRegister();
+  });
 </script>
 </body>
 </html>

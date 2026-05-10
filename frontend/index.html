@@ -14,7 +14,7 @@
 <nav class="navbar navbar-expand-lg">
   <div class="container" style="max-width:1200px">
     <a class="navbar-brand" href="index.html">
-      <img src="img/rabbit.png" class="logo-icon" alt="Logo" style="width:36px; height:36px; border-radius:8px; object-fit:cover;">
+      <img src="img/rabbit.png" class="logo-icon" alt="Logo" style="width:36px;height:36px;border-radius:8px;object-fit:cover;">
       <span><span class="brand-quick">Quick</span>Reserve</span>
     </a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
@@ -93,7 +93,7 @@
   <div class="container">
     <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;text-align:center">
       <div class="stat-item fade-in"><h3>12,000+</h3><p>Happy passengers</p></div>
-      <div class="stat-item fade-in"><h3>6</h3><p>Routes available</p></div>
+      <div class="stat-item fade-in"><h3 id="stat-routes">6</h3><p>Routes available</p></div>
       <div class="stat-item fade-in"><h3>99%</h3><p>On-time rate</p></div>
       <div class="stat-item fade-in"><h3>24/7</h3><p>Customer support</p></div>
     </div>
@@ -104,72 +104,18 @@
 <section class="steps-section">
   <div class="container">
     <div class="text-center mb-4 fade-in" style="margin-bottom:44px!important">
-      <div class="section-pill">
-        <span class="section-pill-dot"></span>
-        Simple Process
-      </div>
+      <div class="section-pill"><span class="section-pill-dot"></span>Simple Process</div>
       <h2 class="section-title" style="font-size:clamp(1.5rem,3.5vw,2.1rem)">Book in 4 Easy Steps</h2>
       <p class="section-sub" style="font-size:15px">From search to confirmed seat in under 2 minutes.</p>
     </div>
-
     <div class="steps-track">
-
-      <!-- Step 1 -->
-      <div class="step-card fade-in">
-        <div class="step-num">1</div>
-        <div class="step-icon">🔍</div>
-        <div class="step-title">Search Route</div>
-        <div class="step-desc">Enter your origin, destination and travel date above.</div>
-      </div>
-
-      <!-- Arrow -->
-      <div class="step-arrow">
-        <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="14" cy="14" r="13" stroke="#c3e8d8" stroke-width="1.5"/>
-          <path d="M11 14h6M14 11l3 3-3 3" stroke="#0f6e56" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-      </div>
-
-      <!-- Step 2 -->
-      <div class="step-card fade-in">
-        <div class="step-num">2</div>
-        <div class="step-icon">💺</div>
-        <div class="step-title">Choose Your Seat</div>
-        <div class="step-desc">Pick your preferred seat from the live bus seat map.</div>
-      </div>
-
-      <!-- Arrow -->
-      <div class="step-arrow">
-        <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="14" cy="14" r="13" stroke="#c3e8d8" stroke-width="1.5"/>
-          <path d="M11 14h6M14 11l3 3-3 3" stroke="#0f6e56" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-      </div>
-
-      <!-- Step 3 -->
-      <div class="step-card fade-in">
-        <div class="step-num">3</div>
-        <div class="step-icon">📝</div>
-        <div class="step-title">Fill Details</div>
-        <div class="step-desc">Enter your passenger info and choose your payment method.</div>
-      </div>
-
-      <!-- Arrow -->
-      <div class="step-arrow">
-        <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="14" cy="14" r="13" stroke="#c3e8d8" stroke-width="1.5"/>
-          <path d="M11 14h6M14 11l3 3-3 3" stroke="#0f6e56" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-      </div>
-
-      <!-- Step 4 -->
-      <div class="step-card fade-in">
-        <div class="step-num">4</div>
-        <div class="step-icon">✅</div>
-        <div class="step-title">Confirmed!</div>
-        <div class="step-desc">Get your booking reference and show it at the terminal.</div>
-      </div>
-
+      <div class="step-card fade-in"><div class="step-num">1</div><div class="step-icon">🔍</div><div class="step-title">Search Route</div><div class="step-desc">Enter your origin, destination and travel date above.</div></div>
+      <div class="step-arrow"><svg width="28" height="28" viewBox="0 0 28 28" fill="none"><circle cx="14" cy="14" r="13" stroke="#c3e8d8" stroke-width="1.5"/><path d="M11 14h6M14 11l3 3-3 3" stroke="#0f6e56" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div class="step-card fade-in"><div class="step-num">2</div><div class="step-icon">💺</div><div class="step-title">Choose Your Seat</div><div class="step-desc">Pick your preferred seat from the live bus seat map.</div></div>
+      <div class="step-arrow"><svg width="28" height="28" viewBox="0 0 28 28" fill="none"><circle cx="14" cy="14" r="13" stroke="#c3e8d8" stroke-width="1.5"/><path d="M11 14h6M14 11l3 3-3 3" stroke="#0f6e56" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div class="step-card fade-in"><div class="step-num">3</div><div class="step-icon">📝</div><div class="step-title">Fill Details</div><div class="step-desc">Enter your passenger info and choose your payment method.</div></div>
+      <div class="step-arrow"><svg width="28" height="28" viewBox="0 0 28 28" fill="none"><circle cx="14" cy="14" r="13" stroke="#c3e8d8" stroke-width="1.5"/><path d="M11 14h6M14 11l3 3-3 3" stroke="#0f6e56" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div class="step-card fade-in"><div class="step-num">4</div><div class="step-icon">✅</div><div class="step-title">Confirmed!</div><div class="step-desc">Get your booking reference and show it at the terminal.</div></div>
     </div>
   </div>
 </section>
@@ -183,9 +129,7 @@
         <h5>Summer Sale — Up to 20% off!</h5>
         <p>Book any route before June 30 and get a discount on your fare.</p>
       </div>
-      <a href="#routes" class="btn-promo">
-        View Routes →
-      </a>
+      <a href="#routes" class="btn-promo">View Routes →</a>
     </div>
   </div>
 </section>
@@ -204,10 +148,7 @@
         <img src="img/sorsogon.jpg" alt="Sorsogon City" onerror="this.src='https://placehold.co/400x160/0f6e56/fff?text=Sorsogon+City'">
         <div class="route-card-body">
           <div class="route-name">🚌 Legazpi City → Sorsogon City</div>
-          <div class="route-meta">
-            <div class="route-meta-item"><strong>₱150–250</strong><br>Fare</div>
-            <div class="route-meta-item"><strong>1–2 hrs</strong><br>Duration</div>
-          </div>
+          <div class="route-meta"><div class="route-meta-item"><strong>₱150–250</strong><br>Fare</div><div class="route-meta-item"><strong>1–2 hrs</strong><br>Duration</div></div>
           <div class="route-badges"><span class="route-badge">Regular</span><span class="route-badge">A/C</span><span class="route-badge">Daily trips</span></div>
           <button class="btn-book" onclick="quickBook('Legazpi City','Sorsogon City','legazpi-sorsogon',150,250,'1-2 hrs')">Select Seat →</button>
         </div>
@@ -217,10 +158,7 @@
         <img src="img/naga.jpg" alt="Naga City" onerror="this.src='https://placehold.co/400x160/16a37a/fff?text=Naga+City'">
         <div class="route-card-body">
           <div class="route-name">🚌 Legazpi City → Naga City</div>
-          <div class="route-meta">
-            <div class="route-meta-item"><strong>₱200–350</strong><br>Fare</div>
-            <div class="route-meta-item"><strong>2–3 hrs</strong><br>Duration</div>
-          </div>
+          <div class="route-meta"><div class="route-meta-item"><strong>₱200–350</strong><br>Fare</div><div class="route-meta-item"><strong>2–3 hrs</strong><br>Duration</div></div>
           <div class="route-badges"><span class="route-badge">Regular</span><span class="route-badge">A/C</span></div>
           <button class="btn-book" onclick="quickBook('Legazpi City','Naga City','legazpi-naga',200,350,'2-3 hrs')">Select Seat →</button>
         </div>
@@ -230,10 +168,7 @@
         <img src="img/daet.jpg" alt="Daet" onerror="this.src='https://placehold.co/400x160/0a5c47/fff?text=Daet'">
         <div class="route-card-body">
           <div class="route-name">🚌 Naga City → Daet</div>
-          <div class="route-meta">
-            <div class="route-meta-item"><strong>₱300–450</strong><br>Fare</div>
-            <div class="route-meta-item"><strong>3–4 hrs</strong><br>Duration</div>
-          </div>
+          <div class="route-meta"><div class="route-meta-item"><strong>₱300–450</strong><br>Fare</div><div class="route-meta-item"><strong>3–4 hrs</strong><br>Duration</div></div>
           <div class="route-badges"><span class="route-badge">Regular</span><span class="route-badge">A/C</span></div>
           <button class="btn-book" onclick="quickBook('Naga City','Daet','naga-daet',300,450,'3-4 hrs')">Select Seat →</button>
         </div>
@@ -243,10 +178,7 @@
         <img src="img/iriga.jpg" alt="Iriga City" onerror="this.src='https://placehold.co/400x160/1a8c6d/fff?text=Iriga+City'">
         <div class="route-card-body">
           <div class="route-name">🚌 Iriga City → Naga City</div>
-          <div class="route-meta">
-            <div class="route-meta-item"><strong>₱150–250</strong><br>Fare</div>
-            <div class="route-meta-item"><strong>1–2 hrs</strong><br>Duration</div>
-          </div>
+          <div class="route-meta"><div class="route-meta-item"><strong>₱150–250</strong><br>Fare</div><div class="route-meta-item"><strong>1–2 hrs</strong><br>Duration</div></div>
           <div class="route-badges"><span class="route-badge">Regular</span></div>
           <button class="btn-book" onclick="quickBook('Iriga City','Naga City','iriga-naga',150,250,'1-2 hrs')">Select Seat →</button>
         </div>
@@ -256,10 +188,7 @@
         <img src="img/ligao.jpg" alt="Ligao City" onerror="this.src='https://placehold.co/400x160/0d5c46/fff?text=Ligao+City'">
         <div class="route-card-body">
           <div class="route-name">🚌 Ligao City → Legazpi City</div>
-          <div class="route-meta">
-            <div class="route-meta-item"><strong>₱80–150</strong><br>Fare</div>
-            <div class="route-meta-item"><strong>30–45 mins</strong><br>Duration</div>
-          </div>
+          <div class="route-meta"><div class="route-meta-item"><strong>₱80–150</strong><br>Fare</div><div class="route-meta-item"><strong>30–45 mins</strong><br>Duration</div></div>
           <div class="route-badges"><span class="route-badge">Regular</span><span class="route-badge">Frequent trips</span></div>
           <button class="btn-book" onclick="quickBook('Ligao City','Legazpi City','ligao-legazpi',80,150,'30-45 mins')">Select Seat →</button>
         </div>
@@ -269,10 +198,7 @@
         <img src="img/polangui.jpg" alt="Polangui" onerror="this.src='https://placehold.co/400x160/12805e/fff?text=Polangui'">
         <div class="route-card-body">
           <div class="route-name">🚌 Polangui → Legazpi City</div>
-          <div class="route-meta">
-            <div class="route-meta-item"><strong>₱60–120</strong><br>Fare</div>
-            <div class="route-meta-item"><strong>45–60 mins</strong><br>Duration</div>
-          </div>
+          <div class="route-meta"><div class="route-meta-item"><strong>₱60–120</strong><br>Fare</div><div class="route-meta-item"><strong>45–60 mins</strong><br>Duration</div></div>
           <div class="route-badges"><span class="route-badge">Regular</span><span class="route-badge">Frequent trips</span></div>
           <button class="btn-book" onclick="quickBook('Polangui','Legazpi City','polangui-legazpi',60,120,'45-60 mins')">Select Seat →</button>
         </div>
@@ -285,10 +211,7 @@
 <!-- ── WHY US ── -->
 <section class="why-section">
   <div class="container">
-    <div class="text-center mb-4 fade-in">
-      <div class="section-label">Why Us</div>
-      <h2 class="section-title">Why Choose QuickReserve?</h2>
-    </div>
+    <div class="text-center mb-4 fade-in"><div class="section-label">Why Us</div><h2 class="section-title">Why Choose QuickReserve?</h2></div>
     <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px">
       <div class="why-card fade-in"><div class="why-icon">⚡</div><div class="why-title">Fast Booking</div><div class="why-desc">Book your seat in under 2 minutes from any device.</div></div>
       <div class="why-card fade-in"><div class="why-icon">🔒</div><div class="why-title">Secure System</div><div class="why-desc">Your data and payments are always safe with us.</div></div>
@@ -301,29 +224,11 @@
 <!-- ── TESTIMONIALS ── -->
 <section style="background:#f9fafb;padding:56px 0">
   <div class="container">
-    <div class="text-center mb-4 fade-in">
-      <div class="section-label">Reviews</div>
-      <h2 class="section-title">What Passengers Say</h2>
-    </div>
+    <div class="text-center mb-4 fade-in"><div class="section-label">Reviews</div><h2 class="section-title">What Passengers Say</h2></div>
     <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px">
-      <div class="testimonial-card fade-in">
-        <div class="stars">★★★★★</div>
-        <p class="testimonial-text">"Super easy to book! Got my seat in less than 2 minutes."</p>
-        <div class="testimonial-name">Maria Santos</div>
-        <div class="testimonial-route">Legazpi → Naga City</div>
-      </div>
-      <div class="testimonial-card fade-in">
-        <div class="stars">★★★★★</div>
-        <p class="testimonial-text">"No more long lines at the terminal. Saved me so much time!"</p>
-        <div class="testimonial-name">Juan dela Cruz</div>
-        <div class="testimonial-route">Legazpi → Sorsogon City</div>
-      </div>
-      <div class="testimonial-card fade-in">
-        <div class="stars">★★★★☆</div>
-        <p class="testimonial-text">"Love the seat selection feature. Always get my window seat!"</p>
-        <div class="testimonial-name">Ana Reyes</div>
-        <div class="testimonial-route">Naga City → Daet</div>
-      </div>
+      <div class="testimonial-card fade-in"><div class="stars">★★★★★</div><p class="testimonial-text">"Super easy to book! Got my seat in less than 2 minutes."</p><div class="testimonial-name">Maria Santos</div><div class="testimonial-route">Legazpi → Naga City</div></div>
+      <div class="testimonial-card fade-in"><div class="stars">★★★★★</div><p class="testimonial-text">"No more long lines at the terminal. Saved me so much time!"</p><div class="testimonial-name">Juan dela Cruz</div><div class="testimonial-route">Legazpi → Sorsogon City</div></div>
+      <div class="testimonial-card fade-in"><div class="stars">★★★★☆</div><p class="testimonial-text">"Love the seat selection feature. Always get my window seat!"</p><div class="testimonial-name">Ana Reyes</div><div class="testimonial-route">Naga City → Daet</div></div>
     </div>
   </div>
 </section>
@@ -331,151 +236,29 @@
 <!-- ── FAQ ── -->
 <section class="faq-section">
   <div class="container" style="max-width:720px">
-    <div class="text-center mb-4 fade-in">
-      <div class="section-label">FAQ</div>
-      <h2 class="section-title">Frequently Asked Questions</h2>
-      <p class="section-sub">Everything you need to know before you ride.</p>
-    </div>
-
+    <div class="text-center mb-4 fade-in"><div class="section-label">FAQ</div><h2 class="section-title">Frequently Asked Questions</h2><p class="section-sub">Everything you need to know before you ride.</p></div>
     <div class="faq-list fade-in">
-
-      <div class="faq-item">
-        <button class="faq-question" onclick="toggleFaq(this)">
-          <span>How do I cancel or change my booking?</span>
-          <span class="faq-icon"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 10L8 5L13 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-        </button>
-        <div class="faq-answer">
-          <p>You can cancel or modify your booking from the My Bookings page up to 2 hours before departure. Refunds are processed within 3–5 business days.</p>
-        </div>
-      </div>
-
-      <div class="faq-item">
-        <button class="faq-question" onclick="toggleFaq(this)">
-          <span>Do I need to print my ticket?</span>
-          <span class="faq-icon"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 10L8 5L13 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-        </button>
-        <div class="faq-answer">
-          <p>No. Just show your booking confirmation on your phone at the terminal. Our staff will scan the QR code or verify your reference number.</p>
-        </div>
-      </div>
-
-      <div class="faq-item">
-        <button class="faq-question" onclick="toggleFaq(this)">
-          <span>Can I choose my seat?</span>
-          <span class="faq-icon"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 10L8 5L13 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-        </button>
-        <div class="faq-answer">
-          <p>Yes! After selecting your route, you can pick any available seat from the live bus seat map. Window, aisle — the choice is yours.</p>
-        </div>
-      </div>
-
-      <div class="faq-item">
-        <button class="faq-question" onclick="toggleFaq(this)">
-          <span>What payment methods are accepted?</span>
-          <span class="faq-icon"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 10L8 5L13 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-        </button>
-        <div class="faq-answer">
-          <p>We accept Cash, GCash, and Credit/Debit cards. Payment is confirmed instantly and your seat is reserved right away.</p>
-        </div>
-      </div>
-
-      <div class="faq-item">
-        <button class="faq-question" onclick="toggleFaq(this)">
-          <span>How early should I arrive at the terminal?</span>
-          <span class="faq-icon"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 10L8 5L13 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-        </button>
-        <div class="faq-answer">
-          <p>We recommend arriving at least 15 minutes before your scheduled departure to allow time for boarding and luggage handling.</p>
-        </div>
-      </div>
-
+      <div class="faq-item"><button class="faq-question" onclick="toggleFaq(this)"><span>How do I cancel or change my booking?</span><span class="faq-icon"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 10L8 5L13 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></button><div class="faq-answer"><p>You can cancel or modify your booking from the My Bookings page up to 2 hours before departure. Refunds are processed within 3–5 business days.</p></div></div>
+      <div class="faq-item"><button class="faq-question" onclick="toggleFaq(this)"><span>Do I need to print my ticket?</span><span class="faq-icon"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 10L8 5L13 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></button><div class="faq-answer"><p>No. Just show your booking confirmation on your phone at the terminal. Our staff will verify your reference number.</p></div></div>
+      <div class="faq-item"><button class="faq-question" onclick="toggleFaq(this)"><span>Can I choose my seat?</span><span class="faq-icon"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 10L8 5L13 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></button><div class="faq-answer"><p>Yes! After selecting your route, you can pick any available seat from the live bus seat map. Window, aisle — the choice is yours.</p></div></div>
+      <div class="faq-item"><button class="faq-question" onclick="toggleFaq(this)"><span>What payment methods are accepted?</span><span class="faq-icon"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 10L8 5L13 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></button><div class="faq-answer"><p>We accept Cash, GCash, and Credit/Debit cards. Payment is confirmed instantly and your seat is reserved right away.</p></div></div>
+      <div class="faq-item"><button class="faq-question" onclick="toggleFaq(this)"><span>How early should I arrive at the terminal?</span><span class="faq-icon"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 10L8 5L13 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></button><div class="faq-answer"><p>We recommend arriving at least 15 minutes before your scheduled departure to allow time for boarding and luggage handling.</p></div></div>
     </div>
   </div>
 </section>
 
 <style>
-/* ── CUSTOM VERTICAL FAQ ── */
-.faq-list {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-.faq-item {
-  background: #fff;
-  border: 1.5px solid var(--border);
-  border-radius: 14px;
-  overflow: hidden;
-  transition: border-color 0.2s, box-shadow 0.2s;
-}
-.faq-item.open {
-  border-color: #c3e8d8;
-  box-shadow: 0 4px 20px rgba(15,110,86,0.08);
-}
-.faq-question {
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 18px 22px;
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-family: 'Poppins', sans-serif;
-  font-size: 14px;
-  font-weight: 700;
-  color: #111827;
-  text-align: left;
-  gap: 12px;
-  transition: color 0.2s;
-}
-.faq-item.open .faq-question { color: var(--green); }
-.faq-icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 28px; height: 28px;
-  border-radius: 50%;
-  background: var(--green-bg);
-  color: var(--green);
-  flex-shrink: 0;
-  transition: transform 0.3s ease, background 0.2s, color 0.2s;
-}
-.faq-item.open .faq-icon {
-  transform: rotate(180deg);
-  background: var(--green);
-  color: #fff;
-}
-.faq-answer {
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height 0.35s cubic-bezier(0.22, 1, 0.36, 1);
-}
-.faq-answer p {
-  padding: 0 22px 18px;
-  font-size: 13.5px;
-  color: var(--muted);
-  line-height: 1.7;
-  margin: 0;
-  border-top: 1px solid #f1f5f9;
-  padding-top: 14px;
-}
-.faq-item.open .faq-answer {
-  max-height: 200px;
-}
+.faq-list { display:flex; flex-direction:column; gap:10px; }
+.faq-item { background:#fff; border:1.5px solid var(--border); border-radius:14px; overflow:hidden; transition:border-color 0.2s,box-shadow 0.2s; }
+.faq-item.open { border-color:#c3e8d8; box-shadow:0 4px 20px rgba(15,110,86,0.08); }
+.faq-question { width:100%; display:flex; justify-content:space-between; align-items:center; padding:18px 22px; background:none; border:none; cursor:pointer; font-family:'Poppins',sans-serif; font-size:14px; font-weight:700; color:#111827; text-align:left; gap:12px; transition:color 0.2s; }
+.faq-item.open .faq-question { color:var(--green); }
+.faq-icon { display:flex; align-items:center; justify-content:center; width:28px; height:28px; border-radius:50%; background:var(--green-bg); color:var(--green); flex-shrink:0; transition:transform 0.3s ease,background 0.2s,color 0.2s; }
+.faq-item.open .faq-icon { transform:rotate(180deg); background:var(--green); color:#fff; }
+.faq-answer { max-height:0; overflow:hidden; transition:max-height 0.35s cubic-bezier(0.22,1,0.36,1); }
+.faq-answer p { padding:0 22px 18px; font-size:13.5px; color:var(--muted); line-height:1.7; margin:0; border-top:1px solid #f1f5f9; padding-top:14px; }
+.faq-item.open .faq-answer { max-height:200px; }
 </style>
-
-<script>
-function toggleFaq(btn) {
-  const item = btn.closest('.faq-item');
-  const isOpen = item.classList.contains('open');
-  // Close all
-  document.querySelectorAll('.faq-item.open').forEach(function(el) {
-    el.classList.remove('open');
-  });
-  // Toggle current
-  if (!isOpen) item.classList.add('open');
-}
-</script>
 
 <!-- ── CTA ── -->
 <section class="cta-section">
@@ -489,92 +272,56 @@ function toggleFaq(btn) {
 <!-- ── FOOTER ── -->
 <footer>
   <div class="container">
-    <div style="
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      flex-wrap:wrap;
-      gap:12px;
-    ">
-      
-      <!-- Left -->
-      <div style="flex:1;font-weight:700;color:#fff;">
-        <span style="color:#16c4a1">Quick</span>Reserve
-      </div>
-
-      <!-- Center -->
-      <div style="
-        flex:1;
-        display:flex;
-        gap:20px;
-        justify-content:center;
-        flex-wrap:wrap;
-      ">
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">
+      <div style="flex:1;font-weight:700;color:#fff"><span style="color:#16c4a1">Quick</span>Reserve</div>
+      <div style="flex:1;display:flex;gap:20px;justify-content:center;flex-wrap:wrap">
         <a href="privacy-policy.html">Privacy Policy</a>
         <a href="terms-of-service.html">Terms of Service</a>
         <a href="pages/user/my-bookings.html">My Bookings</a>
       </div>
-
-      <!-- Right -->
-      <div style="
-        flex:1;
-        color:#fff;
-        text-align:right;
-        display:flex;
-        flex-direction:column;
-        align-items:flex-end;
-        gap:4px;
-        font-size:12px;
-      ">
+      <div style="flex:1;color:#fff;text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:4px;font-size:12px">
         <span>📧 support@quickreserve.com</span>
         <span>📞 +63 963 443 7198</span>
       </div>
-
     </div>
-
-    <div style="
-      margin-top:14px;
-      text-align:center;
-      color:rgba(255,255,255,0.35);
-      font-size:12px;
-    ">
-      © 2026 QuickReserve. All rights reserved.
-    </div>
+    <div style="margin-top:14px;text-align:center;color:rgba(255,255,255,0.35);font-size:12px">© 2026 QuickReserve. All rights reserved.</div>
   </div>
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="js/script.js"></script>
+<script src="js/api.js"></script>
 
-<!-- ── FADE-IN SCROLL OBSERVER ── -->
 <script>
-  (function () {
-    // Select all fade-in elements
-    const fadeEls = document.querySelectorAll('.fade-in, .fade-in-left, .fade-in-right');
+  function toggleFaq(btn) {
+    var item   = btn.closest('.faq-item');
+    var isOpen = item.classList.contains('open');
+    document.querySelectorAll('.faq-item.open').forEach(function(el){ el.classList.remove('open'); });
+    if (!isOpen) item.classList.add('open');
+  }
 
-    if (!fadeEls.length) return;
-
-    const observer = new IntersectionObserver(
-      function (entries) {
-        entries.forEach(function (entry) {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('visible');
-            // Stop observing once revealed — no re-animation on scroll back up
-            observer.unobserve(entry.target);
-          }
-        });
-      },
-      {
-        threshold: 0.12,   // trigger when 12% of element is visible
-        rootMargin: '0px 0px -40px 0px'  // slight bottom offset for natural feel
+  // Update live route count from MongoDB
+  async function loadRouteCount() {
+    try {
+      var trips = await ApiTrips.getAll();
+      if (trips && trips.length) {
+        document.getElementById('stat-routes').textContent = trips.length;
       }
-    );
+    } catch (e) { /* silently fail — default value shown */ }
+  }
+  loadRouteCount();
 
-    fadeEls.forEach(function (el) {
-      observer.observe(el);
-    });
+  // Fade-in scroll observer
+  (function () {
+    var fadeEls = document.querySelectorAll('.fade-in,.fade-in-left,.fade-in-right');
+    if (!fadeEls.length) return;
+    var observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) { entry.target.classList.add('visible'); observer.unobserve(entry.target); }
+      });
+    }, { threshold:0.12, rootMargin:'0px 0px -40px 0px' });
+    fadeEls.forEach(function (el) { observer.observe(el); });
   })();
 </script>
-
 </body>
 </html>

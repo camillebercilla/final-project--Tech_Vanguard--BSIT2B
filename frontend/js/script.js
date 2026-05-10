@@ -23,105 +23,18 @@ function toRoot(rootRelPath) {
   return prefix + rootRelPath;
 }
 
-/* ─── AUTH ─── */
-const Auth = {
-  isLoggedIn() {
-    const u = this.currentUser();
-    return !!u && typeof u === 'object' && !!u.id;
-  },
-  currentUser() {
-    try {
-      const raw = localStorage.getItem('qr_user');
-      if (!raw) return null;
-      const u = JSON.parse(raw);
-      return (u && u.id) ? u : null;
-    } catch { return null; }
-  },
-  login(user) {
-    localStorage.setItem('qr_user', JSON.stringify(user));
-  },
-  logout() {
-    localStorage.removeItem('qr_user');
-    localStorage.removeItem('qr_token');
-    window.location.href = toRoot('index.html');
-  },
-  requireAuth() { return this.isLoggedIn(); },
-  requireAdmin() {
-    const u = this.currentUser();
-    return !!(u && u.role === 'admin');
-  },
-
-  /* ── ADMIN GUARD ──
-     Checks for admin session. If not found, redirects to login.
-     Returns true if admin is logged in, false otherwise. */
-  guardAdmin() {
-    try {
-      const u = this.currentUser();
-      if (!u || u.role !== 'admin') {
-        console.warn('[QuickReserve] guardAdmin: no admin session. Redirecting to login.', u);
-        window.location.replace(toRoot('pages/auth/login.html'));
-        return false;
-      }
-      return true;
-    } catch(e) {
-      console.error('[QuickReserve] guardAdmin error:', e);
-      window.location.replace(toRoot('pages/auth/login.html'));
-      return false;
-    }
-  },
-
-  /* ── DEV BYPASS ──
-     Call this to instantly log in as admin for testing.
-     Open browser console and type: Auth.devLogin() */
-  devLogin() {
-    const adminUser = { id: 1, name: 'Admin User', email: 'admin@quickreserve.com', role: 'admin' };
-    this.login(adminUser);
-    console.log('[QuickReserve] Dev admin login successful. Reloading page...');
-    window.location.reload();
-  },
-};
-
-/* ─── SEED DEFAULT DATA ─── */
-function seedData() {
-  if (!QR.get('qr_users')) {
-    QR.set('qr_users', [
-      { id: 1, name: 'Admin User',     email: 'admin@quickreserve.com', password: 'admin123', role: 'admin', phone: '09001234567', joined: '2024-01-01' },
-      { id: 2, name: 'Maria Santos',   email: 'maria@example.com',      password: 'user123',  role: 'user',  phone: '09171234567', joined: '2024-06-10' },
-      { id: 3, name: 'Juan dela Cruz', email: 'juan@example.com',       password: 'user123',  role: 'user',  phone: '09281234567', joined: '2024-07-22' },
-    ]);
-  }
-  if (!QR.get('qr_trips')) {
-    QR.set('qr_trips', [
-      { id: 1, route: 'Legazpi City → Sorsogon City', duration: '1-2 hrs',    priceMin: 150, priceMax: 250, departures: ['06:00','09:00','12:00','15:00','18:00'],                     totalSeats: 45 },
-      { id: 2, route: 'Legazpi City → Naga City',     duration: '2-3 hrs',    priceMin: 200, priceMax: 350, departures: ['06:00','09:00','12:00','18:00','21:00'],                     totalSeats: 45 },
-      { id: 3, route: 'Naga City → Daet',             duration: '3-4 hrs',    priceMin: 300, priceMax: 450, departures: ['07:00','13:00','19:00'],                                    totalSeats: 45 },
-      { id: 4, route: 'Iriga City → Naga City',       duration: '1-2 hrs',    priceMin: 150, priceMax: 250, departures: ['06:00','09:00','12:00','15:00','18:00'],                     totalSeats: 45 },
-      { id: 5, route: 'Ligao City → Legazpi City',    duration: '30-45 mins', priceMin: 80,  priceMax: 150, departures: ['06:00','08:00','10:00','12:00','14:00','16:00','18:00'],     totalSeats: 45 },
-      { id: 6, route: 'Polangui → Legazpi City',      duration: '45-60 mins', priceMin: 60,  priceMax: 120, departures: ['06:00','08:00','10:00','12:00','14:00','16:00','18:00'],     totalSeats: 45 },
-    ]);
-  }
-  if (!QR.get('qr_bookings')) {
-    QR.set('qr_bookings', [
-      { id: 'QR-0001', userId: 2, userName: 'Maria Santos',   route: 'Legazpi City → Naga City',     seat: 'A1', date: '2026-05-10', departure: '09:00', price: 250, status: 'confirmed', paymentMethod: 'GCash',       createdAt: '2026-04-20' },
-      { id: 'QR-0002', userId: 3, userName: 'Juan dela Cruz', route: 'Legazpi City → Sorsogon City', seat: 'B3', date: '2026-05-15', departure: '06:00', price: 200, status: 'confirmed', paymentMethod: 'Cash',        createdAt: '2026-04-21' },
-      { id: 'QR-0003', userId: 2, userName: 'Maria Santos',   route: 'Naga City → Daet',             seat: 'C2', date: '2026-04-30', departure: '07:00', price: 350, status: 'pending',   paymentMethod: 'Credit Card', createdAt: '2026-04-22' },
-    ]);
-  }
-}
-
-// Clear stale data and re-seed if routes are missing
-(function migrateRouteData() {
+/* ─── PURGE STALE localStorage SEED DATA ─── */
+(function purgeLocalStorageSeedData() {
   try {
-    var trips = localStorage.getItem('qr_trips');
-    if (trips && trips.indexOf('Legazpi') === -1) {
-      localStorage.removeItem('qr_trips');
-      localStorage.removeItem('qr_bookings');
-    }
-  } catch(e) {}
+    localStorage.removeItem('qr_trips');
+    localStorage.removeItem('qr_bookings');
+    localStorage.removeItem('qr_users');
+  } catch(e) {
+    console.warn('[QuickReserve] Could not purge seed data:', e);
+  }
 })();
-seedData();
 
-/* ─── BOOKINGS CRUD ─── */
+/* ─── BOOKINGS CRUD (localStorage fallback) ─── */
 const Bookings = {
   all()        { return QR.get('qr_bookings', []); },
   forUser(uid) { return this.all().filter(b => Number(b.userId) === Number(uid)); },
@@ -143,7 +56,7 @@ const Bookings = {
   delete(id) { QR.set('qr_bookings', this.all().filter(b => b.id !== id)); },
 };
 
-/* ─── TRIPS CRUD ─── */
+/* ─── TRIPS CRUD (localStorage fallback) ─── */
 const Trips = {
   all()    { return QR.get('qr_trips', []); },
   byId(id) { return this.all().find(t => Number(t.id) === Number(id)); },
@@ -161,7 +74,7 @@ const Trips = {
   delete(id) { QR.set('qr_trips', this.all().filter(t => Number(t.id) !== Number(id))); },
 };
 
-/* ─── USERS CRUD ─── */
+/* ─── USERS CRUD (localStorage fallback) ─── */
 const Users = {
   all()          { return QR.get('qr_users', []); },
   byId(id)       { return this.all().find(u => Number(u.id) === Number(id)); },
@@ -209,20 +122,23 @@ const Seats = {
 function renderNavUser() {
   const container = document.getElementById('nav-auth-btns');
   if (!container) return;
+
   const u = Auth.currentUser();
-  if (u && u.id) {
-    container.innerHTML =
-      '<span style="color:rgba(255,255,255,0.75);font-size:13px;font-weight:500">Hi, ' + u.name.split(' ')[0] + '</span>' +
-      (u.role === 'admin' ? '<a href="' + toRoot('pages/admin/admin-dashboard.html') + '" class="btn-register">Admin</a>' : '') +
-      '<button onclick="Auth.logout()" class="nav-login" style="cursor:pointer">Logout</button>';
-  } else {
+
+  if (!u || (!u.id && !u._id) || !u.name) {
     container.innerHTML =
       '<a href="' + toRoot('pages/auth/login.html') + '" class="nav-login">Login</a>' +
       '<a href="' + toRoot('pages/auth/register.html') + '" class="btn-register">Register</a>';
+    return;
   }
+
+  container.innerHTML =
+    '<span style="color:rgba(255,255,255,0.75);font-size:13px;font-weight:500">Hi, ' + u.name.split(' ')[0] + '</span>' +
+    (u.role === 'admin' ? '<a href="' + toRoot('pages/admin/admin-mainDashboard.html') + '" class="btn-register">Admin</a>' : '') +
+    '<button onclick="Auth.logout();window.location.href=toRoot(\'index.html\')" class="nav-login" style="cursor:pointer">Logout</button>';
 }
 
-/* ─── TOAST ─── */
+/* ─── TOAST (floating box for pages without a #toast element) ─── */
 function showToast(msg, type) {
   type = type || 'success';
   let box = document.getElementById('qr-toast-box');
@@ -272,12 +188,7 @@ function searchTrip() {
 function quickBook(origin, destination, routeKey, priceMin, priceMax, duration) {
   var dateEl  = document.getElementById('date');
   var dateVal = dateEl ? dateEl.value : '';
-
-  // If no date selected by user, default to today
-  if (!dateVal) {
-    dateVal = new Date().toISOString().split('T')[0];
-  }
-
+  if (!dateVal) dateVal = new Date().toISOString().split('T')[0];
   localStorage.setItem('selectedRoute',    origin + ' → ' + destination);
   localStorage.setItem('selectedDuration', duration);
   localStorage.setItem('selectedPriceMin', String(priceMin));

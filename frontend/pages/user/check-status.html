@@ -9,153 +9,72 @@
   <link rel="stylesheet" href="../../css/style.css">
   <style>
     .status-card {
-      background: #fff;
-      border-radius: 20px;
-      padding: 36px;
-      box-shadow: 0 8px 40px rgba(0,0,0,0.10);
-      border: 1px solid #e5e7eb;
+      background: #fff; border-radius: 20px; padding: 36px;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.10); border: 1px solid #e5e7eb;
       animation: slideUp 0.4s cubic-bezier(0.22,1,0.36,1);
     }
     @keyframes slideUp {
       from { opacity:0; transform:translateY(24px); }
       to   { opacity:1; transform:translateY(0); }
     }
-
     .status-icon-wrap {
-      width: 80px; height: 80px;
-      border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 36px;
-      margin: 0 auto 16px;
+      width:80px;height:80px;border-radius:50%;
+      display:flex;align-items:center;justify-content:center;
+      font-size:36px;margin:0 auto 16px;
     }
-    .status-icon-confirmed  { background: #d1fae5; }
-    .status-icon-pending    { background: #fef3c7; }
-    .status-icon-cancelled  { background: #fee2e2; }
-
-    .status-title-confirmed { color: #065f46; }
-    .status-title-pending   { color: #92400e; }
-    .status-title-cancelled { color: #991b1b; }
-
+    .status-icon-confirmed { background:#d1fae5; }
+    .status-icon-pending   { background:#fef3c7; }
+    .status-icon-cancelled { background:#fee2e2; }
+    .status-title-confirmed { color:#065f46; }
+    .status-title-pending   { color:#92400e; }
+    .status-title-cancelled { color:#991b1b; }
     .status-pill {
-      display: inline-block;
-      padding: 6px 20px;
-      border-radius: 30px;
-      font-size: 13px;
-      font-weight: 700;
-      letter-spacing: 0.5px;
-      text-transform: uppercase;
-      margin-bottom: 28px;
+      display:inline-block;padding:6px 20px;border-radius:30px;
+      font-size:13px;font-weight:700;letter-spacing:0.5px;
+      text-transform:uppercase;margin-bottom:28px;
     }
-    .pill-confirmed { background: #d1fae5; color: #065f46; }
-    .pill-pending   { background: #fef3c7; color: #92400e; }
-    .pill-cancelled { background: #fee2e2; color: #991b1b; }
-
-    .detail-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 14px;
-      margin-bottom: 24px;
-    }
-    .detail-item {
-      background: #f9fafb;
-      border-radius: 12px;
-      padding: 14px 16px;
-      border: 1px solid #e5e7eb;
-    }
-    .detail-item .label {
-      font-size: 10px;
-      font-weight: 700;
-      color: #9ca3af;
-      text-transform: uppercase;
-      letter-spacing: 0.8px;
-      margin-bottom: 4px;
-    }
-    .detail-item .value {
-      font-size: 14px;
-      font-weight: 700;
-      color: #1a1a1a;
-    }
-
-    .search-wrap {
-      display: flex;
-      gap: 10px;
-      max-width: 480px;
-      margin: 0 auto;
-    }
+    .pill-confirmed { background:#d1fae5;color:#065f46; }
+    .pill-pending   { background:#fef3c7;color:#92400e; }
+    .pill-cancelled { background:#fee2e2;color:#991b1b; }
+    .detail-grid { display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:24px; }
+    .detail-item { background:#f9fafb;border-radius:12px;padding:14px 16px;border:1px solid #e5e7eb; }
+    .detail-item .label { font-size:10px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:4px; }
+    .detail-item .value { font-size:14px;font-weight:700;color:#1a1a1a; }
+    .search-wrap { display:flex;gap:10px;max-width:480px;margin:0 auto; }
     .ref-input {
-      flex: 1;
-      border: 2px solid #e5e7eb;
-      border-radius: 12px;
-      padding: 13px 18px;
-      font-size: 15px;
-      font-family: 'Poppins', sans-serif;
-      font-weight: 600;
-      outline: none;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      transition: border-color 0.2s;
-      color: #1a1a1a;
+      flex:1;border:2px solid #e5e7eb;border-radius:12px;
+      padding:13px 18px;font-size:15px;font-family:'Poppins',sans-serif;
+      font-weight:600;outline:none;text-transform:uppercase;
+      letter-spacing:1px;transition:border-color 0.2s;color:#1a1a1a;
     }
-    .ref-input:focus { border-color: #0f6e56; }
-    .ref-input::placeholder { text-transform: none; letter-spacing: 0; font-weight: 400; color: #9ca3af; }
-
+    .ref-input:focus { border-color:#0f6e56; }
+    .ref-input::placeholder { text-transform:none;letter-spacing:0;font-weight:400;color:#9ca3af; }
     .btn-check {
-      background: #0f6e56;
-      color: #fff;
-      border: none;
-      border-radius: 12px;
-      padding: 13px 24px;
-      font-size: 14px;
-      font-weight: 700;
-      font-family: 'Poppins', sans-serif;
-      cursor: pointer;
-      transition: background 0.2s, transform 0.15s;
-      white-space: nowrap;
+      background:#0f6e56;color:#fff;border:none;border-radius:12px;
+      padding:13px 24px;font-size:14px;font-weight:700;
+      font-family:'Poppins',sans-serif;cursor:pointer;
+      transition:background 0.2s,transform 0.15s;white-space:nowrap;
     }
-    .btn-check:hover { background: #16a37a; transform: translateY(-1px); }
-    .btn-check:disabled { background: #9ca3af; cursor: not-allowed; transform: none; }
-
-    .not-found {
-      text-align: center;
-      padding: 40px 20px;
-      animation: slideUp 0.4s cubic-bezier(0.22,1,0.36,1);
-    }
-
-    .timeline {
-      display: flex;
-      flex-direction: column;
-      gap: 0;
-      margin-top: 8px;
-    }
-    .timeline-step {
-      display: flex;
-      align-items: flex-start;
-      gap: 14px;
-      position: relative;
-    }
+    .btn-check:hover { background:#16a37a;transform:translateY(-1px); }
+    .btn-check:disabled { background:#9ca3af;cursor:not-allowed;transform:none; }
+    .not-found { text-align:center;padding:40px 20px;animation:slideUp 0.4s cubic-bezier(0.22,1,0.36,1); }
+    .timeline { display:flex;flex-direction:column;gap:0;margin-top:8px; }
+    .timeline-step { display:flex;align-items:flex-start;gap:14px;position:relative; }
     .timeline-step:not(:last-child)::after {
-      content: '';
-      position: absolute;
-      left: 15px;
-      top: 32px;
-      width: 2px;
-      height: calc(100% - 4px);
-      background: #e5e7eb;
+      content:'';position:absolute;left:15px;top:32px;
+      width:2px;height:calc(100% - 4px);background:#e5e7eb;
     }
     .timeline-dot {
-      width: 32px; height: 32px;
-      border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 14px;
-      flex-shrink: 0;
-      z-index: 1;
+      width:32px;height:32px;border-radius:50%;
+      display:flex;align-items:center;justify-content:center;
+      font-size:14px;flex-shrink:0;z-index:1;
     }
-    .dot-done      { background: #d1fae5; }
-    .dot-active    { background: #0f6e56; color: #fff; box-shadow: 0 0 0 4px rgba(15,110,86,0.15); }
-    .dot-inactive  { background: #f3f4f6; }
-    .timeline-body { padding: 6px 0 20px; }
-    .timeline-body strong { font-size: 13px; font-weight: 700; color: #1a1a1a; display: block; }
-    .timeline-body span   { font-size: 12px; color: #9ca3af; }
+    .dot-done     { background:#d1fae5; }
+    .dot-active   { background:#0f6e56;color:#fff;box-shadow:0 0 0 4px rgba(15,110,86,0.15); }
+    .dot-inactive { background:#f3f4f6; }
+    .timeline-body { padding:6px 0 20px; }
+    .timeline-body strong { font-size:13px;font-weight:700;color:#1a1a1a;display:block; }
+    .timeline-body span   { font-size:12px;color:#9ca3af; }
   </style>
 </head>
 <body>
@@ -170,14 +89,12 @@
       <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-1">
         <li class="nav-item"><a class="nav-link" href="../../index.html">Home</a></li>
         <li class="nav-item"><a class="nav-link active" href="check-status.html">Check Status</a></li>
-        <li class="nav-item"><a class="nav-link" href="profile.html">Profile</a></li>
       </ul>
       <div class="ms-lg-3 mt-2 mt-lg-0 d-flex align-items-center gap-2" id="nav-auth-btns"></div>
     </div>
   </div>
 </nav>
 
-<!-- Page Header -->
 <div class="page-header">
   <div class="container" style="text-align:center">
     <h1>🔍 Check Booking Status</h1>
@@ -188,30 +105,22 @@
 <div style="background:#f9fafb;padding:40px 0;min-height:60vh">
   <div class="container" style="max-width:600px">
 
-    <!-- Search Box -->
     <div class="card-white" style="text-align:center;margin-bottom:24px">
       <p style="font-size:13px;color:#6b7280;margin-bottom:16px">
-        Your booking reference was shown after completing your booking (e.g. <strong>QR-0003</strong>)
+        Your booking reference was shown after completing your booking (e.g. <strong>64f1a2b3c...</strong>)
       </p>
       <div class="search-wrap">
-        <input
-          class="ref-input"
-          type="text"
-          id="ref-input"
-          placeholder="Enter reference (e.g. QR-0003)"
+        <input class="ref-input" type="text" id="ref-input"
+          placeholder="Enter booking reference"
           onkeydown="if(event.key==='Enter') checkStatus()"
-          maxlength="20"
-          autocomplete="off"
-        >
+          maxlength="60" autocomplete="off">
         <button class="btn-check" id="check-btn" onclick="checkStatus()">Check →</button>
       </div>
       <p id="error-msg" style="display:none;color:#dc2626;font-size:12px;font-weight:600;margin-top:10px"></p>
     </div>
 
-    <!-- Result Area -->
     <div id="result-area"></div>
 
-    <!-- Quick tip -->
     <div id="tip-box" style="text-align:center;padding:20px;color:#9ca3af;font-size:13px">
       <div style="font-size:32px;margin-bottom:8px">🎫</div>
       Your booking reference was provided when you completed your booking.<br>
@@ -229,13 +138,13 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="../../js/script.js"></script>
+<script src="../../js/api.js"></script>
 <script>
-  // Pre-fill if reference passed in URL (?ref=QR-0003)
-  window.addEventListener('load', function() {
+  window.addEventListener('load', function () {
     var params = new URLSearchParams(window.location.search);
     var ref    = params.get('ref');
     if (ref) {
-      document.getElementById('ref-input').value = ref.toUpperCase();
+      document.getElementById('ref-input').value = ref;
       checkStatus();
     }
   });
@@ -246,11 +155,11 @@
     return isNaN(dt) ? d : dt.toLocaleDateString('en-PH', { year:'numeric', month:'long', day:'numeric' });
   }
   function peso(n) {
-    return '₱' + Number(n||0).toLocaleString('en-PH', { minimumFractionDigits:2, maximumFractionDigits:2 });
+    return '₱' + Number(n || 0).toLocaleString('en-PH', { minimumFractionDigits:2, maximumFractionDigits:2 });
   }
 
   async function checkStatus() {
-    var raw    = document.getElementById('ref-input').value.trim().toUpperCase();
+    var raw    = document.getElementById('ref-input').value.trim();
     var btn    = document.getElementById('check-btn');
     var errMsg = document.getElementById('error-msg');
     var result = document.getElementById('result-area');
@@ -258,130 +167,102 @@
     errMsg.style.display = 'none';
 
     if (!raw) {
-      errMsg.textContent = 'Please enter a booking reference.';
+      errMsg.textContent   = 'Please enter a booking reference.';
       errMsg.style.display = 'block';
       return;
     }
 
-    btn.disabled = true;
-    btn.textContent = 'Checking...';
+    btn.disabled    = true;
+    btn.textContent = 'Checking…';
 
     var booking = null;
 
-    // ── Try backend first ──────────────────────────────────────────────────
     try {
-      var res = await fetch('http://localhost:5000/api/bookings/' + raw);
-      if (res.ok) {
-        booking = await res.json();
-      }
-    } catch(e) { /* backend unreachable, fall through */ }
-
-    // ── Fall back to localStorage (STRICT matching only) ───────────────────
-    if (!booking) {
-      var all = JSON.parse(localStorage.getItem('qr_bookings') || '[]');
-      booking = all.find(function(b) {
-        var bid   = String(b.id  || '').toUpperCase();
-        var b_id  = String(b._id || '').toUpperCase();
-        var input = raw.toUpperCase();
-        return bid === input ||
-               b_id === input ||
-               ('QR-' + bid) === input ||
-               bid === input.replace('QR-', '');
-      }) || null;
+      // ── Fetch single booking from MongoDB by _id ─────────────────────
+      booking = await ApiBookings.getById(raw);
+    } catch (e) {
+      // not found or network error — booking stays null
     }
 
-    btn.disabled = false;
+    btn.disabled    = false;
     btn.textContent = 'Check →';
 
     if (!booking) {
       tip.style.display = 'none';
-      result.innerHTML = '<div class="not-found">' +
-        '<div style="font-size:48px;margin-bottom:12px">❓</div>' +
-        '<h5 style="font-weight:800;color:#1a1a1a;margin-bottom:8px">Booking not found</h5>' +
-        '<p style="color:#6b7280;font-size:13px">No booking matches <strong>' + raw + '</strong>.<br>Please double-check your reference number.</p>' +
-      '</div>';
+      result.innerHTML =
+        '<div class="not-found">' +
+          '<div style="font-size:48px;margin-bottom:12px">❓</div>' +
+          '<h5 style="font-weight:800;color:#1a1a1a;margin-bottom:8px">Booking not found</h5>' +
+          '<p style="color:#6b7280;font-size:13px">No booking matches <strong>' + raw + '</strong>.<br>Please double-check your reference number.</p>' +
+        '</div>';
       return;
     }
 
     tip.style.display = 'none';
 
-    var st      = (booking.status || 'pending').toLowerCase();
-    var icons   = { confirmed: '✅', pending: '⏳', cancelled: '❌' };
-    var labels  = { confirmed: 'Booking Confirmed', pending: 'Awaiting Confirmation', cancelled: 'Booking Cancelled' };
-    var descs   = {
+    var st     = (booking.status || 'pending').toLowerCase();
+    var icons  = { confirmed:'✅', pending:'⏳', cancelled:'❌' };
+    var labels = { confirmed:'Booking Confirmed', pending:'Awaiting Confirmation', cancelled:'Booking Cancelled' };
+    var descs  = {
       confirmed: 'Your seat is secured! Show this reference at the terminal.',
       pending:   'Your booking is being reviewed by our team. Please check back soon.',
       cancelled: 'This booking has been cancelled. Please book a new trip if needed.'
     };
 
-    // Timeline steps
     var steps = [
-      { label: 'Booking Submitted', sub: 'Reference issued',  status: 'done' },
-      { label: 'Under Review',      sub: 'Admin processing',  status: st === 'pending' ? 'active' : 'done' },
-      { label: 'Confirmed',         sub: 'Seat reserved',     status: st === 'confirmed' ? 'active' : 'inactive' },
-      { label: 'Cancelled',         sub: 'Booking voided',    status: st === 'cancelled' ? 'active' : 'inactive' },
+      { label:'Booking Submitted', sub:'Reference issued', status:'done' },
+      { label:'Under Review',      sub:'Admin processing', status: st === 'pending' ? 'active' : 'done' },
+      { label:'Confirmed',         sub:'Seat reserved',    status: st === 'confirmed' ? 'active' : 'inactive' },
+      { label:'Cancelled',         sub:'Booking voided',   status: st === 'cancelled' ? 'active' : 'inactive' },
     ];
-
-    // For confirmed, remove cancelled step; for cancelled, remove confirmed step
-    var filteredSteps = steps.filter(function(s) {
+    var filteredSteps = steps.filter(function (s) {
       if (st === 'confirmed' && s.label === 'Cancelled') return false;
       if (st === 'cancelled' && s.label === 'Confirmed') return false;
       return true;
     });
 
-    var dotClass = { done: 'dot-done', active: 'dot-active', inactive: 'dot-inactive' };
-    var dotIcon  = { done: '✓', active: st === 'cancelled' ? '✕' : '●', inactive: '○' };
+    var dotClass = { done:'dot-done', active:'dot-active', inactive:'dot-inactive' };
+    var dotIcon  = { done:'✓', active: st === 'cancelled' ? '✕' : '●', inactive:'○' };
+
+    var passengerName = booking.passengerName || booking.userName ||
+                        (booking.userId && booking.userId.name) || '—';
 
     result.innerHTML =
       '<div class="status-card">' +
-
-        // Status header
         '<div style="text-align:center;margin-bottom:28px">' +
-          '<div class="status-icon-wrap status-icon-' + st + '">' + (icons[st]||'📋') + '</div>' +
-          '<h4 class="status-title-' + st + '" style="font-weight:800;margin-bottom:8px">' + (labels[st]||st) + '</h4>' +
+          '<div class="status-icon-wrap status-icon-' + st + '">' + (icons[st] || '📋') + '</div>' +
+          '<h4 class="status-title-' + st + '" style="font-weight:800;margin-bottom:8px">' + (labels[st] || st) + '</h4>' +
           '<div class="status-pill pill-' + st + '">' + st + '</div>' +
-          '<p style="font-size:13px;color:#6b7280;max-width:360px;margin:0 auto">' + (descs[st]||'') + '</p>' +
+          '<p style="font-size:13px;color:#6b7280;max-width:360px;margin:0 auto">' + (descs[st] || '') + '</p>' +
         '</div>' +
-
-        // Booking ID
         '<div style="text-align:center;margin-bottom:24px">' +
           '<div style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Booking Reference</div>' +
-          '<div style="font-size:1.6rem;font-weight:800;color:#0f6e56">' + (booking.id || booking._id || raw) + '</div>' +
+          '<div style="font-size:1.3rem;font-weight:800;color:#0f6e56;word-break:break-all">' + (booking._id || booking.id || raw) + '</div>' +
         '</div>' +
-
-        // Detail grid
         '<div class="detail-grid">' +
-          '<div class="detail-item"><div class="label">Passenger</div><div class="value">' + (booking.passengerName||booking.userName||(booking.user&&booking.user.name)||'—') + '</div></div>' +
-          '<div class="detail-item"><div class="label">Route</div><div class="value">' + (booking.route||'—') + '</div></div>' +
+          '<div class="detail-item"><div class="label">Passenger</div><div class="value">' + passengerName + '</div></div>' +
+          '<div class="detail-item"><div class="label">Route</div><div class="value">' + (booking.route || '—') + '</div></div>' +
           '<div class="detail-item"><div class="label">Date</div><div class="value">' + fmtDate(booking.date) + '</div></div>' +
-          '<div class="detail-item"><div class="label">Departure</div><div class="value">' + (booking.departure||'—') + '</div></div>' +
-          '<div class="detail-item"><div class="label">Seat</div><div class="value">Seat ' + (booking.seat||'—') + '</div></div>' +
-          '<div class="detail-item"><div class="label">Fare</div><div class="value">' + peso(booking.price||booking.fare||0) + '</div></div>' +
-          '<div class="detail-item"><div class="label">Payment</div><div class="value">' + (booking.paymentMethod||'—') + '</div></div>' +
-          '<div class="detail-item"><div class="label">Status</div><div class="value status-title-' + st + '">' + st.charAt(0).toUpperCase()+st.slice(1) + '</div></div>' +
+          '<div class="detail-item"><div class="label">Departure</div><div class="value">' + (booking.departure || '—') + '</div></div>' +
+          '<div class="detail-item"><div class="label">Seat</div><div class="value">Seat ' + (booking.seat || '—') + '</div></div>' +
+          '<div class="detail-item"><div class="label">Fare</div><div class="value">' + peso(booking.price || 0) + '</div></div>' +
+          '<div class="detail-item"><div class="label">Payment</div><div class="value">' + (booking.paymentMethod || '—') + '</div></div>' +
+          '<div class="detail-item"><div class="label">Status</div><div class="value status-title-' + st + '">' + st.charAt(0).toUpperCase() + st.slice(1) + '</div></div>' +
         '</div>' +
-
-        // Timeline
         '<div style="border-top:1px solid #f3f4f6;padding-top:20px;margin-top:4px">' +
           '<div style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:1px;margin-bottom:16px">Booking Timeline</div>' +
           '<div class="timeline">' +
-            filteredSteps.map(function(s) {
+            filteredSteps.map(function (s) {
               return '<div class="timeline-step">' +
                 '<div class="timeline-dot ' + dotClass[s.status] + '">' + dotIcon[s.status] + '</div>' +
-                '<div class="timeline-body">' +
-                  '<strong>' + s.label + '</strong>' +
-                  '<span>' + s.sub + '</span>' +
-                '</div>' +
+                '<div class="timeline-body"><strong>' + s.label + '</strong><span>' + s.sub + '</span></div>' +
               '</div>';
             }).join('') +
           '</div>' +
         '</div>' +
-
-        // Footer note
         (st === 'pending'   ? '<div style="background:#fef3c7;border-radius:10px;padding:12px 16px;font-size:12px;color:#92400e;font-weight:600;margin-top:16px;text-align:center">⏳ Come back later or contact the terminal for updates.</div>' : '') +
         (st === 'cancelled' ? '<div style="background:#fee2e2;border-radius:10px;padding:12px 16px;font-size:12px;color:#991b1b;font-weight:600;margin-top:16px;text-align:center">This booking has been voided. Please make a new reservation.</div>' : '') +
         (st === 'confirmed' ? '<div style="background:#d1fae5;border-radius:10px;padding:12px 16px;font-size:12px;color:#065f46;font-weight:600;margin-top:16px;text-align:center">🚌 Show this page or your reference number at the terminal.</div>' : '') +
-
       '</div>';
   }
 </script>
