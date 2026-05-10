@@ -120,21 +120,52 @@ const Seats = {
 
 /* ─── NAVBAR ─── */
 function renderNavUser() {
-  const container = document.getElementById('nav-auth-btns');
-  if (!container) return;
+  const authContainer = document.getElementById('nav-auth-btns');
+  const linksContainer = document.getElementById('nav-links');
+  if (!authContainer) return;
 
   const u = Auth.currentUser();
 
+  /* ── GUEST (not logged in) ── */
   if (!u || (!u.id && !u._id) || !u.name) {
-    container.innerHTML =
+    if (linksContainer) {
+      linksContainer.innerHTML =
+        '<li class="nav-item"><a class="nav-link" href="' + toRoot('index.html') + '">Home</a></li>' +
+        '<li class="nav-item"><a class="nav-link" href="' + toRoot('index.html') + '#routes">Routes</a></li>' +
+        '<li class="nav-item"><a class="nav-link" href="' + toRoot('pages/user/check-status.html') + '">Booking</a></li>';
+    }
+    authContainer.innerHTML =
       '<a href="' + toRoot('pages/auth/login.html') + '" class="nav-login">Login</a>' +
       '<a href="' + toRoot('pages/auth/register.html') + '" class="btn-register">Register</a>';
     return;
   }
 
-  container.innerHTML =
+  /* ── ADMIN ── */
+  if (u.role === 'admin') {
+    if (linksContainer) {
+      linksContainer.innerHTML =
+        '<li class="nav-item"><a class="nav-link" href="' + toRoot('index.html') + '">Home</a></li>' +
+        '<li class="nav-item"><a class="nav-link" href="' + toRoot('index.html') + '#routes">Routes</a></li>' +
+        '<li class="nav-item"><a class="nav-link" href="' + toRoot('pages/admin/admin-mainDashboard.html') + '">Panel</a></li>' +
+        '<li class="nav-item"><a class="nav-link" href="' + toRoot('pages/user/profile.html') + '">Profile</a></li>';
+    }
+    authContainer.innerHTML =
+      '<span style="color:rgba(255,255,255,0.75);font-size:13px;font-weight:500">Hi, ' + u.name.split(' ')[0] + ' 👋</span>' +
+      '<a href="' + toRoot('pages/admin/admin-mainDashboard.html') + '" class="btn-register" style="background:#16c4a1;border-color:#16c4a1">Admin Panel</a>' +
+      '<button onclick="Auth.logout();window.location.href=toRoot(\'index.html\')" class="nav-login" style="cursor:pointer">Logout</button>';
+    return;
+  }
+
+  /* ── REGULAR USER ── */
+  if (linksContainer) {
+    linksContainer.innerHTML =
+      '<li class="nav-item"><a class="nav-link" href="' + toRoot('index.html') + '">Home</a></li>' +
+      '<li class="nav-item"><a class="nav-link" href="' + toRoot('index.html') + '#routes">Routes</a></li>' +
+      '<li class="nav-item"><a class="nav-link" href="' + toRoot('pages/user/check-status.html') + '">Booking</a></li>' +
+      '<li class="nav-item"><a class="nav-link" href="' + toRoot('pages/user/profile.html') + '">Profile</a></li>';
+  }
+  authContainer.innerHTML =
     '<span style="color:rgba(255,255,255,0.75);font-size:13px;font-weight:500">Hi, ' + u.name.split(' ')[0] + '</span>' +
-    (u.role === 'admin' ? '<a href="' + toRoot('pages/admin/admin-mainDashboard.html') + '" class="btn-register">Admin</a>' : '') +
     '<button onclick="Auth.logout();window.location.href=toRoot(\'index.html\')" class="nav-login" style="cursor:pointer">Logout</button>';
 }
 

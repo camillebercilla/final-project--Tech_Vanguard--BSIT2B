@@ -21,12 +21,8 @@
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="nav">
-      <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-1">
-        <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
-        <li class="nav-item"><a class="nav-link" href="#routes">Routes</a></li>
-        <li class="nav-item"><a class="nav-link" href="pages/user/check-status.html">Booking</a></li>
-        <li class="nav-item"><a class="nav-link" href="pages/user/profile.html">Profile</a></li>
-      </ul>
+      <!-- nav-links is populated by renderNavUser() in script.js based on role -->
+      <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-1" id="nav-links"></ul>
       <div class="ms-lg-3 mt-2 mt-lg-0 d-flex align-items-center gap-2" id="nav-auth-btns"></div>
     </div>
   </div>
@@ -289,8 +285,9 @@
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<script src="js/script.js"></script>
+<!-- api.js MUST load before script.js -->
 <script src="js/api.js"></script>
+<script src="js/script.js"></script>
 
 <script>
   function toggleFaq(btn) {
@@ -300,28 +297,27 @@
     if (!isOpen) item.classList.add('open');
   }
 
-  // Update live route count from MongoDB
   async function loadRouteCount() {
     try {
       var trips = await ApiTrips.getAll();
-      if (trips && trips.length) {
-        document.getElementById('stat-routes').textContent = trips.length;
-      }
-    } catch (e) { /* silently fail — default value shown */ }
+      if (trips && trips.length) document.getElementById('stat-routes').textContent = trips.length;
+    } catch (e) { /* silently fail */ }
   }
-  loadRouteCount();
 
-  // Fade-in scroll observer
-  (function () {
+  document.addEventListener('DOMContentLoaded', function () {
+    loadRouteCount();
+
+    // Fade-in scroll observer
     var fadeEls = document.querySelectorAll('.fade-in,.fade-in-left,.fade-in-right');
-    if (!fadeEls.length) return;
-    var observer = new IntersectionObserver(function (entries) {
-      entries.forEach(function (entry) {
-        if (entry.isIntersecting) { entry.target.classList.add('visible'); observer.unobserve(entry.target); }
-      });
-    }, { threshold:0.12, rootMargin:'0px 0px -40px 0px' });
-    fadeEls.forEach(function (el) { observer.observe(el); });
-  })();
+    if (fadeEls.length) {
+      var observer = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) { entry.target.classList.add('visible'); observer.unobserve(entry.target); }
+        });
+      }, { threshold:0.12, rootMargin:'0px 0px -40px 0px' });
+      fadeEls.forEach(function (el) { observer.observe(el); });
+    }
+  });
 </script>
 </body>
 </html>

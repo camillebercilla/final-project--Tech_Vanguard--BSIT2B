@@ -26,35 +26,26 @@ app.use((req, res, next) => {
   next();
 });
 
-// ── API ROUTES (must come BEFORE static files) ──────────────────────────────
+// ── API ROUTES ───────────────────────────────────────────────────────────────
 app.use("/api/users",    userRoutes);
 app.use("/api/trips",    tripRoutes);
 app.use("/api/bookings", bookingRoutes);
-app.use("/api",          busRoutes);
-app.use("/api/admin",    adminRoutes);
+app.use("/api/admin",    adminRoutes);   // ✅ MOVED UP — before the broad /api catch
+app.use("/api",          busRoutes);     // ✅ broad catch is now LAST
 
-// ── SERVE FRONTEND STATIC FILES ─────────────────────────────────────────────
-// Assumes your folder structure is:
-//   backend/   ← server.js lives here
-//   frontend/  ← index.html, css/, js/, pages/ live here
-//
-// If your frontend folder has a different name or location, update the path below.
+// ── SERVE FRONTEND STATIC FILES ──────────────────────────────────────────────
 const FRONTEND = path.join(__dirname, "../frontend");
 app.use(express.static(FRONTEND));
 
-// ── FALLBACK: send index.html for any non-API route ─────────────────────────
-// This lets you open any .html page directly in the browser via the Express server.
-// The auth guard inside each HTML file will handle login redirection.
+// ── FALLBACK: send index.html for any non-API route ──────────────────────────
 app.get(/^(?!\/api).*/, (req, res) => {
   const requestedFile = path.join(FRONTEND, req.path);
   const fs = require("fs");
 
-  // If the exact file exists, serve it (e.g. /pages/admin/admin-dashboard.html)
   if (fs.existsSync(requestedFile) && fs.statSync(requestedFile).isFile()) {
     return res.sendFile(requestedFile);
   }
 
-  // Otherwise fall back to index.html
   res.sendFile(path.join(FRONTEND, "index.html"));
 });
 
