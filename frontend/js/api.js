@@ -5,7 +5,7 @@
 /* ─── BASE URL ───────────────────────────────────────────────── */
 const BASE_URL = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
   ? "http://localhost:5000/api"
-  : "https://your-app-name.onrender.com/api";
+  : "https://final-project-tech-vanguard-bsit2b.onrender.com/api";
 
 /* ─── TOKEN HELPERS ──────────────────────────────────────────── */
 const Token = {
