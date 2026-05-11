@@ -26,12 +26,32 @@ app.use((req, res, next) => {
   next();
 });
 
+// ── TEMP SEED ROUTE (remove after use) ───────────────────────────────────────
+app.get("/api/seed-now", async (req, res) => {
+  try {
+    const Trip = require("./models/Trip");
+    await Trip.deleteMany({});
+    const TRIPS = [
+      { origin:"Legazpi City", destination:"Sorsogon City", duration:"1-2 hrs", priceMin:150, priceMax:250, departures:["6:00 AM","9:00 AM","12:00 PM","3:00 PM","6:00 PM"], totalSeats:45, status:"scheduled" },
+      { origin:"Legazpi City", destination:"Naga City", duration:"2-3 hrs", priceMin:200, priceMax:350, departures:["6:00 AM","9:00 AM","12:00 PM","6:00 PM","9:00 PM"], totalSeats:45, status:"scheduled" },
+      { origin:"Naga City", destination:"Daet", duration:"3-4 hrs", priceMin:300, priceMax:450, departures:["7:00 AM","1:00 PM","7:00 PM"], totalSeats:45, status:"scheduled" },
+      { origin:"Iriga City", destination:"Naga City", duration:"1-2 hrs", priceMin:150, priceMax:250, departures:["6:00 AM","9:00 AM","12:00 PM","3:00 PM","6:00 PM"], totalSeats:45, status:"scheduled" },
+      { origin:"Ligao City", destination:"Legazpi City", duration:"30-45 mins", priceMin:80, priceMax:150, departures:["6:00 AM","8:00 AM","10:00 AM","12:00 PM","2:00 PM","4:00 PM","6:00 PM"], totalSeats:45, status:"scheduled" },
+      { origin:"Polangui", destination:"Legazpi City", duration:"45-60 mins", priceMin:60, priceMax:120, departures:["6:00 AM","8:00 AM","10:00 AM","12:00 PM","2:00 PM","4:00 PM","6:00 PM"], totalSeats:45, status:"scheduled" },
+    ];
+    await Trip.insertMany(TRIPS);
+    res.json({ ok: true, message: "Seeded " + TRIPS.length + " trips with AM/PM times" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // ── API ROUTES ───────────────────────────────────────────────────────────────
 app.use("/api/users",    userRoutes);
 app.use("/api/trips",    tripRoutes);
 app.use("/api/bookings", bookingRoutes);
-app.use("/api/admin",    adminRoutes);   // ✅ MOVED UP — before the broad /api catch
-app.use("/api",          busRoutes);     // ✅ broad catch is now LAST
+app.use("/api/admin",    adminRoutes);
+app.use("/api",          busRoutes);
 
 // ── SERVE FRONTEND STATIC FILES ──────────────────────────────────────────────
 const FRONTEND = path.join(__dirname, "../frontend");
