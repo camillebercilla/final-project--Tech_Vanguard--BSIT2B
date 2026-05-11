@@ -5,7 +5,6 @@
 require("dotenv").config();
 const mongoose = require("mongoose");
 
-// ── Connect directly (no relying on connectDB wrapper) ──────────────────────
 const MONGO_URI = process.env.MONGO_URI || process.env.MONGODB_URI || "mongodb://localhost:27017/quickreserve";
 
 console.log("Connecting to:", MONGO_URI);
@@ -20,7 +19,6 @@ mongoose.connect(MONGO_URI)
     process.exit(1);
   });
 
-// ── Trip Schema (inline — no import issues) ─────────────────────────────────
 const tripSchema = new mongoose.Schema({
   origin:      { type: String, required: true },
   destination: { type: String, required: true },
@@ -36,10 +34,8 @@ const tripSchema = new mongoose.Schema({
   },
 }, { timestamps: true });
 
-// Use existing model if already registered (avoid OverwriteModelError)
 const Trip = mongoose.models.Trip || mongoose.model("Trip", tripSchema);
 
-// ── Correct trip data matching index.html routes ─────────────────────────────
 const TRIPS = [
   {
     origin:      "Legazpi City",
@@ -47,7 +43,7 @@ const TRIPS = [
     duration:    "1-2 hrs",
     priceMin:    150,
     priceMax:    250,
-    departures:  ["06:00", "09:00", "12:00", "15:00", "18:00"],
+    departures:  ["6:00 AM", "9:00 AM", "12:00 PM", "3:00 PM", "6:00 PM"],
     totalSeats:  45,
     status:      "scheduled",
   },
@@ -57,7 +53,7 @@ const TRIPS = [
     duration:    "2-3 hrs",
     priceMin:    200,
     priceMax:    350,
-    departures:  ["06:00", "09:00", "12:00", "18:00", "21:00"],
+    departures:  ["6:00 AM", "9:00 AM", "12:00 PM", "6:00 PM", "9:00 PM"],
     totalSeats:  45,
     status:      "scheduled",
   },
@@ -67,7 +63,7 @@ const TRIPS = [
     duration:    "3-4 hrs",
     priceMin:    300,
     priceMax:    450,
-    departures:  ["07:00", "13:00", "19:00"],
+    departures:  ["7:00 AM", "1:00 PM", "7:00 PM"],
     totalSeats:  45,
     status:      "scheduled",
   },
@@ -77,7 +73,7 @@ const TRIPS = [
     duration:    "1-2 hrs",
     priceMin:    150,
     priceMax:    250,
-    departures:  ["06:00", "09:00", "12:00", "15:00", "18:00"],
+    departures:  ["6:00 AM", "9:00 AM", "12:00 PM", "3:00 PM", "6:00 PM"],
     totalSeats:  45,
     status:      "scheduled",
   },
@@ -87,7 +83,7 @@ const TRIPS = [
     duration:    "30-45 mins",
     priceMin:    80,
     priceMax:    150,
-    departures:  ["06:00", "08:00", "10:00", "12:00", "14:00", "16:00", "18:00"],
+    departures:  ["6:00 AM", "8:00 AM", "10:00 AM", "12:00 PM", "2:00 PM", "4:00 PM", "6:00 PM"],
     totalSeats:  45,
     status:      "scheduled",
   },
@@ -97,7 +93,7 @@ const TRIPS = [
     duration:    "45-60 mins",
     priceMin:    60,
     priceMax:    120,
-    departures:  ["06:00", "08:00", "10:00", "12:00", "14:00", "16:00", "18:00"],
+    departures:  ["6:00 AM", "8:00 AM", "10:00 AM", "12:00 PM", "2:00 PM", "4:00 PM", "6:00 PM"],
     totalSeats:  45,
     status:      "scheduled",
   },
@@ -105,11 +101,9 @@ const TRIPS = [
 
 async function seed() {
   try {
-    // Delete everything in the trips collection
     const del = await Trip.deleteMany({});
     console.log("🗑  Deleted", del.deletedCount, "existing trips");
 
-    // Insert correct trips one by one so we can see each result
     for (var i = 0; i < TRIPS.length; i++) {
       var t = await Trip.create(TRIPS[i]);
       console.log("✅ Created:", t.origin, "→", t.destination, "| ₱" + t.priceMin + "–₱" + t.priceMax, "| Deps:", t.departures.join(", "));
