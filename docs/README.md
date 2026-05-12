@@ -9,7 +9,7 @@
 - Camille Bercilla  
 - Mariel Odoño  
 - John Edmar Bongcodin  
-- Justine James Dasallas  
+- Justin James Dasallas  
 
 ---
 
@@ -94,12 +94,16 @@ This system provides users the ability to:
 
 ```bash
 git clone https://github.com/your-username/quickreserve.git
+
 📁 Navigate to Project Folder
 cd quickreserve
+
 📦 Install Dependencies
 npm install
+
 ▶️ Run the Project
 npm start
+
 📁 Project Structure
 quickreserve/
 │── client/        # Frontend files
@@ -109,28 +113,8 @@ quickreserve/
 │── controllers/   # Logic handling
 │── package.json
 │── README.md
-🌙 Design Theme
-🎯 Clean and structured layout
-🚀 Smooth and intuitive navigation
-🎨 Consistent color scheme
-📱 Fully responsive across devices
-🤝 Contribution
 
-Contributions are welcome!
-Feel free to fork this repository and submit a pull request.
-
-📜 License
-
-This project is for educational purposes only.
-
-✨ Closing
-
-QuickReserve is more than just a booking platform—
-it’s a smarter, faster, and more efficient way to travel.
-
-🧾 Final Project – Tech Vanguard BSIT2B
-🚀 Live Deployment
-
+🧾 Final Project – Tech Vanguard BSIT2B, Live Deployment
 🔗 https://final-project-tech-vanguard-bsit2b.onrender.com
 
 👥 Group Members and Contributions
@@ -142,16 +126,59 @@ Mariel Odoño - Documentation Officer
 John Edmar Bongcodin - Tester/Debugger
 Justine James Dasallas - Database Manager
 
-📂 How to Clone the Project
+📂 How to Clone the Project (Step-by-Step)
+
+Follow these steps to download and run the project on your local machine:
+
+🧾 Step 1: Install Git
+
+Make sure Git is installed on your computer.
+Download here: https://git-scm.com/
+
+Check if Git is installed:
+
+git --version
+📥 Step 2: Open Terminal / Command Prompt
+
+You can use:
+
+Git Bash (recommended)
+VS Code Terminal
+Command Prompt
+PowerShell
+📌 Step 3: Go to Your Desired Folder
+
+Choose where you want to store the project:
+
+cd Desktop
+
+(or any folder you prefer)
+
+📦 Step 4: Clone the Repository
+
+Download the project from GitHub:
+
 git clone https://github.com/camillebercilla/final-project--Tech_Vanguard--BSIT2B.git
 
+📁 Step 5: Enter the Project Folder
 cd final-project--Tech_Vanguard--BSIT2B
+
 ▶️ Running the Project
-Frontend
+🎨 FRONTEND
 cd frontend
 npm install
 npm start
-Backend
+⚙️ BACKEND
 cd backend
 npm install
 npm run dev
+
+Contributions are welcome!
+Feel free to fork this repository and submit a pull request.
+
+📜 License
+This project is for educational purposes only.
+
+✨ Closing
+QuickReserve is more than just a booking platform—
+it’s a smarter, faster, and more efficient way to travel.
