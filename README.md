@@ -81,13 +81,9 @@ This system provides users the ability to:
 
 ---
 
-# 📊 GitHub Stats
+## Live Demo
 
-![](https://github-readme-stats.vercel.app/api?username=camillebercilla&theme=synthwave&hide_border=false&count_private=true&cache_seconds=0)
-
-![](https://github-readme-streak-stats.herokuapp.com/?user=camillebercilla&theme=synthwave&hide_border=false)
-
-![](https://github-readme-stats.vercel.app/api/top-langs/?username=camillebercilla&theme=synthwave&layout=compact&cache_seconds=0)
+🔗 https://final-project-tech-vanguard-bsit2b.onrender.com
 
 ### 🚀 Tech Vanguard Motto
 > "Great software is built by great teamwork."
