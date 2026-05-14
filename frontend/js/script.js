@@ -30,7 +30,7 @@ function toRoot(rootRelPath) {
     localStorage.removeItem('qr_bookings');
     localStorage.removeItem('qr_users');
   } catch(e) {
-    console.warn('[QuickReserve] Could not purge seed data:', e);
+    console.warn('[BicolTransit] Could not purge seed data:', e);
   }
 })();
 
@@ -101,32 +101,49 @@ const Users = {
 };
 
 /* ─── SEAT HELPERS ─── */
+/*
+  Key now includes the operator so that Philtranco seat A1 and DLTB seat A1
+  on the same route/date/departure are tracked independently.
+  Format: seats_{operator}_{route}_{date}_{departure}
+
+  If no operator is passed (legacy callers), falls back to the old format
+  so existing bookings are not broken.
+*/
 const Seats = {
-  _key(route, date, dep) {
-    return ('seats_' + route + '_' + date + '_' + dep)
+  _key(route, date, dep, operator) {
+    const opPrefix = operator ? operator + '_' : '';
+    return ('seats_' + opPrefix + route + '_' + date + '_' + dep)
       .replace(/\s*→\s*/g, '_').replace(/\s+/g, '_');
   },
-  getTaken(route, date, dep) { return QR.get(this._key(route, date, dep), []); },
-  book(route, date, dep, seat) {
-    const key = this._key(route, date, dep);
+
+  /* Get taken seats — operator is optional for backwards compatibility */
+  getTaken(route, date, dep, operator) {
+    return QR.get(this._key(route, date, dep, operator), []);
+  },
+
+  /* Book a seat */
+  book(route, date, dep, seat, operator) {
+    const key = this._key(route, date, dep, operator);
     const t   = QR.get(key, []);
     if (!t.includes(seat)) { t.push(seat); QR.set(key, t); }
   },
-  free(route, date, dep, seat) {
-    const key = this._key(route, date, dep);
+
+  /* Free a seat (on cancel / reschedule) */
+  free(route, date, dep, seat, operator) {
+    const key = this._key(route, date, dep, operator);
     QR.set(key, QR.get(key, []).filter(s => s !== seat));
   },
 };
 
 /* ─── NAVBAR ─── */
 function renderNavUser() {
-  const authContainer = document.getElementById('nav-auth-btns');
+  const authContainer  = document.getElementById('nav-auth-btns');
   const linksContainer = document.getElementById('nav-links');
   if (!authContainer) return;
 
   const u = Auth.currentUser();
 
-  /* ── GUEST (not logged in) ── */
+  /* ── GUEST ── */
   if (!u || (!u.id && !u._id) || !u.name) {
     if (linksContainer) {
       linksContainer.innerHTML =
@@ -213,6 +230,7 @@ function searchTrip() {
   localStorage.setItem('selectedPriceMax', '0');
   localStorage.setItem('selectedDate',     date);
   localStorage.removeItem('selectedSeat');
+  localStorage.removeItem('selectedOperator');   /* clear previous operator on new search */
   window.location.href = toRoot('seats.html');
 }
 
@@ -226,6 +244,7 @@ function quickBook(origin, destination, routeKey, priceMin, priceMax, duration) 
   localStorage.setItem('selectedPriceMax', String(priceMax));
   localStorage.setItem('selectedDate',     dateVal);
   localStorage.removeItem('selectedSeat');
+  localStorage.removeItem('selectedOperator');   /* clear previous operator on new quick-book */
   window.location.href = toRoot('seats.html');
 }
 
@@ -236,7 +255,7 @@ document.addEventListener('DOMContentLoaded', function() {
   if (dateEl && !dateEl.value) dateEl.min = new Date().toISOString().split('T')[0];
 });
 
-// Add at the very bottom of script.js
+/* ─── SERVICE WORKER ─── */
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('/sw.js')

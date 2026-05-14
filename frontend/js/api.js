@@ -20,11 +20,27 @@ const Token = {
   },
 };
 
+/* ─── PURGE STALE SESSION ON EVERY PAGE LOAD ─────────────────── */
+// If there is no token, there is no valid session.
+// Clear qr_user immediately so a new visitor never sees a past user's data.
+(function cleanStaleSession() {
+  try {
+    if (!localStorage.getItem("qr_token")) {
+      localStorage.removeItem("qr_user");
+    }
+  } catch (e) {}
+})();
+
 /* ─── AUTH OBJECT ────────────────────────────────────────────── */
 const Auth = {
   isLoggedIn()  { return !!Token.get(); },
   currentUser() {
     try {
+      // Extra safety: if token is gone, wipe user and return null
+      if (!Token.get()) {
+        localStorage.removeItem("qr_user");
+        return null;
+      }
       const raw = localStorage.getItem("qr_user");
       return raw ? JSON.parse(raw) : null;
     } catch (e) { return null; }

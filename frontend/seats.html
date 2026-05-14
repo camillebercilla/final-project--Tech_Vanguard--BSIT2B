@@ -8,7 +8,7 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
   <link rel="manifest" href="/manifest.json">
-<meta name="theme-color" content="#0f6e56">
+  <meta name="theme-color" content="#0f6e56">
   <style>
 
     /* ═══════════════════════════════════════════════════
@@ -98,6 +98,108 @@
     }
 
     /* ═══════════════════════════════════════════════════
+       OPERATOR SELECTOR
+    ═══════════════════════════════════════════════════ */
+    .operator-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+
+    @media (max-width: 520px) {
+      .operator-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    .operator-card {
+      border: 2px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 12px 8px;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.18s ease;
+      background: #fff;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .operator-card:hover {
+      border-color: #0f6e56;
+      box-shadow: 0 4px 12px rgba(15,110,86,0.12);
+      transform: translateY(-2px);
+    }
+
+    .operator-card.active {
+      border-color: #0f6e56;
+      background: linear-gradient(135deg, #f0faf6 0%, #e6f7f1 100%);
+      box-shadow: 0 4px 16px rgba(15,110,86,0.18);
+    }
+
+    .operator-card.active::after {
+      content: '✓';
+      position: absolute;
+      top: 6px;
+      right: 8px;
+      font-size: 11px;
+      font-weight: 700;
+      color: #0f6e56;
+      background: #c8f0e2;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 18px;
+    }
+
+    /* Logo canvas — styled SVG badge per operator */
+    .operator-logo {
+      width: 60px;
+      height: 44px;
+      margin: 0 auto 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .operator-logo svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    .operator-name {
+      font-size: 11px;
+      font-weight: 700;
+      color: #374151;
+      line-height: 1.2;
+      letter-spacing: 0.02em;
+    }
+
+    .operator-tagline {
+      font-size: 10px;
+      color: #9ca3af;
+      margin-top: 2px;
+      font-weight: 400;
+    }
+
+    .operator-badge {
+      display: inline-block;
+      font-size: 9px;
+      font-weight: 600;
+      padding: 2px 6px;
+      border-radius: 20px;
+      margin-top: 5px;
+      letter-spacing: 0.04em;
+    }
+
+    .badge-ac    { background: #dbeafe; color: #1d4ed8; }
+    .badge-reg   { background: #fef3c7; color: #92400e; }
+    .badge-prem  { background: #f3e8ff; color: #6b21a8; }
+    .badge-freq  { background: #d1fae5; color: #065f46; }
+
+    /* ═══════════════════════════════════════════════════
        DEPARTURE TIME BUTTONS
     ═══════════════════════════════════════════════════ */
     #departure-btns {
@@ -126,7 +228,6 @@
       color: #fff;
     }
 
-    /* Mobile: scrollable row */
     @media (max-width: 600px) {
       #departure-btns {
         flex-wrap: nowrap;
@@ -151,7 +252,6 @@
     }
 
     .bus-front {
-      background: #0f6e56;
       color: #fff;
       text-align: center;
       font-size: 12px;
@@ -160,6 +260,7 @@
       border-radius: 10px;
       margin-bottom: 18px;
       letter-spacing: 0.03em;
+      transition: background 0.3s;
     }
 
     .seat-grid {
@@ -171,10 +272,7 @@
     }
 
     @media (max-width: 400px) {
-      .seat-grid {
-        gap: 6px;
-        max-width: 220px;
-      }
+      .seat-grid { gap: 6px; max-width: 220px; }
     }
 
     .seat {
@@ -194,13 +292,9 @@
       -webkit-tap-highlight-color: transparent;
     }
 
-    .seat:not(.taken):not(.aisle):active {
-      transform: scale(0.88);
-    }
+    .seat:not(.taken):not(.aisle):active { transform: scale(0.88); }
 
     .seat.selected {
-      background: #0f6e56;
-      border-color: #0f6e56;
       color: #fff;
       box-shadow: 0 2px 8px rgba(15,110,86,0.35);
     }
@@ -271,6 +365,18 @@
       font-weight: 600;
     }
 
+    /* Operator mini badge in summary */
+    .operator-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 700;
+      border: 1.5px solid currentColor;
+    }
+
     /* ═══════════════════════════════════════════════════
        PROCEED BUTTON
     ═══════════════════════════════════════════════════ */
@@ -292,16 +398,12 @@
       gap: 8px;
     }
 
-    .btn-primary-full:disabled {
-      opacity: 0.45;
-      cursor: not-allowed;
-    }
-
+    .btn-primary-full:disabled { opacity: 0.45; cursor: not-allowed; }
     .btn-primary-full:not(:disabled):hover  { background: #0d5e49; }
     .btn-primary-full:not(:disabled):active { transform: scale(0.98); background: #085041; }
 
     /* ═══════════════════════════════════════════════════
-       DESKTOP LAYOUT (two-column grid)
+       DESKTOP LAYOUT
     ═══════════════════════════════════════════════════ */
     .layout-grid {
       display: grid;
@@ -313,7 +415,7 @@
     .summary-sticky { position: sticky; top: 80px; }
 
     /* ═══════════════════════════════════════════════════
-       MOBILE LAYOUT (single column)
+       MOBILE LAYOUT
     ═══════════════════════════════════════════════════ */
     @media (max-width: 768px) {
       .layout-grid {
@@ -322,14 +424,11 @@
       }
 
       .summary-sticky { position: static; }
-
-      /* Move summary card below seat map on mobile */
       .col-left  { order: 1; }
       .col-right { order: 2; }
 
-      body { padding-bottom: 90px; } /* space for fixed bottom button */
+      body { padding-bottom: 90px; }
 
-      /* Fixed proceed button on mobile */
       .mobile-proceed-bar {
         display: flex;
         position: fixed;
@@ -344,17 +443,8 @@
         align-items: center;
       }
 
-      .mobile-seat-info {
-        flex: 1;
-        min-width: 0;
-      }
-
-      .mobile-seat-info .label {
-        font-size: 11px;
-        color: #9ca3af;
-        font-weight: 500;
-      }
-
+      .mobile-seat-info { flex: 1; min-width: 0; }
+      .mobile-seat-info .label { font-size: 11px; color: #9ca3af; font-weight: 500; }
       .mobile-seat-info .value {
         font-size: 14px;
         font-weight: 700;
@@ -371,18 +461,34 @@
         flex-shrink: 0;
       }
 
-      /* Hide the in-card proceed button on mobile */
       .desktop-proceed { display: none; }
     }
 
-    /* Hide mobile proceed bar on desktop */
     .mobile-proceed-bar { display: none; }
     @media (max-width: 768px) {
       .mobile-proceed-bar { display: flex; }
     }
 
     /* ═══════════════════════════════════════════════════
-       TOAST NOTIFICATION
+       OPERATOR NOT SELECTED OVERLAY
+    ═══════════════════════════════════════════════════ */
+    .seat-overlay {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 32px 16px;
+      color: #9ca3af;
+      font-size: 13px;
+      font-weight: 500;
+      text-align: center;
+    }
+
+    .seat-overlay svg { opacity: 0.35; }
+
+    /* ═══════════════════════════════════════════════════
+       TOAST
     ═══════════════════════════════════════════════════ */
     #toast-container {
       position: fixed;
@@ -393,9 +499,7 @@
       pointer-events: none;
     }
 
-    @media (min-width: 769px) {
-      #toast-container { bottom: 24px; }
-    }
+    @media (min-width: 769px) { #toast-container { bottom: 24px; } }
 
     .toast-msg {
       background: #1a1a1a;
@@ -412,11 +516,7 @@
       margin-bottom: 8px;
     }
 
-    .toast-msg.show {
-      opacity: 1;
-      transform: translateY(0);
-    }
-
+    .toast-msg.show { opacity: 1; transform: translateY(0); }
     .toast-msg.warning { background: #d97706; }
     .toast-msg.error   { background: #dc2626; }
 
@@ -429,16 +529,28 @@
       margin-top: 32px;
     }
 
-    /* Main wrapper padding */
     .main-wrap {
       background: #f3f4f6;
       padding: 24px 0;
       min-height: 60vh;
     }
 
-    @media (max-width: 768px) {
-      .main-wrap { padding: 16px 0; }
+    @media (max-width: 768px) { .main-wrap { padding: 16px 0; } }
+
+    /* ═══════════════════════════════════════════════════
+       ANIMATION
+    ═══════════════════════════════════════════════════ */
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
     }
+
+    .seat-grid { animation: slideIn 0.25s ease; }
+    .operator-card { animation: slideIn 0.2s ease both; }
+    .operator-card:nth-child(1) { animation-delay: 0.0s; }
+    .operator-card:nth-child(2) { animation-delay: 0.05s; }
+    .operator-card:nth-child(3) { animation-delay: 0.1s; }
+    .operator-card:nth-child(4) { animation-delay: 0.15s; }
 
   </style>
 </head>
@@ -459,7 +571,7 @@
   <div class="container">
     <a href="index.html" class="back-link">← Back</a>
     <h1 id="route-title">Loading…</h1>
-    <p id="trip-info">Select your departure and seat below</p>
+    <p id="trip-info">Select your operator, departure, and seat below</p>
   </div>
 </div>
 
@@ -468,21 +580,132 @@
   <div class="container">
     <div class="layout-grid">
 
-      <!-- LEFT / TOP: Seat Map -->
+      <!-- LEFT / TOP -->
       <div class="col-left">
 
-        <!-- Departure Time -->
+        <!-- ── STEP 1: Operator Selection ── -->
         <div class="card-white">
-          <div class="card-section-label">🕐 Select Departure Time</div>
-          <div id="departure-btns">
-            <span style="color:#9ca3af;font-size:13px">Loading departures…</span>
+          <div class="card-section-label">🚌 Step 1 — Choose Your Bus Operator</div>
+          <div class="operator-grid" id="operator-grid">
+
+            <!-- PHILTRANCO -->
+            <div class="operator-card" onclick="selectOperator('Philtranco', this)" data-op="Philtranco">
+              <div class="operator-logo">
+                <!-- Philtranco logo: red/yellow shield style -->
+                <svg viewBox="0 0 70 50" xmlns="http://www.w3.org/2000/svg">
+                  <rect width="70" height="50" rx="8" fill="#CC0000"/>
+                  <rect y="32" width="70" height="18" rx="0" fill="#FFD700" ry="0"/>
+                  <rect y="38" width="70" height="12" rx="0" ry="0" fill="#CC0000"/>
+                  <!-- Bus silhouette -->
+                  <rect x="10" y="8" width="50" height="22" rx="4" fill="none" stroke="#fff" stroke-width="1.5"/>
+                  <rect x="13" y="11" width="10" height="8" rx="1" fill="#fff" opacity="0.8"/>
+                  <rect x="26" y="11" width="10" height="8" rx="1" fill="#fff" opacity="0.8"/>
+                  <rect x="39" y="11" width="10" height="8" rx="1" fill="#fff" opacity="0.8"/>
+                  <circle cx="18" cy="31" r="3" fill="#fff"/>
+                  <circle cx="52" cy="31" r="3" fill="#fff"/>
+                  <!-- Text -->
+                  <text x="35" y="46" font-family="Arial Black,Arial" font-weight="900" font-size="7" fill="#fff" text-anchor="middle" letter-spacing="1">PHILTRANCO</text>
+                </svg>
+              </div>
+              <div class="operator-name">Philtranco</div>
+              <div class="operator-tagline">Since 1946</div>
+              <div><span class="operator-badge badge-prem">Premium A/C</span></div>
+            </div>
+
+            <!-- DLTB -->
+            <div class="operator-card" onclick="selectOperator('DLTB', this)" data-op="DLTB">
+              <div class="operator-logo">
+                <!-- DLTB logo: blue/white -->
+                <svg viewBox="0 0 70 50" xmlns="http://www.w3.org/2000/svg">
+                  <rect width="70" height="50" rx="8" fill="#003087"/>
+                  <rect y="34" width="70" height="16" rx="0" fill="#E8C42A"/>
+                  <!-- Bus outline -->
+                  <rect x="8" y="7" width="54" height="24" rx="4" fill="none" stroke="#fff" stroke-width="1.5"/>
+                  <rect x="11" y="10" width="11" height="9" rx="1" fill="#4FC3F7" opacity="0.9"/>
+                  <rect x="25" y="10" width="11" height="9" rx="1" fill="#4FC3F7" opacity="0.9"/>
+                  <rect x="39" y="10" width="11" height="9" rx="1" fill="#4FC3F7" opacity="0.9"/>
+                  <line x1="8" y1="22" x2="62" y2="22" stroke="#fff" stroke-width="1" opacity="0.4"/>
+                  <circle cx="19" cy="32" r="3" fill="#fff"/>
+                  <circle cx="51" cy="32" r="3" fill="#fff"/>
+                  <!-- DLTB letters -->
+                  <text x="35" y="46" font-family="Arial Black,Arial" font-weight="900" font-size="8" fill="#003087" text-anchor="middle" letter-spacing="1.5">DLTB Co.</text>
+                </svg>
+              </div>
+              <div class="operator-name">DLTB Co.</div>
+              <div class="operator-tagline">Luzon's Finest</div>
+              <div><span class="operator-badge badge-ac">A/C Regular</span></div>
+            </div>
+
+            <!-- RSL -->
+            <div class="operator-card" onclick="selectOperator('RSL', this)" data-op="RSL">
+              <div class="operator-logo">
+                <!-- RSL logo: green style -->
+                <svg viewBox="0 0 70 50" xmlns="http://www.w3.org/2000/svg">
+                  <rect width="70" height="50" rx="8" fill="#1B5E20"/>
+                  <rect y="35" width="70" height="15" rx="0" fill="#43A047"/>
+                  <!-- Diagonal stripe -->
+                  <polygon points="0,20 25,0 35,0 10,20" fill="#2E7D32" opacity="0.6"/>
+                  <!-- Bus -->
+                  <rect x="9" y="8" width="52" height="22" rx="4" fill="none" stroke="#A5D6A7" stroke-width="1.5"/>
+                  <rect x="12" y="11" width="9" height="8" rx="1" fill="#A5D6A7" opacity="0.85"/>
+                  <rect x="24" y="11" width="9" height="8" rx="1" fill="#A5D6A7" opacity="0.85"/>
+                  <rect x="37" y="11" width="9" height="8" rx="1" fill="#A5D6A7" opacity="0.85"/>
+                  <circle cx="18" cy="31" r="3" fill="#A5D6A7"/>
+                  <circle cx="52" cy="31" r="3" fill="#A5D6A7"/>
+                  <!-- RSL text -->
+                  <text x="35" y="46" font-family="Arial Black,Arial" font-weight="900" font-size="9" fill="#fff" text-anchor="middle" letter-spacing="2">RSL</text>
+                </svg>
+              </div>
+              <div class="operator-name">RSL Bus</div>
+              <div class="operator-tagline">Bicol Region</div>
+              <div><span class="operator-badge badge-reg">Regular</span></div>
+            </div>
+
+            <!-- ISAROG -->
+            <div class="operator-card" onclick="selectOperator('Isarog', this)" data-op="Isarog">
+              <div class="operator-logo">
+                <!-- Isarog logo: orange/maroon mountain theme -->
+                <svg viewBox="0 0 70 50" xmlns="http://www.w3.org/2000/svg">
+                  <rect width="70" height="50" rx="8" fill="#7B1A1A"/>
+                  <rect y="33" width="70" height="17" rx="0" fill="#E65100"/>
+                  <!-- Mountain motif -->
+                  <polygon points="15,28 28,10 41,28" fill="#FF8A65" opacity="0.5"/>
+                  <polygon points="28,28 42,14 56,28" fill="#FF8A65" opacity="0.35"/>
+                  <!-- Bus outline -->
+                  <rect x="8" y="9" width="54" height="20" rx="3" fill="none" stroke="#FFE0B2" stroke-width="1.3"/>
+                  <rect x="11" y="12" width="9" height="7" rx="1" fill="#FFE0B2" opacity="0.8"/>
+                  <rect x="23" y="12" width="9" height="7" rx="1" fill="#FFE0B2" opacity="0.8"/>
+                  <rect x="36" y="12" width="9" height="7" rx="1" fill="#FFE0B2" opacity="0.8"/>
+                  <circle cx="18" cy="30" r="3" fill="#FFE0B2"/>
+                  <circle cx="52" cy="30" r="3" fill="#FFE0B2"/>
+                  <!-- Isarog text -->
+                  <text x="35" y="46" font-family="Arial Black,Arial" font-weight="900" font-size="7.5" fill="#fff" text-anchor="middle" letter-spacing="1">ISAROG</text>
+                </svg>
+              </div>
+              <div class="operator-name">Isarog Bus</div>
+              <div class="operator-tagline">Mt. Isarog Pride</div>
+              <div><span class="operator-badge badge-freq">Frequent Trips</span></div>
+            </div>
+
           </div>
         </div>
 
-        <!-- Seat Map -->
-        <div class="seat-map-wrap">
-          <div class="bus-front">🚌 DRIVER &nbsp;&nbsp; FRONT OF BUS</div>
+        <!-- ── STEP 2: Departure Time ── -->
+        <div class="card-white" id="departure-card" style="opacity:0.5;pointer-events:none;transition:opacity 0.2s">
+          <div class="card-section-label">🕐 Step 2 — Select Departure Time</div>
+          <div id="departure-btns">
+            <span style="color:#9ca3af;font-size:13px">Choose an operator first…</span>
+          </div>
+        </div>
+
+        <!-- ── STEP 3: Seat Map ── -->
+        <div class="seat-map-wrap" id="seat-map-wrap" style="opacity:0.5;pointer-events:none;transition:opacity 0.2s">
+          <div class="bus-front" id="bus-front-bar" style="background:#6b7280">🚌 DRIVER &nbsp;&nbsp; FRONT OF BUS</div>
           <div id="seat-grid" class="seat-grid"></div>
+          <div id="seat-placeholder" class="seat-overlay">
+            <svg width="40" height="40" fill="none" viewBox="0 0 24 24" stroke="#9ca3af" stroke-width="1.5"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 9h18M9 5v4M15 5v4"/></svg>
+            Select an operator &amp; departure to see seats
+          </div>
           <div class="seat-legend">
             <div class="legend-item"><div class="legend-box available"></div> Available</div>
             <div class="legend-item"><div class="legend-box selected"></div> Your Seat</div>
@@ -492,7 +715,7 @@
 
       </div>
 
-      <!-- RIGHT / BOTTOM: Summary -->
+      <!-- RIGHT: Summary -->
       <div class="col-right">
         <div class="card-white summary-sticky">
           <div class="card-section-label">📋 Trip Summary</div>
@@ -504,6 +727,10 @@
             <div class="summary-row">
               <span>Date</span>
               <span id="s-date">—</span>
+            </div>
+            <div class="summary-row">
+              <span>Operator</span>
+              <span id="s-operator">—</span>
             </div>
             <div class="summary-row">
               <span>Departure</span>
@@ -523,12 +750,11 @@
             </div>
           </div>
 
-          <!-- Desktop proceed button (hidden on mobile) -->
           <div class="desktop-proceed">
             <button id="proceed-btn-desktop" class="btn-primary-full" onclick="proceedToBooking()" disabled>
               Proceed to Booking →
             </button>
-            <p style="font-size:11px;color:#9ca3af;text-align:center;margin-top:10px">Select a seat to continue</p>
+            <p style="font-size:11px;color:#9ca3af;text-align:center;margin-top:10px" id="proceed-hint">Select an operator and seat to continue</p>
           </div>
         </div>
       </div>
@@ -564,11 +790,49 @@
 <script src="js/script.js"></script>
 <script src="js/api.js"></script>
 <script>
+
+  /* ══════════════════════════════════════════════════════
+     OPERATOR CONFIG
+     Each operator has its own color theme, departures, and
+     a fare multiplier so prices feel distinct per operator.
+  ══════════════════════════════════════════════════════ */
+  var OPERATORS = {
+    Philtranco: {
+      color:       '#CC0000',
+      textColor:   '#fff',
+      departures:  ['05:00am', '07:30am', '10:00am', '01:00pm', '04:00pm', '08:00pm'],
+      fareLabel:   'Premium A/C',
+      fareMulti:   1.3,   /* 30% more than base */
+    },
+    DLTB: {
+      color:       '#003087',
+      textColor:   '#fff',
+      departures:  ['06:00am', '09:00am', '12:00nn', '03:00pm', '06:00pm', '09:00pm'],
+      fareLabel:   'A/C Regular',
+      fareMulti:   1.1,
+    },
+    RSL: {
+      color:       '#1B5E20',
+      textColor:   '#fff',
+      departures:  ['05:30am', '08:00am', '11:00am', '02:00pm', '05:00pm'],
+      fareLabel:   'Regular',
+      fareMulti:   1.0,
+    },
+    Isarog: {
+      color:       '#7B1A1A',
+      textColor:   '#fff',
+      departures:  ['04:30am', '06:00am', '08:30am', '11:30am', '02:30pm', '05:30pm', '08:30pm'],
+      fareLabel:   'Frequent / Regular',
+      fareMulti:   0.95,
+    },
+  };
+
   /* ══════════════════════════════════════════════════════
      STATE
   ══════════════════════════════════════════════════════ */
   var selectedSeat      = null;
   var selectedDeparture = null;
+  var selectedOperator  = null;
 
   var route    = localStorage.getItem('selectedRoute')    || '';
   var duration = localStorage.getItem('selectedDuration') || '';
@@ -585,47 +849,90 @@
   document.getElementById('route-title').textContent = route || 'Select a Route';
   document.getElementById('trip-info').textContent   =
     'Date: ' + formatDate(date) + (duration ? ' · Duration: ' + duration : '');
-  document.getElementById('s-route').textContent     = route || '—';
-  document.getElementById('s-date').textContent      = formatDate(date);
-  document.getElementById('s-duration').textContent  = duration || '—';
-  document.getElementById('s-price').textContent     = priceMin ? '₱' + priceMin + ' – ₱' + priceMax : '—';
+  document.getElementById('s-route').textContent    = route || '—';
+  document.getElementById('s-date').textContent     = formatDate(date);
+  document.getElementById('s-duration').textContent = duration || '—';
+  document.getElementById('s-price').textContent    = priceMin ? '₱' + priceMin + ' – ₱' + priceMax : '—';
 
   /* ══════════════════════════════════════════════════════
-     LOAD DEPARTURES FROM API / FALLBACK
+     SELECT OPERATOR
+  ══════════════════════════════════════════════════════ */
+  function selectOperator(name, cardEl) {
+    selectedOperator  = name;
+    selectedSeat      = null;
+    selectedDeparture = null;
+
+    /* Highlight selected card */
+    document.querySelectorAll('.operator-card').forEach(function(c){
+      c.classList.remove('active');
+    });
+    cardEl.classList.add('active');
+
+    var op = OPERATORS[name];
+
+    /* Update bus front color */
+    document.getElementById('bus-front-bar').style.background = op.color;
+
+    /* Enable step 2 & 3 */
+    document.getElementById('departure-card').style.opacity = '1';
+    document.getElementById('departure-card').style.pointerEvents = 'auto';
+    document.getElementById('seat-map-wrap').style.opacity = '1';
+    document.getElementById('seat-map-wrap').style.pointerEvents = 'auto';
+
+    /* Update summary */
+    document.getElementById('s-operator').innerHTML =
+      '<span class="operator-pill" style="color:' + op.color + ';border-color:' + op.color + ';background:' + hexToLight(op.color) + '">' +
+      name + '</span>';
+
+    /* Update fare with operator multiplier */
+    if (priceMin) {
+      var pMin = Math.round(priceMin * op.fareMulti / 5) * 5;
+      var pMax = Math.round(priceMax * op.fareMulti / 5) * 5;
+      document.getElementById('s-price').textContent = '₱' + pMin + ' – ₱' + pMax;
+      localStorage.setItem('selectedPriceMin', pMin);
+      localStorage.setItem('selectedPriceMax', pMax);
+    }
+
+    /* Reset seat summary */
+    document.getElementById('s-seat').textContent = 'Not selected';
+    document.getElementById('mobile-seat-label').textContent = '—';
+    document.getElementById('s-depart').textContent = '—';
+    setProceedState(false);
+
+    /* Save to localStorage */
+    localStorage.setItem('selectedOperator', name);
+
+    /* Render departures */
+    renderDepartureButtons(op.departures);
+
+    /* Reset seat grid and show placeholder */
+    document.getElementById('seat-grid').innerHTML = '';
+    var ph = document.getElementById('seat-placeholder');
+    if (ph) {
+      ph.style.display = 'flex';
+      ph.innerHTML =
+        '<svg width="32" height="32" fill="none" viewBox="0 0 24 24" stroke="#9ca3af" stroke-width="1.5"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 9h18M9 5v4M15 5v4"/></svg>' +
+        'Pick a departure time to see seats';
+    }
+
+    showToast(name + ' selected!');
+  }
+
+  /* Hex → very light tint for badge bg */
+  function hexToLight(hex) {
+    try {
+      var r = parseInt(hex.slice(1,3),16);
+      var g = parseInt(hex.slice(3,5),16);
+      var b = parseInt(hex.slice(5,7),16);
+      return 'rgba(' + r + ',' + g + ',' + b + ',0.10)';
+    } catch(e) { return '#f0faf6'; }
+  }
+
+  /* ══════════════════════════════════════════════════════
+     LOAD DEPARTURES FROM API / OPERATOR CONFIG
   ══════════════════════════════════════════════════════ */
   async function loadDepartures() {
-    var departures = [];
-    try {
-      var parts       = route.split('→').map(function(p){ return p.trim(); });
-      var origin      = parts[0] || '';
-      var destination = parts[1] || '';
-      var trips       = await ApiTrips.search(origin, destination);
-
-      if (trips && trips.length > 0) {
-        departures = trips[0].departures || [];
-
-        if (!duration && trips[0].duration) {
-          localStorage.setItem('selectedDuration', trips[0].duration);
-          document.getElementById('s-duration').textContent = trips[0].duration;
-          document.getElementById('trip-info').textContent  =
-            'Date: ' + formatDate(date) + ' · Duration: ' + trips[0].duration;
-        }
-        if (!priceMin && trips[0].priceMin) {
-          document.getElementById('s-price').textContent =
-            '₱' + trips[0].priceMin + ' – ₱' + trips[0].priceMax;
-          localStorage.setItem('selectedPriceMin', trips[0].priceMin);
-          localStorage.setItem('selectedPriceMax', trips[0].priceMax);
-        }
-      }
-    } catch (e) {
-      console.warn('Could not load trips from API, using fallback departures');
-    }
-
-    if (!departures.length) {
-      departures = ['06:00am', '09:00am', '12:00pm', '03:00pm', '06:00pm'];
-    }
-
-    renderDepartureButtons(departures);
+    /* No-op on first load — operator must be chosen first */
   }
 
   /* ══════════════════════════════════════════════════════
@@ -641,7 +948,6 @@
       btn.textContent = d;
       btn.onclick = function() { selectDeparture(d, btn); };
       container.appendChild(btn);
-      if (i === 0) setTimeout(function(){ selectDeparture(d, btn); }, 100);
     });
   }
 
@@ -649,6 +955,11 @@
      SELECT DEPARTURE
   ══════════════════════════════════════════════════════ */
   function selectDeparture(dep, btn) {
+    if (!selectedOperator) {
+      showToast('Choose an operator first.', 'warning');
+      return;
+    }
+
     selectedDeparture = dep;
 
     document.querySelectorAll('.dep-btn').forEach(function(b){
@@ -658,9 +969,9 @@
 
     document.getElementById('s-depart').textContent = dep;
 
-    // Reset seat selection
+    /* Reset seat */
     selectedSeat = null;
-    document.getElementById('s-seat').textContent  = 'Not selected';
+    document.getElementById('s-seat').textContent = 'Not selected';
     document.getElementById('mobile-seat-label').textContent = '—';
     setProceedState(false);
 
@@ -671,9 +982,16 @@
      RENDER SEAT GRID
   ══════════════════════════════════════════════════════ */
   function renderSeats() {
-    var taken = Seats.getTaken(route, date, selectedDeparture);
-    var grid  = document.getElementById('seat-grid');
+    /* Pass route and operator separately — Seats._key() handles the prefix internally */
+    var taken   = Seats.getTaken(route, date, selectedDeparture, selectedOperator);
+    var grid    = document.getElementById('seat-grid');
+    var opColor = selectedOperator ? OPERATORS[selectedOperator].color : '#0f6e56';
+
+    /* Hide placeholder, reset grid */
+    var ph = document.getElementById('seat-placeholder');
+    if (ph) ph.style.display = 'none';
     grid.innerHTML = '';
+    grid.style.display = 'grid';
 
     ROWS.forEach(function(row) {
       COLS.forEach(function(col) {
@@ -690,8 +1008,12 @@
           if (taken.includes(label)) {
             el.classList.add('taken');
           } else {
-            el.onclick = function(){ selectSeat(label, el); };
-            if (selectedSeat === label) el.classList.add('selected');
+            el.onclick = function(){ selectSeat(label, el, opColor); };
+            if (selectedSeat === label) {
+              el.classList.add('selected');
+              el.style.background = opColor;
+              el.style.borderColor = opColor;
+            }
           }
         }
         grid.appendChild(el);
@@ -702,19 +1024,29 @@
   /* ══════════════════════════════════════════════════════
      SELECT SEAT
   ══════════════════════════════════════════════════════ */
-  function selectSeat(label, el) {
+  function selectSeat(label, el, opColor) {
     selectedSeat = label;
+    var color    = opColor || '#0f6e56';
 
     document.querySelectorAll('.seat').forEach(function(s){
       s.classList.remove('selected');
+      s.style.background  = '';
+      s.style.borderColor = '';
+      s.style.color       = '';
     });
+
     el.classList.add('selected');
+    el.style.background  = color;
+    el.style.borderColor = color;
+    el.style.color       = '#fff';
 
-    // Update summary card
+    /* Update legend selected color */
+    var legendSelected = document.querySelector('.legend-box.selected');
+    if (legendSelected) legendSelected.style.background = color;
+
     document.getElementById('s-seat').innerHTML =
-      '<span class="seat-pill">Seat ' + label + '</span>';
+      '<span class="seat-pill" style="background:' + hexToLight(color) + ';color:' + color + '">Seat ' + label + '</span>';
 
-    // Update mobile bottom bar
     document.getElementById('mobile-seat-label').textContent = 'Seat ' + label;
 
     setProceedState(true);
@@ -725,16 +1057,22 @@
      TOGGLE PROCEED BUTTONS
   ══════════════════════════════════════════════════════ */
   function setProceedState(enabled) {
-    var desktopBtn = document.getElementById('proceed-btn-desktop');
-    var mobileBtn  = document.getElementById('proceed-btn-mobile');
-    if (desktopBtn) desktopBtn.disabled = !enabled;
-    if (mobileBtn)  mobileBtn.disabled  = !enabled;
+    var db = document.getElementById('proceed-btn-desktop');
+    var mb = document.getElementById('proceed-btn-mobile');
+    var hint = document.getElementById('proceed-hint');
+    if (db) db.disabled = !enabled;
+    if (mb) mb.disabled = !enabled;
+    if (hint) hint.textContent = enabled ? 'You\'re all set. Proceed!' : 'Select an operator and seat to continue';
   }
 
   /* ══════════════════════════════════════════════════════
      PROCEED TO BOOKING
   ══════════════════════════════════════════════════════ */
   function proceedToBooking() {
+    if (!selectedOperator) {
+      showToast('Please choose a bus operator.', 'error');
+      return;
+    }
     if (!selectedSeat || !selectedDeparture) {
       showToast('Please select a departure and seat first.', 'error');
       return;
@@ -747,6 +1085,7 @@
     }
     localStorage.setItem('selectedSeat',      selectedSeat);
     localStorage.setItem('selectedDeparture', selectedDeparture);
+    localStorage.setItem('selectedOperator',  selectedOperator);
     window.location.href = 'pages/user/booking.html';
   }
 

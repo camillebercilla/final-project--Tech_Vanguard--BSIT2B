@@ -809,7 +809,7 @@ footer a:hover { color: #16c4a1; }
 
 /* ── PAGE HEADER ── */
 .page-header {
-  background: linear-gradient(135deg, #0a2e24 0%, #0f6e56 100%);
+  background: linear-gradient(to right, #071a13 0%, #0b3323 35%, #0f6e56 70%, #13a876 100%);
   padding: 80px 24px 32px;
   color: #fff;
 }

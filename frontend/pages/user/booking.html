@@ -65,6 +65,38 @@
     }
 
     /* ═══════════════════════════════════════════════════
+       STEP BREADCRUMB
+    ═══════════════════════════════════════════════════ */
+    .step-bar {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 12px;
+      flex-wrap: wrap;
+    }
+
+    .step-chip {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 20px;
+      background: rgba(255,255,255,0.15);
+      color: rgba(255,255,255,0.7);
+    }
+
+    .step-chip.done {
+      background: rgba(255,255,255,0.25);
+      color: #fff;
+    }
+
+    .step-chip.active {
+      background: #16c4a1;
+      color: #fff;
+    }
+
+    .step-arrow { color: rgba(255,255,255,0.4); font-size: 11px; }
+
+    /* ═══════════════════════════════════════════════════
        MAIN WRAPPER
     ═══════════════════════════════════════════════════ */
     .main-wrap {
@@ -136,6 +168,19 @@
     }
 
     /* ═══════════════════════════════════════════════════
+       OPERATOR BADGE IN SUMMARY
+    ═══════════════════════════════════════════════════ */
+    .op-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    /* ═══════════════════════════════════════════════════
        PAYMENT OPTIONS
     ═══════════════════════════════════════════════════ */
     .payment-option {
@@ -200,6 +245,15 @@
     .total-row span:first-child { font-size: 13px; font-weight: 600; color: #374151; }
     .total-row span:last-child  { font-size: 18px; font-weight: 700; color: #0f6e56; }
 
+    /* Fare range note */
+    .fare-note {
+      font-size: 11px;
+      color: #9ca3af;
+      text-align: right;
+      margin-top: 4px;
+      margin-bottom: 12px;
+    }
+
     /* ═══════════════════════════════════════════════════
        DESKTOP LAYOUT
     ═══════════════════════════════════════════════════ */
@@ -213,7 +267,7 @@
     .summary-sticky { position: sticky; top: 80px; }
 
     /* ═══════════════════════════════════════════════════
-       CONFIRM BUTTON (desktop in-card)
+       CONFIRM BUTTON
     ═══════════════════════════════════════════════════ */
     .btn-primary-full {
       width: 100%;
@@ -248,13 +302,9 @@
 
       .col-left  { order: 1; }
       .col-right { order: 2; }
-
       .summary-sticky { position: static; }
-
-      /* Hide in-card confirm on mobile */
       .desktop-confirm { display: none; }
 
-      /* Fixed bottom bar */
       .mobile-confirm-bar {
         display: flex;
         flex-direction: column;
@@ -275,7 +325,6 @@
       }
     }
 
-    /* Show mobile bar only on mobile */
     .mobile-confirm-bar { display: none; }
     @media (max-width: 768px) {
       .mobile-confirm-bar { display: flex; }
@@ -291,44 +340,53 @@
     }
 
     .success-icon {
-      width: 72px;
-      height: 72px;
+      width: 80px;
+      height: 80px;
       border-radius: 50%;
       background: #e1f5ee;
       display: flex;
       align-items: center;
       justify-content: center;
       margin: 0 auto 16px;
-      font-size: 36px;
+      font-size: 40px;
+      animation: popIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+    }
+
+    @keyframes popIn {
+      from { transform: scale(0.5); opacity: 0; }
+      to   { transform: scale(1);   opacity: 1; }
     }
 
     .booking-ref-box {
-      background: #e8f8f2;
+      background: linear-gradient(135deg, #e8f8f2, #d4f1e5);
       border-radius: 14px;
       padding: 16px 20px;
       margin: 20px auto;
-      max-width: 360px;
+      max-width: 380px;
+      border: 1.5px solid #b8e8d4;
     }
 
     .booking-ref-label {
       font-size: 11px;
       font-weight: 600;
       text-transform: uppercase;
-      letter-spacing: 0.07em;
+      letter-spacing: 0.08em;
       color: #5DCAA5;
       margin-bottom: 6px;
     }
 
     .booking-ref-num {
-      font-size: 22px;
+      font-size: 20px;
       font-weight: 800;
       color: #085041;
       letter-spacing: 0.04em;
+      word-break: break-all;
     }
 
     .success-summary {
-      max-width: 400px;
+      max-width: 420px;
       margin: 0 auto 20px;
+      text-align: left;
     }
 
     .success-actions {
@@ -357,6 +415,14 @@
 
     .btn-outline:hover { background: #f9fafb; }
 
+    .btn-green {
+      background: #0f6e56;
+      color: #fff;
+      border-color: #0f6e56;
+    }
+
+    .btn-green:hover { background: #0d5e49; color: #fff; }
+
     /* ═══════════════════════════════════════════════════
        TOAST
     ═══════════════════════════════════════════════════ */
@@ -369,9 +435,7 @@
       pointer-events: none;
     }
 
-    @media (min-width: 769px) {
-      #toast-container { bottom: 24px; }
-    }
+    @media (min-width: 769px) { #toast-container { bottom: 24px; } }
 
     .toast-msg {
       background: #1a1a1a;
@@ -434,6 +498,15 @@
   <div class="container">
     <h1>Complete Your Booking</h1>
     <p>Review your trip details and confirm payment</p>
+    <div class="step-bar">
+      <span class="step-chip done">✓ Route</span>
+      <span class="step-arrow">›</span>
+      <span class="step-chip done">✓ Operator</span>
+      <span class="step-arrow">›</span>
+      <span class="step-chip done">✓ Seat</span>
+      <span class="step-arrow">›</span>
+      <span class="step-chip active">Payment</span>
+    </div>
   </div>
 </div>
 
@@ -453,12 +526,14 @@
           <div class="booking-ref-num" id="booking-ref">—</div>
         </div>
 
-        <div class="card-white success-summary" style="text-align:left">
+        <div class="card-white success-summary">
           <div class="booking-summary">
             <div class="summary-row"><span>Route</span><span id="conf-route">—</span></div>
+            <div class="summary-row"><span>Operator</span><span id="conf-operator">—</span></div>
             <div class="summary-row"><span>Date</span><span id="conf-date">—</span></div>
             <div class="summary-row"><span>Departure</span><span id="conf-depart">—</span></div>
             <div class="summary-row"><span>Seat</span><span id="conf-seat">—</span></div>
+            <div class="summary-row"><span>Payment</span><span id="conf-payment">—</span></div>
           </div>
           <div class="total-row">
             <span>Total Paid</span>
@@ -466,7 +541,7 @@
           </div>
         </div>
 
-        <p style="font-size:12px;color:#9ca3af;margin-bottom:20px">Show this reference at the terminal. Safe travels! 🚌</p>
+        <p style="font-size:12px;color:#9ca3af;margin-bottom:24px">Show this reference at the terminal. Safe travels! 🚌</p>
 
         <div class="success-actions">
           <a href="../../index.html" class="btn-outline">Back to Home</a>
@@ -520,22 +595,40 @@
             <div class="card-white summary-sticky">
               <h5>🧾 Order Summary</h5>
               <div class="booking-summary">
-                <div class="summary-row"><span>Route</span><span id="b-route" style="max-width:160px;text-align:right">—</span></div>
-                <div class="summary-row"><span>Date</span><span id="b-date">—</span></div>
-                <div class="summary-row"><span>Departure</span><span id="b-depart">—</span></div>
-                <div class="summary-row"><span>Seat</span><span id="b-seat">—</span></div>
+                <div class="summary-row">
+                  <span>Route</span>
+                  <span id="b-route" style="max-width:160px;text-align:right">—</span>
+                </div>
+                <div class="summary-row">
+                  <span>Operator</span>
+                  <span id="b-operator">—</span>
+                </div>
+                <div class="summary-row">
+                  <span>Date</span>
+                  <span id="b-date">—</span>
+                </div>
+                <div class="summary-row">
+                  <span>Departure</span>
+                  <span id="b-depart">—</span>
+                </div>
+                <div class="summary-row">
+                  <span>Seat</span>
+                  <span id="b-seat">—</span>
+                </div>
               </div>
-              <div class="total-row" style="margin-bottom:16px">
+
+              <div class="total-row" style="margin-bottom:4px">
                 <span>Total Fare</span>
                 <span id="b-price">—</span>
               </div>
+              <p class="fare-note" id="b-fare-note"></p>
 
               <!-- Desktop confirm (hidden on mobile) -->
               <div class="desktop-confirm">
                 <button class="btn-primary-full" id="confirm-btn-desktop" onclick="confirmBooking()">
                   Confirm Booking ✓
                 </button>
-                <a href="../../seats.html" class="change-seat-link">← Change seat</a>
+                <a href="../../seats.html" class="change-seat-link">← Change seat / operator</a>
               </div>
             </div>
           </div>
@@ -551,7 +644,7 @@
     <button class="btn-primary-full" id="confirm-btn-mobile" onclick="confirmBooking()">
       Confirm Booking ✓
     </button>
-    <a href="../../seats.html" class="change-seat-link">← Change seat</a>
+    <a href="../../seats.html" class="change-seat-link">← Change seat / operator</a>
   </div>
 
 </div>
@@ -572,6 +665,17 @@
 <script src="../../js/script.js"></script>
 <script src="../../js/api.js"></script>
 <script>
+
+  /* ══════════════════════════════════════════════════════
+     OPERATOR BRAND CONFIG (matches seats.html)
+  ══════════════════════════════════════════════════════ */
+  var OPERATOR_COLORS = {
+    Philtranco: { color: '#CC0000', bg: 'rgba(204,0,0,0.08)' },
+    DLTB:       { color: '#003087', bg: 'rgba(0,48,135,0.08)' },
+    RSL:        { color: '#1B5E20', bg: 'rgba(27,94,32,0.08)' },
+    Isarog:     { color: '#7B1A1A', bg: 'rgba(123,26,26,0.08)' },
+  };
+
   document.addEventListener('DOMContentLoaded', function () {
 
     /* ── Auth guard ── */
@@ -581,34 +685,51 @@
       return;
     }
 
-    /* ── Read state ── */
+    /* ── Read state from localStorage ── */
     var user      = Auth.currentUser();
     var route     = localStorage.getItem('selectedRoute')     || '';
     var date      = localStorage.getItem('selectedDate')      || '';
     var seat      = localStorage.getItem('selectedSeat')      || '';
     var departure = localStorage.getItem('selectedDeparture') || '';
+    var operator  = localStorage.getItem('selectedOperator')  || '';
     var priceMin  = parseInt(localStorage.getItem('selectedPriceMin')) || 0;
     var priceMax  = parseInt(localStorage.getItem('selectedPriceMax')) || 0;
-    var price     = priceMin > 0
-      ? priceMin + Math.floor(Math.random() * Math.max(priceMax - priceMin, 1))
-      : 1100;
+
+    /* Use the actual stored priceMin as the base fare;
+       only fall back to 150 if nothing was set at all */
+    var price = priceMin > 0 ? priceMin : 150;
 
     if (!seat || !route) { window.location.href = '../../index.html'; return; }
 
     /* ── Show page ── */
     document.getElementById('page-content').style.display = 'block';
 
-    /* ── Pre-fill passenger ── */
+    /* ── Pre-fill passenger details ── */
     document.getElementById('pax-name').value  = user.name  || '';
     document.getElementById('pax-email').value = user.email || '';
     document.getElementById('pax-phone').value = user.phone || '';
 
+    /* ── Operator badge ── */
+    var opHtml = operator
+      ? buildOpBadge(operator)
+      : '<span style="color:#9ca3af;font-size:12px">Not specified</span>';
+
     /* ── Order summary ── */
-    document.getElementById('b-route').textContent  = route;
-    document.getElementById('b-date').textContent   = formatDate(date);
-    document.getElementById('b-depart').textContent = departure || '—';
-    document.getElementById('b-seat').textContent   = 'Seat ' + seat;
-    document.getElementById('b-price').textContent  = formatPeso(price);
+    document.getElementById('b-route').textContent    = route;
+    document.getElementById('b-operator').innerHTML   = opHtml;
+    document.getElementById('b-date').textContent     = formatDate(date);
+    document.getElementById('b-depart').textContent   = departure || '—';
+    document.getElementById('b-seat').textContent     = 'Seat ' + seat;
+    document.getElementById('b-price').textContent    = formatPeso(price);
+
+    /* Fare range note */
+    if (priceMin > 0 && priceMax > priceMin) {
+      document.getElementById('b-fare-note').textContent =
+        'Fare range: ' + formatPeso(priceMin) + ' – ' + formatPeso(priceMax);
+    }
+
+    /* ── Render nav ── */
+    if (typeof renderNavUser === 'function') renderNavUser();
 
     /* ── Payment selection ── */
     window.selectPayment = function (value, el) {
@@ -627,18 +748,17 @@
       var payment = document.querySelector('input[name="payment"]:checked');
       var method  = payment ? payment.value : 'Cash';
 
-      if (!name || !email || !phone) {
-        showToast('Please fill in all passenger details.', 'error');
-        return;
-      }
+      if (!name)  { showToast('Please enter your full name.', 'error'); return; }
+      if (!email) { showToast('Please enter your email.', 'error'); return; }
+      if (!phone) { showToast('Please enter your phone number.', 'error'); return; }
 
-      /* Disable both confirm buttons */
-      setConfirmState(true, 'Processing…');
+      setConfirmState(true, '⏳ Processing…');
 
       var bookingPayload = {
         userId:         user._id || user.id,
         userName:       user.name,
         route:          route,
+        operator:       operator,
         seat:           seat,
         date:           date,
         departure:      departure,
@@ -647,29 +767,36 @@
         paymentMethod:  method,
         passengerName:  name,
         passengerEmail: email,
-        passengerPhone: phone
+        passengerPhone: phone,
       };
 
       try {
         var saved     = await ApiBookings.create(bookingPayload);
-        Seats.book(route, date, departure, seat);
 
-        var displayId = saved._id || saved.id || 'Confirmed';
+        /* Mark seat as taken (operator-aware) */
+        Seats.book(route, date, departure, seat, operator);
 
+        var displayId = saved._id || saved.id || ('BT-' + Date.now());
+
+        /* Clear seat state but keep route for possible re-booking */
         localStorage.removeItem('selectedSeat');
         localStorage.removeItem('selectedDeparture');
+        localStorage.removeItem('selectedOperator');
 
-        /* Show success */
+        /* ── Show success screen ── */
         document.getElementById('booking-form-state').style.display = 'none';
-        document.querySelector('.mobile-confirm-bar').style.display  = 'none';
-        document.getElementById('success-state').style.display       = 'block';
+        var mbar = document.querySelector('.mobile-confirm-bar');
+        if (mbar) mbar.style.display = 'none';
+        document.getElementById('success-state').style.display = 'block';
 
-        document.getElementById('booking-ref').textContent   = displayId;
-        document.getElementById('conf-route').textContent    = route;
-        document.getElementById('conf-date').textContent     = formatDate(date);
-        document.getElementById('conf-depart').textContent   = departure || '—';
-        document.getElementById('conf-seat').textContent     = 'Seat ' + seat;
-        document.getElementById('conf-price').textContent    = formatPeso(price);
+        document.getElementById('booking-ref').textContent     = displayId;
+        document.getElementById('conf-route').textContent      = route;
+        document.getElementById('conf-operator').innerHTML     = operator ? buildOpBadge(operator) : '—';
+        document.getElementById('conf-date').textContent       = formatDate(date);
+        document.getElementById('conf-depart').textContent     = departure || '—';
+        document.getElementById('conf-seat').textContent       = 'Seat ' + seat;
+        document.getElementById('conf-payment').textContent    = method;
+        document.getElementById('conf-price').textContent      = formatPeso(price);
 
         window.scrollTo({ top: 0, behavior: 'smooth' });
 
@@ -679,7 +806,7 @@
       }
     };
 
-    /* ── Helper: toggle confirm buttons ── */
+    /* ── Helper: disable/enable confirm buttons ── */
     function setConfirmState(disabled, label) {
       ['confirm-btn-desktop', 'confirm-btn-mobile'].forEach(function (id) {
         var btn = document.getElementById(id);
@@ -691,6 +818,15 @@
     }
 
   });
+
+  /* ── Build operator colored badge ── */
+  function buildOpBadge(name) {
+    var cfg   = OPERATOR_COLORS[name] || { color: '#0f6e56', bg: '#e1f5ee' };
+    return '<span class="op-badge" style="color:' + cfg.color +
+           ';background:' + cfg.bg +
+           ';border:1.5px solid ' + cfg.color + '22">' +
+           name + '</span>';
+  }
 
   /* ── Toast ── */
   function showToast(msg, type) {
@@ -707,6 +843,7 @@
       setTimeout(function () { toast.remove(); }, 300);
     }, 2800);
   }
+
 </script>
 </body>
 </html>
