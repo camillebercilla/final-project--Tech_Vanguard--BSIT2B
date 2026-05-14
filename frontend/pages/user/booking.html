@@ -2,21 +2,434 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Complete Booking — QuickReserve</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>Complete Booking — BicolTransit Hub</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="../../css/style.css">
+  <style>
+
+    /* ═══════════════════════════════════════════════════
+       GLOBAL
+    ═══════════════════════════════════════════════════ */
+    *, *::before, *::after { box-sizing: border-box; }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #f3f4f6;
+      margin: 0;
+      padding: 0;
+      color: #1a1a1a;
+    }
+
+    /* ═══════════════════════════════════════════════════
+       NAVBAR
+    ═══════════════════════════════════════════════════ */
+    .navbar {
+      background: #0f6e56;
+      padding: 12px 0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+    }
+
+    .navbar-brand {
+      font-weight: 700;
+      font-size: 18px;
+      color: #fff !important;
+      text-decoration: none;
+    }
+
+    .brand-quick { color: #9FE1CB; }
+
+    /* ═══════════════════════════════════════════════════
+       PAGE HEADER
+    ═══════════════════════════════════════════════════ */
+    .page-header {
+      background: linear-gradient(135deg, #0f6e56 0%, #085041 100%);
+      padding: 20px 0 24px;
+      color: #fff;
+    }
+
+    .page-header h1 {
+      font-size: clamp(18px, 4vw, 26px);
+      font-weight: 700;
+      margin: 0 0 4px;
+    }
+
+    .page-header p {
+      font-size: 13px;
+      color: rgba(255,255,255,0.7);
+      margin: 0;
+    }
+
+    /* ═══════════════════════════════════════════════════
+       MAIN WRAPPER
+    ═══════════════════════════════════════════════════ */
+    .main-wrap {
+      background: #f3f4f6;
+      padding: 24px 0;
+      min-height: 60vh;
+    }
+
+    @media (max-width: 768px) {
+      .main-wrap { padding: 14px 0 100px; }
+    }
+
+    /* ═══════════════════════════════════════════════════
+       CARD
+    ═══════════════════════════════════════════════════ */
+    .card-white {
+      background: #fff;
+      border-radius: 14px;
+      border: 1px solid #e5e7eb;
+      padding: 18px;
+      margin-bottom: 16px;
+    }
+
+    .card-white h5 {
+      font-weight: 700;
+      font-size: 15px;
+      margin-bottom: 18px;
+      color: #1a1a1a;
+    }
+
+    /* ═══════════════════════════════════════════════════
+       FORM ELEMENTS
+    ═══════════════════════════════════════════════════ */
+    .form-group { margin-bottom: 14px; }
+    .form-group:last-child { margin-bottom: 0; }
+
+    .form-group label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: #6b7280;
+      margin-bottom: 5px;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 10px 13px;
+      border-radius: 9px;
+      border: 1.5px solid #e5e7eb;
+      font-size: 13px;
+      font-family: 'Poppins', sans-serif;
+      color: #1a1a1a;
+      background: #fff;
+      outline: none;
+      transition: border 0.15s;
+    }
+
+    .form-group input:focus { border-color: #0f6e56; }
+    .form-group input::placeholder { color: #c4c8cd; }
+
+    .form-grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    @media (max-width: 400px) {
+      .form-grid-2 { grid-template-columns: 1fr; }
+    }
+
+    /* ═══════════════════════════════════════════════════
+       PAYMENT OPTIONS
+    ═══════════════════════════════════════════════════ */
+    .payment-option {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 14px;
+      border-radius: 10px;
+      border: 1.5px solid #e5e7eb;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 500;
+      color: #1a1a1a;
+      margin-bottom: 8px;
+      transition: all 0.15s;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .payment-option:last-child { margin-bottom: 0; }
+
+    .payment-option.active {
+      border-color: #0f6e56;
+      background: #e8f8f2;
+      color: #085041;
+    }
+
+    .payment-option input[type="radio"] {
+      accent-color: #0f6e56;
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0;
+    }
+
+    /* ═══════════════════════════════════════════════════
+       ORDER SUMMARY
+    ═══════════════════════════════════════════════════ */
+    .booking-summary { margin-bottom: 16px; }
+
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 9px 0;
+      border-bottom: 1px solid #f3f4f6;
+      font-size: 13px;
+      gap: 10px;
+    }
+
+    .summary-row:last-child { border-bottom: none; }
+    .summary-row span:first-child { color: #6b7280; flex-shrink: 0; }
+    .summary-row span:last-child  { font-weight: 600; text-align: right; }
+
+    .total-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 0 0;
+      border-top: 2px solid #f3f4f6;
+      margin-top: 6px;
+    }
+
+    .total-row span:first-child { font-size: 13px; font-weight: 600; color: #374151; }
+    .total-row span:last-child  { font-size: 18px; font-weight: 700; color: #0f6e56; }
+
+    /* ═══════════════════════════════════════════════════
+       DESKTOP LAYOUT
+    ═══════════════════════════════════════════════════ */
+    .layout-grid {
+      display: grid;
+      grid-template-columns: 1fr 300px;
+      gap: 24px;
+      align-items: start;
+    }
+
+    .summary-sticky { position: sticky; top: 80px; }
+
+    /* ═══════════════════════════════════════════════════
+       CONFIRM BUTTON (desktop in-card)
+    ═══════════════════════════════════════════════════ */
+    .btn-primary-full {
+      width: 100%;
+      padding: 14px;
+      background: #0f6e56;
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      font-size: 15px;
+      font-weight: 600;
+      font-family: 'Poppins', sans-serif;
+      cursor: pointer;
+      transition: all 0.15s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn-primary-full:disabled { opacity: 0.45; cursor: not-allowed; }
+    .btn-primary-full:not(:disabled):hover  { background: #0d5e49; }
+    .btn-primary-full:not(:disabled):active { transform: scale(0.98); background: #085041; }
+
+    /* ═══════════════════════════════════════════════════
+       MOBILE LAYOUT
+    ═══════════════════════════════════════════════════ */
+    @media (max-width: 768px) {
+      .layout-grid {
+        grid-template-columns: 1fr;
+        gap: 0;
+      }
+
+      .col-left  { order: 1; }
+      .col-right { order: 2; }
+
+      .summary-sticky { position: static; }
+
+      /* Hide in-card confirm on mobile */
+      .desktop-confirm { display: none; }
+
+      /* Fixed bottom bar */
+      .mobile-confirm-bar {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        padding: 12px 16px;
+        background: #fff;
+        border-top: 1px solid #e5e7eb;
+        z-index: 50;
+      }
+
+      .mobile-confirm-bar .btn-primary-full {
+        font-size: 15px;
+        padding: 14px;
+      }
+    }
+
+    /* Show mobile bar only on mobile */
+    .mobile-confirm-bar { display: none; }
+    @media (max-width: 768px) {
+      .mobile-confirm-bar { display: flex; }
+    }
+
+    /* ═══════════════════════════════════════════════════
+       SUCCESS STATE
+    ═══════════════════════════════════════════════════ */
+    #success-state {
+      display: none;
+      text-align: center;
+      padding: 48px 20px 32px;
+    }
+
+    .success-icon {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: #e1f5ee;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 16px;
+      font-size: 36px;
+    }
+
+    .booking-ref-box {
+      background: #e8f8f2;
+      border-radius: 14px;
+      padding: 16px 20px;
+      margin: 20px auto;
+      max-width: 360px;
+    }
+
+    .booking-ref-label {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: #5DCAA5;
+      margin-bottom: 6px;
+    }
+
+    .booking-ref-num {
+      font-size: 22px;
+      font-weight: 800;
+      color: #085041;
+      letter-spacing: 0.04em;
+    }
+
+    .success-summary {
+      max-width: 400px;
+      margin: 0 auto 20px;
+    }
+
+    .success-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn-outline {
+      padding: 10px 24px;
+      border-radius: 10px;
+      border: 1.5px solid #e5e7eb;
+      background: #fff;
+      font-size: 13px;
+      font-weight: 600;
+      font-family: 'Poppins', sans-serif;
+      color: #374151;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s;
+    }
+
+    .btn-outline:hover { background: #f9fafb; }
+
+    /* ═══════════════════════════════════════════════════
+       TOAST
+    ═══════════════════════════════════════════════════ */
+    #toast-container {
+      position: fixed;
+      bottom: 90px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 9999;
+      pointer-events: none;
+    }
+
+    @media (min-width: 769px) {
+      #toast-container { bottom: 24px; }
+    }
+
+    .toast-msg {
+      background: #1a1a1a;
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: 24px;
+      font-size: 13px;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 500;
+      white-space: nowrap;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: all 0.25s;
+      margin-bottom: 8px;
+    }
+
+    .toast-msg.show  { opacity: 1; transform: translateY(0); }
+    .toast-msg.error { background: #dc2626; }
+
+    /* ═══════════════════════════════════════════════════
+       CHANGE SEAT LINK
+    ═══════════════════════════════════════════════════ */
+    .change-seat-link {
+      display: block;
+      text-align: center;
+      font-size: 12px;
+      color: #9ca3af;
+      margin-top: 10px;
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+
+    .change-seat-link:hover { color: #0f6e56; }
+
+    /* ═══════════════════════════════════════════════════
+       FOOTER
+    ═══════════════════════════════════════════════════ */
+    footer {
+      background: #1a1a1a;
+      padding: 20px 0;
+      margin-top: 32px;
+    }
+
+  </style>
 </head>
 <body>
 
+<!-- ══════════ NAVBAR ══════════ -->
 <nav class="navbar navbar-expand-lg">
   <div class="container" style="max-width:1200px">
-    <a class="navbar-brand" href="../../index.html"><span><span class="brand-quick">Quick</span>Reserve</span></a>
+    <a class="navbar-brand" href="../../index.html">
+      <span class="brand-quick">BicolTransit</span>Hub
+    </a>
     <div class="ms-auto d-flex align-items-center gap-2" id="nav-auth-btns"></div>
   </div>
 </nav>
 
+<!-- ══════════ PAGE HEADER ══════════ -->
 <div class="page-header">
   <div class="container">
     <h1>Complete Your Booking</h1>
@@ -24,81 +437,136 @@
   </div>
 </div>
 
-<div id="page-content" style="display:none;background:#f9fafb;padding:32px 0;min-height:60vh">
-  <div class="container" style="max-width:900px">
+<!-- ══════════ MAIN CONTENT ══════════ -->
+<div id="page-content" style="display:none">
+  <div class="main-wrap">
+    <div class="container" style="max-width:900px">
 
-    <!-- Success State -->
-    <div id="success-state" style="display:none;text-align:center;padding:60px 20px">
-      <div style="font-size:60px;margin-bottom:16px">✅</div>
-      <h2 style="font-weight:800;color:#0f6e56;margin-bottom:8px">Booking Confirmed!</h2>
-      <p style="color:#6b7280;margin-bottom:8px">Your booking reference is:</p>
-      <div id="booking-ref" style="font-size:2rem;font-weight:800;color:#0f6e56;margin-bottom:24px"></div>
-      <div class="booking-summary" style="max-width:400px;margin:0 auto 24px">
-        <div class="summary-row"><span>Route</span><span id="conf-route">—</span></div>
-        <div class="summary-row"><span>Date</span><span id="conf-date">—</span></div>
-        <div class="summary-row"><span>Departure</span><span id="conf-depart">—</span></div>
-        <div class="summary-row"><span>Seat</span><span id="conf-seat">—</span></div>
-        <div class="summary-row"><span>Total Paid</span><span id="conf-price">—</span></div>
-      </div>
-      <p style="font-size:13px;color:#9ca3af;margin-bottom:20px">Show this reference at the terminal. Safe travels! 🚌</p>
-      <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
-        <a href="../../index.html" class="btn-sm btn-gray" style="padding:10px 24px;font-size:14px">Back to Home</a>
-      </div>
-    </div>
+      <!-- ── SUCCESS STATE ── -->
+      <div id="success-state">
+        <div class="success-icon">✅</div>
+        <h2 style="font-weight:800;color:#0f6e56;margin-bottom:6px;font-size:clamp(20px,4vw,28px)">Booking Confirmed!</h2>
+        <p style="color:#6b7280;font-size:14px;margin-bottom:0">Your booking reference is:</p>
 
-    <!-- Booking Form -->
-    <div id="booking-form-state">
-      <div style="display:grid;grid-template-columns:1fr 300px;gap:24px;align-items:start">
+        <div class="booking-ref-box">
+          <div class="booking-ref-label">Reference No.</div>
+          <div class="booking-ref-num" id="booking-ref">—</div>
+        </div>
 
-        <div>
-          <div class="card-white">
-            <h5 style="font-weight:700;font-size:15px;margin-bottom:20px">👤 Passenger Details</h5>
-            <div class="form-group"><label>Full Name</label><input type="text" id="pax-name" placeholder="As shown on valid ID"></div>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
-              <div class="form-group"><label>Email</label><input type="email" id="pax-email" placeholder="you@example.com"></div>
-              <div class="form-group"><label>Phone</label><input type="tel" id="pax-phone" placeholder="09XX XXX XXXX"></div>
-            </div>
+        <div class="card-white success-summary" style="text-align:left">
+          <div class="booking-summary">
+            <div class="summary-row"><span>Route</span><span id="conf-route">—</span></div>
+            <div class="summary-row"><span>Date</span><span id="conf-date">—</span></div>
+            <div class="summary-row"><span>Departure</span><span id="conf-depart">—</span></div>
+            <div class="summary-row"><span>Seat</span><span id="conf-seat">—</span></div>
           </div>
-
-          <div class="card-white">
-            <h5 style="font-weight:700;font-size:15px;margin-bottom:20px">💳 Payment Method</h5>
-            <div style="display:flex;flex-direction:column;gap:10px">
-              <label class="payment-option"><input type="radio" name="payment" value="Cash" checked style="accent-color:#0f6e56"> <span>💵 Cash (Pay at terminal)</span></label>
-              <label class="payment-option"><input type="radio" name="payment" value="GCash" style="accent-color:#0f6e56"> <span>📱 GCash</span></label>
-              <label class="payment-option"><input type="radio" name="payment" value="Credit Card" style="accent-color:#0f6e56"> <span>💳 Credit / Debit Card</span></label>
-            </div>
+          <div class="total-row">
+            <span>Total Paid</span>
+            <span id="conf-price">—</span>
           </div>
         </div>
 
-        <div style="position:sticky;top:24px">
-          <div class="card-white">
-            <h5 style="font-weight:700;font-size:15px;margin-bottom:16px">🧾 Order Summary</h5>
-            <div class="booking-summary">
-              <div class="summary-row"><span>Route</span><span id="b-route" style="font-weight:600;text-align:right;max-width:160px">—</span></div>
-              <div class="summary-row"><span>Date</span><span id="b-date">—</span></div>
-              <div class="summary-row"><span>Departure</span><span id="b-depart">—</span></div>
-              <div class="summary-row"><span>Seat</span><span id="b-seat">—</span></div>
-              <div class="summary-row"><span>Fare</span><span id="b-price">—</span></div>
-            </div>
-            <button class="btn-primary-full" id="confirm-btn" onclick="confirmBooking()" style="margin-top:12px">Confirm Booking ✓</button>
-            <a href="../../seats.html" style="display:block;text-align:center;font-size:12px;color:#9ca3af;margin-top:10px;text-decoration:none">← Change seat</a>
-          </div>
+        <p style="font-size:12px;color:#9ca3af;margin-bottom:20px">Show this reference at the terminal. Safe travels! 🚌</p>
+
+        <div class="success-actions">
+          <a href="../../index.html" class="btn-outline">Back to Home</a>
         </div>
-
       </div>
-    </div>
 
+      <!-- ── BOOKING FORM ── -->
+      <div id="booking-form-state">
+        <div class="layout-grid">
+
+          <!-- LEFT / TOP -->
+          <div class="col-left">
+
+            <!-- Passenger Details -->
+            <div class="card-white">
+              <h5>👤 Passenger Details</h5>
+              <div class="form-group">
+                <label>Full Name</label>
+                <input type="text" id="pax-name" placeholder="As shown on valid ID">
+              </div>
+              <div class="form-grid-2">
+                <div class="form-group">
+                  <label>Email</label>
+                  <input type="email" id="pax-email" placeholder="you@example.com">
+                </div>
+                <div class="form-group">
+                  <label>Phone</label>
+                  <input type="tel" id="pax-phone" placeholder="09XX XXX XXXX">
+                </div>
+              </div>
+            </div>
+
+            <!-- Payment Method -->
+            <div class="card-white">
+              <h5>💳 Payment Method</h5>
+              <label class="payment-option active" id="opt-cash" onclick="selectPayment('Cash', this)">
+                <input type="radio" name="payment" value="Cash" checked> 💵 Cash (Pay at terminal)
+              </label>
+              <label class="payment-option" id="opt-gcash" onclick="selectPayment('GCash', this)">
+                <input type="radio" name="payment" value="GCash"> 📱 GCash
+              </label>
+              <label class="payment-option" id="opt-card" onclick="selectPayment('Credit Card', this)">
+                <input type="radio" name="payment" value="Credit Card"> 💳 Credit / Debit Card
+              </label>
+            </div>
+
+          </div>
+
+          <!-- RIGHT / BOTTOM -->
+          <div class="col-right">
+            <div class="card-white summary-sticky">
+              <h5>🧾 Order Summary</h5>
+              <div class="booking-summary">
+                <div class="summary-row"><span>Route</span><span id="b-route" style="max-width:160px;text-align:right">—</span></div>
+                <div class="summary-row"><span>Date</span><span id="b-date">—</span></div>
+                <div class="summary-row"><span>Departure</span><span id="b-depart">—</span></div>
+                <div class="summary-row"><span>Seat</span><span id="b-seat">—</span></div>
+              </div>
+              <div class="total-row" style="margin-bottom:16px">
+                <span>Total Fare</span>
+                <span id="b-price">—</span>
+              </div>
+
+              <!-- Desktop confirm (hidden on mobile) -->
+              <div class="desktop-confirm">
+                <button class="btn-primary-full" id="confirm-btn-desktop" onclick="confirmBooking()">
+                  Confirm Booking ✓
+                </button>
+                <a href="../../seats.html" class="change-seat-link">← Change seat</a>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
   </div>
+
+  <!-- ══════════ MOBILE FIXED BOTTOM BAR ══════════ -->
+  <div class="mobile-confirm-bar">
+    <button class="btn-primary-full" id="confirm-btn-mobile" onclick="confirmBooking()">
+      Confirm Booking ✓
+    </button>
+    <a href="../../seats.html" class="change-seat-link">← Change seat</a>
+  </div>
+
 </div>
 
-<style>
-.payment-option {
-  display:flex;align-items:center;gap:10px;
-  padding:12px 14px;border-radius:10px;border:1.5px solid var(--border);
-  cursor:pointer;font-size:14px;font-weight:500;transition:all 0.15s;
-}
-.payment-option:has(input:checked) { border-color:var(--green);background:var(--green-bg); }
-</style>
+<!-- ══════════ TOAST ══════════ -->
+<div id="toast-container"></div>
+
+<!-- ══════════ FOOTER ══════════ -->
+<footer>
+  <div class="container">
+    <div style="text-align:center;color:rgba(255,255,255,0.35);font-size:12px">
+      © 2026 BicolTransit Hub. All rights reserved.
+    </div>
+  </div>
+</footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="../../js/script.js"></script>
@@ -106,12 +574,14 @@
 <script>
   document.addEventListener('DOMContentLoaded', function () {
 
+    /* ── Auth guard ── */
     if (!Auth.isLoggedIn()) {
       try { localStorage.setItem('loginRedirect', window.location.href); } catch (e) {}
       window.location.href = '../auth/login.html';
       return;
     }
 
+    /* ── Read state ── */
     var user      = Auth.currentUser();
     var route     = localStorage.getItem('selectedRoute')     || '';
     var date      = localStorage.getItem('selectedDate')      || '';
@@ -125,18 +595,31 @@
 
     if (!seat || !route) { window.location.href = '../../index.html'; return; }
 
+    /* ── Show page ── */
     document.getElementById('page-content').style.display = 'block';
 
+    /* ── Pre-fill passenger ── */
     document.getElementById('pax-name').value  = user.name  || '';
     document.getElementById('pax-email').value = user.email || '';
     document.getElementById('pax-phone').value = user.phone || '';
 
+    /* ── Order summary ── */
     document.getElementById('b-route').textContent  = route;
     document.getElementById('b-date').textContent   = formatDate(date);
     document.getElementById('b-depart').textContent = departure || '—';
     document.getElementById('b-seat').textContent   = 'Seat ' + seat;
     document.getElementById('b-price').textContent  = formatPeso(price);
 
+    /* ── Payment selection ── */
+    window.selectPayment = function (value, el) {
+      document.querySelectorAll('.payment-option').forEach(function (o) {
+        o.classList.remove('active');
+      });
+      el.classList.add('active');
+      el.querySelector('input[type="radio"]').checked = true;
+    };
+
+    /* ── Confirm booking ── */
     window.confirmBooking = async function () {
       var name    = document.getElementById('pax-name').value.trim();
       var email   = document.getElementById('pax-email').value.trim();
@@ -145,12 +628,12 @@
       var method  = payment ? payment.value : 'Cash';
 
       if (!name || !email || !phone) {
-        showToast('Please fill in all passenger details.', 'error'); return;
+        showToast('Please fill in all passenger details.', 'error');
+        return;
       }
 
-      var btn = document.getElementById('confirm-btn');
-      btn.disabled    = true;
-      btn.textContent = 'Processing…';
+      /* Disable both confirm buttons */
+      setConfirmState(true, 'Processing…');
 
       var bookingPayload = {
         userId:         user._id || user.id,
@@ -168,10 +651,7 @@
       };
 
       try {
-        // ── Save to MongoDB ──────────────────────────────────────────────
-        var saved = await ApiBookings.create(bookingPayload);
-
-        // Also mark the seat taken locally so the seat map stays accurate
+        var saved     = await ApiBookings.create(bookingPayload);
         Seats.book(route, date, departure, seat);
 
         var displayId = saved._id || saved.id || 'Confirmed';
@@ -179,23 +659,54 @@
         localStorage.removeItem('selectedSeat');
         localStorage.removeItem('selectedDeparture');
 
+        /* Show success */
         document.getElementById('booking-form-state').style.display = 'none';
-        document.getElementById('success-state').style.display      = 'block';
-        document.getElementById('booking-ref').textContent          = displayId;
-        document.getElementById('conf-route').textContent           = route;
-        document.getElementById('conf-date').textContent            = formatDate(date);
-        document.getElementById('conf-depart').textContent          = departure || '—';
-        document.getElementById('conf-seat').textContent            = 'Seat ' + seat;
-        document.getElementById('conf-price').textContent           = formatPeso(price);
+        document.querySelector('.mobile-confirm-bar').style.display  = 'none';
+        document.getElementById('success-state').style.display       = 'block';
+
+        document.getElementById('booking-ref').textContent   = displayId;
+        document.getElementById('conf-route').textContent    = route;
+        document.getElementById('conf-date').textContent     = formatDate(date);
+        document.getElementById('conf-depart').textContent   = departure || '—';
+        document.getElementById('conf-seat').textContent     = 'Seat ' + seat;
+        document.getElementById('conf-price').textContent    = formatPeso(price);
+
+        window.scrollTo({ top: 0, behavior: 'smooth' });
 
       } catch (err) {
         showToast(err.message || 'Booking failed. Please try again.', 'error');
-        btn.disabled    = false;
-        btn.textContent = 'Confirm Booking ✓';
+        setConfirmState(false, 'Confirm Booking ✓');
       }
     };
 
+    /* ── Helper: toggle confirm buttons ── */
+    function setConfirmState(disabled, label) {
+      ['confirm-btn-desktop', 'confirm-btn-mobile'].forEach(function (id) {
+        var btn = document.getElementById(id);
+        if (btn) {
+          btn.disabled    = disabled;
+          btn.textContent = label;
+        }
+      });
+    }
+
   });
+
+  /* ── Toast ── */
+  function showToast(msg, type) {
+    var container = document.getElementById('toast-container');
+    var toast     = document.createElement('div');
+    toast.className = 'toast-msg' + (type ? ' ' + type : '');
+    toast.textContent = msg;
+    container.appendChild(toast);
+    requestAnimationFrame(function () {
+      requestAnimationFrame(function () { toast.classList.add('show'); });
+    });
+    setTimeout(function () {
+      toast.classList.remove('show');
+      setTimeout(function () { toast.remove(); }, 300);
+    }, 2800);
+  }
 </script>
 </body>
 </html>

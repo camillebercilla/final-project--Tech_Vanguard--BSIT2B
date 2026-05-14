@@ -235,3 +235,12 @@ document.addEventListener('DOMContentLoaded', function() {
   var dateEl = document.getElementById('date');
   if (dateEl && !dateEl.value) dateEl.min = new Date().toISOString().split('T')[0];
 });
+
+// Add at the very bottom of script.js
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js')
+      .then(() => console.log('SW registered'))
+      .catch(err => console.log('SW failed:', err));
+  });
+}

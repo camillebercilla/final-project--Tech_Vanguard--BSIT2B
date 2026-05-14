@@ -2,46 +2,486 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Select Seat — QuickReserve</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>Select Seat — BicolTransit Hub</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
+  <link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#0f6e56">
+  <style>
+
+    /* ═══════════════════════════════════════════════════
+       GLOBAL RESET & BASE
+    ═══════════════════════════════════════════════════ */
+    *, *::before, *::after { box-sizing: border-box; }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #f3f4f6;
+      margin: 0;
+      padding: 0;
+      color: #1a1a1a;
+    }
+
+    /* ═══════════════════════════════════════════════════
+       NAVBAR
+    ═══════════════════════════════════════════════════ */
+    .navbar {
+      background: #0f6e56;
+      padding: 12px 0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+
+    .navbar-brand {
+      font-weight: 700;
+      font-size: 18px;
+      color: #fff !important;
+      text-decoration: none;
+    }
+
+    .brand-quick { color: #9FE1CB; }
+
+    /* ═══════════════════════════════════════════════════
+       PAGE HEADER
+    ═══════════════════════════════════════════════════ */
+    .page-header {
+      background: linear-gradient(135deg, #0f6e56 0%, #085041 100%);
+      padding: 20px 0 24px;
+      color: #fff;
+    }
+
+    .page-header h1 {
+      font-size: clamp(18px, 4vw, 26px);
+      font-weight: 700;
+      margin: 0 0 4px;
+      line-height: 1.3;
+    }
+
+    .page-header p {
+      font-size: 13px;
+      color: rgba(255,255,255,0.7);
+      margin: 0;
+    }
+
+    .back-link {
+      color: rgba(255,255,255,0.7);
+      font-size: 13px;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      margin-bottom: 8px;
+    }
+
+    /* ═══════════════════════════════════════════════════
+       CARD
+    ═══════════════════════════════════════════════════ */
+    .card-white {
+      background: #fff;
+      border-radius: 14px;
+      border: 1px solid #e5e7eb;
+      padding: 16px;
+      margin-bottom: 14px;
+    }
+
+    .card-section-label {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #9ca3af;
+      margin-bottom: 10px;
+    }
+
+    /* ═══════════════════════════════════════════════════
+       DEPARTURE TIME BUTTONS
+    ═══════════════════════════════════════════════════ */
+    #departure-btns {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .dep-btn {
+      padding: 8px 14px;
+      font-size: 13px;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 500;
+      border-radius: 20px;
+      border: 1.5px solid #d1d5db;
+      background: transparent;
+      color: #374151;
+      cursor: pointer;
+      transition: all 0.15s;
+      white-space: nowrap;
+    }
+
+    .dep-btn.active {
+      background: #0f6e56;
+      border-color: #0f6e56;
+      color: #fff;
+    }
+
+    /* Mobile: scrollable row */
+    @media (max-width: 600px) {
+      #departure-btns {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        padding-bottom: 4px;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+      }
+      #departure-btns::-webkit-scrollbar { display: none; }
+      .dep-btn { flex-shrink: 0; }
+    }
+
+    /* ═══════════════════════════════════════════════════
+       SEAT MAP
+    ═══════════════════════════════════════════════════ */
+    .seat-map-wrap {
+      background: #fff;
+      border-radius: 14px;
+      border: 1px solid #e5e7eb;
+      padding: 16px;
+      margin-bottom: 14px;
+    }
+
+    .bus-front {
+      background: #0f6e56;
+      color: #fff;
+      text-align: center;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 10px;
+      border-radius: 10px;
+      margin-bottom: 18px;
+      letter-spacing: 0.03em;
+    }
+
+    .seat-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+      max-width: 260px;
+      margin: 0 auto 16px;
+    }
+
+    @media (max-width: 400px) {
+      .seat-grid {
+        gap: 6px;
+        max-width: 220px;
+      }
+    }
+
+    .seat {
+      aspect-ratio: 1;
+      border-radius: 8px;
+      border: 1.5px solid #d1d5db;
+      background: #f9fafb;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 600;
+      font-family: 'Poppins', sans-serif;
+      cursor: pointer;
+      transition: all 0.15s;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .seat:not(.taken):not(.aisle):active {
+      transform: scale(0.88);
+    }
+
+    .seat.selected {
+      background: #0f6e56;
+      border-color: #0f6e56;
+      color: #fff;
+      box-shadow: 0 2px 8px rgba(15,110,86,0.35);
+    }
+
+    .seat.taken {
+      background: #f3f4f6;
+      border-color: #e5e7eb;
+      color: #d1d5db;
+      cursor: not-allowed;
+    }
+
+    .seat.aisle {
+      background: transparent;
+      border: none;
+      cursor: default;
+    }
+
+    .seat-legend {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: #6b7280;
+    }
+
+    .legend-box {
+      width: 14px;
+      height: 14px;
+      border-radius: 4px;
+    }
+
+    .legend-box.available { background: #f9fafb; border: 1.5px solid #d1d5db; }
+    .legend-box.selected  { background: #0f6e56; }
+    .legend-box.taken     { background: #f3f4f6; border: 1.5px solid #e5e7eb; }
+
+    /* ═══════════════════════════════════════════════════
+       TRIP SUMMARY
+    ═══════════════════════════════════════════════════ */
+    .booking-summary { margin-bottom: 16px; }
+
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 9px 0;
+      border-bottom: 1px solid #f3f4f6;
+      font-size: 13px;
+      gap: 10px;
+    }
+
+    .summary-row:last-child { border-bottom: none; }
+    .summary-row span:first-child { color: #6b7280; flex-shrink: 0; }
+    .summary-row span:last-child  { font-weight: 600; text-align: right; }
+
+    .seat-pill {
+      background: #e1f5ee;
+      color: #0f6e56;
+      padding: 3px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    /* ═══════════════════════════════════════════════════
+       PROCEED BUTTON
+    ═══════════════════════════════════════════════════ */
+    .btn-primary-full {
+      width: 100%;
+      padding: 14px;
+      background: #0f6e56;
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      font-size: 15px;
+      font-weight: 600;
+      font-family: 'Poppins', sans-serif;
+      cursor: pointer;
+      transition: all 0.15s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn-primary-full:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .btn-primary-full:not(:disabled):hover  { background: #0d5e49; }
+    .btn-primary-full:not(:disabled):active { transform: scale(0.98); background: #085041; }
+
+    /* ═══════════════════════════════════════════════════
+       DESKTOP LAYOUT (two-column grid)
+    ═══════════════════════════════════════════════════ */
+    .layout-grid {
+      display: grid;
+      grid-template-columns: 1fr 320px;
+      gap: 24px;
+      align-items: start;
+    }
+
+    .summary-sticky { position: sticky; top: 80px; }
+
+    /* ═══════════════════════════════════════════════════
+       MOBILE LAYOUT (single column)
+    ═══════════════════════════════════════════════════ */
+    @media (max-width: 768px) {
+      .layout-grid {
+        grid-template-columns: 1fr;
+        gap: 0;
+      }
+
+      .summary-sticky { position: static; }
+
+      /* Move summary card below seat map on mobile */
+      .col-left  { order: 1; }
+      .col-right { order: 2; }
+
+      body { padding-bottom: 90px; } /* space for fixed bottom button */
+
+      /* Fixed proceed button on mobile */
+      .mobile-proceed-bar {
+        display: flex;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        padding: 12px 16px;
+        background: #fff;
+        border-top: 1px solid #e5e7eb;
+        z-index: 50;
+        gap: 12px;
+        align-items: center;
+      }
+
+      .mobile-seat-info {
+        flex: 1;
+        min-width: 0;
+      }
+
+      .mobile-seat-info .label {
+        font-size: 11px;
+        color: #9ca3af;
+        font-weight: 500;
+      }
+
+      .mobile-seat-info .value {
+        font-size: 14px;
+        font-weight: 700;
+        color: #1a1a1a;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .mobile-proceed-bar .btn-primary-full {
+        width: auto;
+        padding: 13px 20px;
+        font-size: 14px;
+        flex-shrink: 0;
+      }
+
+      /* Hide the in-card proceed button on mobile */
+      .desktop-proceed { display: none; }
+    }
+
+    /* Hide mobile proceed bar on desktop */
+    .mobile-proceed-bar { display: none; }
+    @media (max-width: 768px) {
+      .mobile-proceed-bar { display: flex; }
+    }
+
+    /* ═══════════════════════════════════════════════════
+       TOAST NOTIFICATION
+    ═══════════════════════════════════════════════════ */
+    #toast-container {
+      position: fixed;
+      bottom: 80px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 9999;
+      pointer-events: none;
+    }
+
+    @media (min-width: 769px) {
+      #toast-container { bottom: 24px; }
+    }
+
+    .toast-msg {
+      background: #1a1a1a;
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: 24px;
+      font-size: 13px;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 500;
+      white-space: nowrap;
+      opacity: 0;
+      transform: translateY(12px);
+      transition: all 0.25s;
+      margin-bottom: 8px;
+    }
+
+    .toast-msg.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .toast-msg.warning { background: #d97706; }
+    .toast-msg.error   { background: #dc2626; }
+
+    /* ═══════════════════════════════════════════════════
+       FOOTER
+    ═══════════════════════════════════════════════════ */
+    footer {
+      background: #1a1a1a;
+      padding: 20px 0;
+      margin-top: 32px;
+    }
+
+    /* Main wrapper padding */
+    .main-wrap {
+      background: #f3f4f6;
+      padding: 24px 0;
+      min-height: 60vh;
+    }
+
+    @media (max-width: 768px) {
+      .main-wrap { padding: 16px 0; }
+    }
+
+  </style>
 </head>
 <body>
 
+<!-- ══════════ NAVBAR ══════════ -->
 <nav class="navbar navbar-expand-lg">
   <div class="container" style="max-width:1200px">
-    <a class="navbar-brand" href="index.html"><span><span class="brand-quick">Quick</span>Reserve</span></a>
+    <a class="navbar-brand" href="index.html">
+      <span class="brand-quick">BicolTransit</span>Hub
+    </a>
     <div class="ms-auto d-flex align-items-center gap-2" id="nav-auth-btns"></div>
   </div>
 </nav>
 
+<!-- ══════════ PAGE HEADER ══════════ -->
 <div class="page-header">
   <div class="container">
-    <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px">
-      <a href="index.html" style="color:rgba(255,255,255,0.7);font-size:13px;text-decoration:none">← Back</a>
-    </div>
+    <a href="index.html" class="back-link">← Back</a>
     <h1 id="route-title">Loading…</h1>
     <p id="trip-info">Select your departure and seat below</p>
   </div>
 </div>
 
-<div style="background:#f9fafb;padding:32px 0;min-height:60vh">
+<!-- ══════════ MAIN CONTENT ══════════ -->
+<div class="main-wrap">
   <div class="container">
-    <div style="display:grid;grid-template-columns:1fr 320px;gap:24px;align-items:start">
+    <div class="layout-grid">
 
-      <!-- LEFT: Seat Map -->
-      <div>
-        <div class="card-white" style="margin-bottom:20px">
-          <h5 style="font-weight:700;font-size:14px;color:#1a1a1a;margin-bottom:12px">🕐 Select Departure Time</h5>
-          <div id="departure-btns" style="display:flex;gap:8px;flex-wrap:wrap">
+      <!-- LEFT / TOP: Seat Map -->
+      <div class="col-left">
+
+        <!-- Departure Time -->
+        <div class="card-white">
+          <div class="card-section-label">🕐 Select Departure Time</div>
+          <div id="departure-btns">
             <span style="color:#9ca3af;font-size:13px">Loading departures…</span>
           </div>
         </div>
 
+        <!-- Seat Map -->
         <div class="seat-map-wrap">
-          <div class="bus-front">🚌 DRIVER &nbsp; FRONT OF BUS</div>
+          <div class="bus-front">🚌 DRIVER &nbsp;&nbsp; FRONT OF BUS</div>
           <div id="seat-grid" class="seat-grid"></div>
           <div class="seat-legend">
             <div class="legend-item"><div class="legend-box available"></div> Available</div>
@@ -49,24 +489,47 @@
             <div class="legend-item"><div class="legend-box taken"></div> Taken</div>
           </div>
         </div>
+
       </div>
 
-      <!-- RIGHT: Summary -->
-      <div>
-        <div class="card-white" style="position:sticky;top:24px">
-          <h5 style="font-weight:700;font-size:15px;color:#1a1a1a;margin-bottom:16px">📋 Trip Summary</h5>
+      <!-- RIGHT / BOTTOM: Summary -->
+      <div class="col-right">
+        <div class="card-white summary-sticky">
+          <div class="card-section-label">📋 Trip Summary</div>
           <div class="booking-summary">
-            <div class="summary-row"><span>Route</span><span id="s-route" style="font-weight:600;text-align:right;max-width:180px">—</span></div>
-            <div class="summary-row"><span>Date</span><span id="s-date">—</span></div>
-            <div class="summary-row"><span>Departure</span><span id="s-depart">—</span></div>
-            <div class="summary-row"><span>Duration</span><span id="s-duration">—</span></div>
-            <div class="summary-row"><span>Seat</span><span id="s-seat">Not selected</span></div>
-            <div class="summary-row"><span>Fare</span><span id="s-price">—</span></div>
+            <div class="summary-row">
+              <span>Route</span>
+              <span id="s-route" style="max-width:180px">—</span>
+            </div>
+            <div class="summary-row">
+              <span>Date</span>
+              <span id="s-date">—</span>
+            </div>
+            <div class="summary-row">
+              <span>Departure</span>
+              <span id="s-depart">—</span>
+            </div>
+            <div class="summary-row">
+              <span>Duration</span>
+              <span id="s-duration">—</span>
+            </div>
+            <div class="summary-row">
+              <span>Seat</span>
+              <span id="s-seat">Not selected</span>
+            </div>
+            <div class="summary-row">
+              <span>Fare</span>
+              <span id="s-price" style="color:#0f6e56">—</span>
+            </div>
           </div>
-          <button id="proceed-btn" class="btn-primary-full" onclick="proceedToBooking()" disabled style="opacity:0.5">
-            Proceed to Booking →
-          </button>
-          <p style="font-size:11px;color:#9ca3af;text-align:center;margin-top:10px">Select a seat to continue</p>
+
+          <!-- Desktop proceed button (hidden on mobile) -->
+          <div class="desktop-proceed">
+            <button id="proceed-btn-desktop" class="btn-primary-full" onclick="proceedToBooking()" disabled>
+              Proceed to Booking →
+            </button>
+            <p style="font-size:11px;color:#9ca3af;text-align:center;margin-top:10px">Select a seat to continue</p>
+          </div>
         </div>
       </div>
 
@@ -74,9 +537,26 @@
   </div>
 </div>
 
+<!-- ══════════ MOBILE FIXED BOTTOM BAR ══════════ -->
+<div class="mobile-proceed-bar">
+  <div class="mobile-seat-info">
+    <div class="label">Selected seat</div>
+    <div class="value" id="mobile-seat-label">—</div>
+  </div>
+  <button id="proceed-btn-mobile" class="btn-primary-full" onclick="proceedToBooking()" disabled>
+    Continue →
+  </button>
+</div>
+
+<!-- ══════════ TOAST ══════════ -->
+<div id="toast-container"></div>
+
+<!-- ══════════ FOOTER ══════════ -->
 <footer>
   <div class="container">
-    <div style="text-align:center;color:rgba(255,255,255,0.35);font-size:12px">© 2026 QuickReserve. All rights reserved.</div>
+    <div style="text-align:center;color:rgba(255,255,255,0.35);font-size:12px">
+      © 2026 BicolTransit Hub. All rights reserved.
+    </div>
   </div>
 </footer>
 
@@ -84,6 +564,9 @@
 <script src="js/script.js"></script>
 <script src="js/api.js"></script>
 <script>
+  /* ══════════════════════════════════════════════════════
+     STATE
+  ══════════════════════════════════════════════════════ */
   var selectedSeat      = null;
   var selectedDeparture = null;
 
@@ -96,28 +579,31 @@
   var ROWS = ['A','B','C','D','E','F','G','H','I'];
   var COLS = [1, 2, null, 3, 4];
 
-  document.getElementById('route-title').textContent  = route || 'Select a Route';
-  document.getElementById('trip-info').textContent    = 'Date: ' + formatDate(date) + (duration ? ' · Duration: ' + duration : '');
-  document.getElementById('s-route').textContent      = route || '—';
-  document.getElementById('s-date').textContent       = formatDate(date);
-  document.getElementById('s-duration').textContent   = duration || '—';
-  document.getElementById('s-price').textContent      = priceMin ? '₱' + priceMin + ' – ₱' + priceMax : '—';
+  /* ══════════════════════════════════════════════════════
+     INITIAL RENDER
+  ══════════════════════════════════════════════════════ */
+  document.getElementById('route-title').textContent = route || 'Select a Route';
+  document.getElementById('trip-info').textContent   =
+    'Date: ' + formatDate(date) + (duration ? ' · Duration: ' + duration : '');
+  document.getElementById('s-route').textContent     = route || '—';
+  document.getElementById('s-date').textContent      = formatDate(date);
+  document.getElementById('s-duration').textContent  = duration || '—';
+  document.getElementById('s-price').textContent     = priceMin ? '₱' + priceMin + ' – ₱' + priceMax : '—';
 
-  // ── Load departures from MongoDB ────────────────────────────────────────
+  /* ══════════════════════════════════════════════════════
+     LOAD DEPARTURES FROM API / FALLBACK
+  ══════════════════════════════════════════════════════ */
   async function loadDepartures() {
     var departures = [];
-
     try {
-      // Search for the matching trip by origin + destination
-      var parts = route.split('→').map(function (p) { return p.trim(); });
+      var parts       = route.split('→').map(function(p){ return p.trim(); });
       var origin      = parts[0] || '';
       var destination = parts[1] || '';
-
-      var trips = await ApiTrips.search(origin, destination);
+      var trips       = await ApiTrips.search(origin, destination);
 
       if (trips && trips.length > 0) {
         departures = trips[0].departures || [];
-        // Update duration and price from DB if not already set
+
         if (!duration && trips[0].duration) {
           localStorage.setItem('selectedDuration', trips[0].duration);
           document.getElementById('s-duration').textContent = trips[0].duration;
@@ -135,61 +621,76 @@
       console.warn('Could not load trips from API, using fallback departures');
     }
 
-    // Fallback if nothing came back
-    if (!departures.length) departures = ['06:00am', '09:00am', '12:00pm', '03:00pm', '06:00pm'];
+    if (!departures.length) {
+      departures = ['06:00am', '09:00am', '12:00pm', '03:00pm', '06:00pm'];
+    }
 
     renderDepartureButtons(departures);
   }
 
+  /* ══════════════════════════════════════════════════════
+     RENDER DEPARTURE BUTTONS
+  ══════════════════════════════════════════════════════ */
   function renderDepartureButtons(departures) {
     var container = document.getElementById('departure-btns');
     container.innerHTML = '';
-    departures.forEach(function (d, i) {
+
+    departures.forEach(function(d, i) {
       var btn = document.createElement('button');
-      btn.className   = 'btn-sm btn-gray';
-      btn.style.cssText = 'padding:8px 16px;font-size:13px';
+      btn.className   = 'dep-btn';
       btn.textContent = d;
-      btn.onclick = function () { selectDeparture(d, btn); };
+      btn.onclick = function() { selectDeparture(d, btn); };
       container.appendChild(btn);
-      if (i === 0) setTimeout(function () { selectDeparture(d, btn); }, 100);
+      if (i === 0) setTimeout(function(){ selectDeparture(d, btn); }, 100);
     });
   }
 
+  /* ══════════════════════════════════════════════════════
+     SELECT DEPARTURE
+  ══════════════════════════════════════════════════════ */
   function selectDeparture(dep, btn) {
     selectedDeparture = dep;
-    document.querySelectorAll('#departure-btns .btn-sm').forEach(function (b) {
-      b.style.background = '';
-      b.style.color      = '';
+
+    document.querySelectorAll('.dep-btn').forEach(function(b){
+      b.classList.remove('active');
     });
-    btn.style.background = '#0f6e56';
-    btn.style.color      = '#fff';
+    btn.classList.add('active');
+
     document.getElementById('s-depart').textContent = dep;
+
+    // Reset seat selection
     selectedSeat = null;
-    document.getElementById('s-seat').textContent          = 'Not selected';
-    document.getElementById('proceed-btn').disabled        = true;
-    document.getElementById('proceed-btn').style.opacity   = '0.5';
+    document.getElementById('s-seat').textContent  = 'Not selected';
+    document.getElementById('mobile-seat-label').textContent = '—';
+    setProceedState(false);
+
     renderSeats();
   }
 
+  /* ══════════════════════════════════════════════════════
+     RENDER SEAT GRID
+  ══════════════════════════════════════════════════════ */
   function renderSeats() {
     var taken = Seats.getTaken(route, date, selectedDeparture);
     var grid  = document.getElementById('seat-grid');
     grid.innerHTML = '';
 
-    ROWS.forEach(function (row) {
-      COLS.forEach(function (col) {
+    ROWS.forEach(function(row) {
+      COLS.forEach(function(col) {
         var el = document.createElement('div');
+
         if (col === null) {
-          el.className   = 'seat aisle';
-          el.innerHTML   = '&nbsp;';
+          el.className = 'seat aisle';
+          el.innerHTML = '&nbsp;';
         } else {
-          var label = row + col;
-          el.className   = 'seat';
+          var label    = row + col;
+          el.className = 'seat';
           el.textContent = label;
+
           if (taken.includes(label)) {
             el.classList.add('taken');
           } else {
-            el.onclick = function () { selectSeat(label, el); };
+            el.onclick = function(){ selectSeat(label, el); };
             if (selectedSeat === label) el.classList.add('selected');
           }
         }
@@ -198,24 +699,50 @@
     });
   }
 
+  /* ══════════════════════════════════════════════════════
+     SELECT SEAT
+  ══════════════════════════════════════════════════════ */
   function selectSeat(label, el) {
     selectedSeat = label;
-    document.querySelectorAll('.seat').forEach(function (s) { s.classList.remove('selected'); });
+
+    document.querySelectorAll('.seat').forEach(function(s){
+      s.classList.remove('selected');
+    });
     el.classList.add('selected');
-    document.getElementById('s-seat').textContent        = 'Seat ' + label;
-    document.getElementById('proceed-btn').disabled      = false;
-    document.getElementById('proceed-btn').style.opacity = '1';
+
+    // Update summary card
+    document.getElementById('s-seat').innerHTML =
+      '<span class="seat-pill">Seat ' + label + '</span>';
+
+    // Update mobile bottom bar
+    document.getElementById('mobile-seat-label').textContent = 'Seat ' + label;
+
+    setProceedState(true);
     showToast('Seat ' + label + ' selected!');
   }
 
+  /* ══════════════════════════════════════════════════════
+     TOGGLE PROCEED BUTTONS
+  ══════════════════════════════════════════════════════ */
+  function setProceedState(enabled) {
+    var desktopBtn = document.getElementById('proceed-btn-desktop');
+    var mobileBtn  = document.getElementById('proceed-btn-mobile');
+    if (desktopBtn) desktopBtn.disabled = !enabled;
+    if (mobileBtn)  mobileBtn.disabled  = !enabled;
+  }
+
+  /* ══════════════════════════════════════════════════════
+     PROCEED TO BOOKING
+  ══════════════════════════════════════════════════════ */
   function proceedToBooking() {
     if (!selectedSeat || !selectedDeparture) {
-      showToast('Please select a departure and seat first.', 'error'); return;
+      showToast('Please select a departure and seat first.', 'error');
+      return;
     }
     if (!Auth.isLoggedIn()) {
       localStorage.setItem('loginRedirect', window.location.href);
       showToast('Please login to continue.', 'warning');
-      setTimeout(function () { window.location.href = 'pages/auth/login.html'; }, 1000);
+      setTimeout(function(){ window.location.href = 'pages/auth/login.html'; }, 1000);
       return;
     }
     localStorage.setItem('selectedSeat',      selectedSeat);
@@ -223,7 +750,31 @@
     window.location.href = 'pages/user/booking.html';
   }
 
-  // ── Init ────────────────────────────────────────────────────────────────
+  /* ══════════════════════════════════════════════════════
+     TOAST
+  ══════════════════════════════════════════════════════ */
+  function showToast(msg, type) {
+    var container = document.getElementById('toast-container');
+    var toast     = document.createElement('div');
+    toast.className = 'toast-msg' + (type ? ' ' + type : '');
+    toast.textContent = msg;
+    container.appendChild(toast);
+
+    requestAnimationFrame(function(){
+      requestAnimationFrame(function(){
+        toast.classList.add('show');
+      });
+    });
+
+    setTimeout(function(){
+      toast.classList.remove('show');
+      setTimeout(function(){ toast.remove(); }, 300);
+    }, 2500);
+  }
+
+  /* ══════════════════════════════════════════════════════
+     INIT
+  ══════════════════════════════════════════════════════ */
   loadDepartures();
 </script>
 </body>
